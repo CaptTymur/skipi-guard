@@ -180,11 +180,15 @@ def git_changed_files(repo: Path, base: str, head: str) -> tuple[list[str], str 
 def sha_matches(claimed: str, actual_full: str | None) -> bool:
     claimed = claimed.strip()
     actual = (actual_full or "").strip()
-    if len(claimed) < 4:
+    if len(claimed) < 7:
         return False
-    if len(actual) < 4:
+    if len(actual) < 7:
         return False
-    return actual.startswith(claimed) or claimed.startswith(actual)
+    if len(claimed) > len(actual):
+        return False
+    if not re.fullmatch(r"[0-9a-fA-F]+", claimed):
+        return False
+    return actual.lower().startswith(claimed.lower())
 
 
 def report_files(report: dict[str, Any]) -> list[str]:

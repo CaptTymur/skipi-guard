@@ -166,6 +166,38 @@ class SkipiReportVerifyTests(unittest.TestCase):
         self.assertIn("sha_mismatch", codes)
         self.assertIn("guard_sha_mismatch", codes)
 
+    def test_report_sha_full_sha_with_trailing_text_fails(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-report-verify-report-sha-superstring-") as tmp:
+            root = Path(tmp)
+            repo, report, guard = self.make_repo_fixture(root)
+            full_sha = self.run_git(repo, "rev-parse", "HEAD").stdout.strip()
+            report["sha"] = f"{full_sha}notasha"
+            proc, payload = self.run_verify(root, report, guard)
+
+        self.assertNotEqual(proc.returncode, 0)
+        self.assert_failed_with(payload, "sha_mismatch")
+
+    def test_guard_sha_full_sha_with_trailing_text_fails(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-report-verify-guard-sha-superstring-") as tmp:
+            root = Path(tmp)
+            repo, report, guard = self.make_repo_fixture(root)
+            full_sha = self.run_git(repo, "rev-parse", "HEAD").stdout.strip()
+            guard["sha"] = f"{full_sha}notasha"
+            proc, payload = self.run_verify(root, report, guard)
+
+        self.assertNotEqual(proc.returncode, 0)
+        self.assert_failed_with(payload, "guard_sha_mismatch")
+
+    def test_non_hex_report_sha_fails(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-report-verify-non-hex-sha-") as tmp:
+            root = Path(tmp)
+            _repo, report, guard = self.make_repo_fixture(root)
+            report["sha"] = "zzzzzzz"
+            proc, payload = self.run_verify(root, report, guard)
+
+        self.assertNotEqual(proc.returncode, 0)
+        self.assert_failed_with(payload, "sha_mismatch")
+
     def test_claimed_files_omit_changed_file_fails(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-report-verify-files-") as tmp:
             root = Path(tmp)
