@@ -1,0 +1,66 @@
+{
+  "home": "crewing",
+  "repo": "/home/linux/Developer/skipi-crewing",
+  "stop_lines": [
+    "no backend/server/prod data",
+    "no catalog/latest/release/signing keys",
+    "no app version/tag bump",
+    "no Tauri/Cargo/mobile generated changes",
+    "no pairing/QR/camera bridge changes",
+    "no Play/TestFlight/upload/deploy"
+  ],
+  "release_tasks": ["release", "release-infra", "build-release"],
+  "protected_paths": [
+    {
+      "name": "backend/server/prod data",
+      "patterns": ["backend/**", "server/**", "api/**", "data/prod/**", "prod/**", "production/**", "media/**", "uploads/**"]
+    },
+    {
+      "name": "secrets/signing keys",
+      "patterns": [".env", ".env.*", "**/.env", "**/.env.*", "keys/**", "signing/**", "**/*.pem", "**/*.p12", "**/*.keystore", "**/*secret*", "**/*token*"]
+    },
+    {
+      "name": "pairing/QR/camera bridge",
+      "patterns": ["**/*pair*", "**/*Pair*", "**/*qr*", "**/*QR*", "**/*camera*", "**/*Camera*", "**/*barcode*", "**/*Barcode*"]
+    }
+  ],
+  "release_sensitive_paths": [
+    {
+      "name": "catalog/latest/release manifests",
+      "patterns": ["latest.json", "**/latest.json", "catalog/**", "**/catalog/**", "release/**", "releases/**", "downloads/**", "manifest*.json", "**/manifest*.json"]
+    },
+    {
+      "name": "versions/tags",
+      "patterns": ["VERSION", "version.txt", "package.json", "package-lock.json", "pnpm-lock.yaml", "src-tauri/tauri.conf.json", "Cargo.toml", "Cargo.lock"]
+    },
+    {
+      "name": "Tauri/Cargo/mobile generated files",
+      "patterns": ["src-tauri/gen/**", "src-tauri/target/**", "src-tauri/Cargo.lock", "android/**", "ios/**", "build/**", "*.apk", "*.aab", "*.ipa", "dist/**/*.apk"]
+    },
+    {
+      "name": "Play/TestFlight/upload/deploy",
+      "patterns": ["fastlane/**", "play/**", "testflight/**", "scripts/deploy*", "scripts/upload*", "scripts/*testflight*", "scripts/*play*", ".github/workflows/*release*", ".github/workflows/*deploy*"]
+    }
+  ],
+  "harness_commands": {
+    "plugin-host": [
+      {
+        "name": "crewing_plugin_isolation",
+        "command": "node tests/crewing_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "shared_host_runtime_isolation",
+        "command": "node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs"
+      }
+    ],
+    "provenance": [
+      {
+        "name": "crewing_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      }
+    ]
+  },
+  "allowed_file_patterns": {
+    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/crewing_plugin_isolation_harness.mjs"]
+  }
+}

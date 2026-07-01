@@ -1,0 +1,42 @@
+name: skipi-guard
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout app repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout skipi-guard
+        uses: actions/checkout@v4
+        with:
+          repository: CaptTymur/skipi-guard
+          path: .skipi-guard
+
+      - name: Run skipi-guard
+        env:
+          SKIPI_GUARD_HOME: ${{ vars.SKIPI_GUARD_HOME }}
+          SKIPI_GUARD_TASK: ${{ vars.SKIPI_GUARD_TASK || 'plugin-host' }}
+        run: |
+          .skipi-guard/bin/skipi-guard verify \
+            --home "$SKIPI_GUARD_HOME" \
+            --task "$SKIPI_GUARD_TASK" \
+            --repo "$GITHUB_WORKSPACE" \
+            --base "origin/${GITHUB_BASE_REF:-main}" \
+            --head "$GITHUB_SHA" \
+            --json /tmp/skipi-guard.json
+
+      - name: Upload guard JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: skipi-guard-json
+          path: /tmp/skipi-guard.json

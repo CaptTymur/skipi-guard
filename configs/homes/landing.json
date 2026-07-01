@@ -1,0 +1,46 @@
+{
+  "home": "landing",
+  "repo": "/home/linux/Developer/skipi-landing",
+  "stop_lines": [
+    "no latest/catalog/release edits without release task",
+    "no production data/secrets",
+    "no version/tag bump",
+    "no deploy/upload action"
+  ],
+  "release_tasks": ["release", "release-infra", "build-release"],
+  "protected_paths": [
+    {
+      "name": "production data",
+      "patterns": ["data/prod/**", "prod/**", "production/**", "media/prod/**", "uploads/**"]
+    },
+    {
+      "name": "secrets/signing keys",
+      "patterns": [".env", ".env.*", "**/.env", "**/.env.*", "keys/**", "signing/**", "**/*.pem", "**/*.p12", "**/*.keystore", "**/*secret*", "**/*token*"]
+    }
+  ],
+  "release_sensitive_paths": [
+    {
+      "name": "catalog/latest/release manifests",
+      "patterns": ["latest.json", "**/latest.json", "catalog/**", "**/catalog/**", "release/**", "releases/**", "downloads/**", "manifest*.json", "**/manifest*.json"]
+    },
+    {
+      "name": "versions/tags",
+      "patterns": ["VERSION", "version.txt", "package.json", "package-lock.json", "pnpm-lock.yaml"]
+    },
+    {
+      "name": "deploy/upload",
+      "patterns": ["scripts/deploy*", "scripts/upload*", ".github/workflows/*release*", ".github/workflows/*deploy*"]
+    }
+  ],
+  "harness_commands": {
+    "landing": [
+      {
+        "name": "landing_tests",
+        "command": "npm test"
+      }
+    ]
+  },
+  "allowed_file_patterns": {
+    "plugin-host": ["plugins/**", "dist/**", "tests/*plugin*", "tests/*host*"]
+  }
+}

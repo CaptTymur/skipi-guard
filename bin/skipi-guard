@@ -1,0 +1,293 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import fnmatch
+import json
+import os
+import shlex
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+
+VERSION = "0.1.0"
+SCHEMA_VERSION = "skipi-guard.v1"
+ROOT = Path(__file__).resolve().parents[1]
+CONFIG_DIR = ROOT / "configs" / "homes"
+
+
+def run(cmd: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(cmd, cwd=cwd, text=True, capture_output=True)
+
+
+def load_home_config(home: str) -> dict[str, Any]:
+    config_path = CONFIG_DIR / f"{home}.json"
+    if not config_path.exists():
+        homes = sorted(path.stem for path in CONFIG_DIR.glob("*.json"))
+        raise SystemExit(f"unknown home '{home}'. configured homes: {', '.join(homes)}")
+    with config_path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def clean_path(path: str) -> str:
+    return path.replace("\\", "/").lstrip("./")
+
+
+def pattern_matches(path: str, pattern: str) -> bool:
+    path = clean_path(path)
+    pattern = clean_path(pattern)
+    if not pattern:
+        return False
+    if pattern.endswith("/**"):
+        prefix = pattern[:-3]
+        return path == prefix or path.startswith(prefix + "/")
+    if fnmatch.fnmatchcase(path, pattern):
+        return True
+    if pattern.startswith("**/") and fnmatch.fnmatchcase(path, pattern[3:]):
+        return True
+    has_glob = any(char in pattern for char in "*?[")
+    if not has_glob and "/" not in pattern:
+        return path == pattern or path.endswith("/" + pattern) or path.startswith(pattern + "/")
+    return False
+
+
+def classify_paths(files: list[str], rules: list[dict[str, Any]], kind: str) -> list[dict[str, str]]:
+    touches: list[dict[str, str]] = []
+    seen: set[tuple[str, str, str]] = set()
+    for file_path in files:
+        for rule in rules:
+            for pattern in rule.get("patterns", []):
+                if pattern_matches(file_path, pattern):
+                    key = (file_path, kind, rule.get("name", "unnamed"))
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    touches.append(
+                        {
+                            "path": file_path,
+                            "kind": kind,
+                            "rule": rule.get("name", "unnamed"),
+                            "pattern": pattern,
+                        }
+                    )
+    return touches
+
+
+def changed_files_between(repo: Path, base: str, head: str) -> tuple[list[str], str, str | None]:
+    specs = [(f"{base}...{head}", "triple-dot"), (f"{base}..{head}", "two-dot")]
+    errors: list[str] = []
+    for spec, mode in specs:
+        proc = run(["git", "-C", str(repo), "diff", "--name-only", "--diff-filter=ACMRTUXB", spec])
+        if proc.returncode == 0:
+            files = sorted({clean_path(line) for line in proc.stdout.splitlines() if line.strip()})
+            return files, mode, None
+        errors.append(proc.stderr.strip() or proc.stdout.strip() or f"git diff failed for {spec}")
+    return [], "none", " ; ".join(errors)
+
+
+def short_sha(repo: Path, head: str) -> tuple[str, str | None]:
+    proc = run(["git", "-C", str(repo), "rev-parse", "--short", head])
+    if proc.returncode != 0:
+        return "unknown", proc.stderr.strip() or proc.stdout.strip() or f"cannot resolve {head}"
+    return proc.stdout.strip(), None
+
+
+def is_release_task(config: dict[str, Any], task: str) -> bool:
+    release_tasks = set(config.get("release_tasks", []))
+    lowered = task.lower()
+    return task in release_tasks or lowered == "release" or lowered.startswith("release-") or lowered.endswith("-release")
+
+
+def configured_harnesses(config: dict[str, Any], task: str) -> list[dict[str, Any]]:
+    commands_by_task = config.get("harness_commands", {})
+    return list(commands_by_task.get(task, []))
+
+
+def run_harness_commands(repo: Path, harnesses: list[dict[str, Any]], should_run: bool) -> tuple[list[dict[str, Any]], list[str]]:
+    tests: list[dict[str, Any]] = []
+    errors: list[str] = []
+    for harness in harnesses:
+        entry = {
+            "name": harness.get("name", "unnamed"),
+            "command": harness.get("command", ""),
+            "status": "not_run",
+            "summary": "configured only; pass --run-harness to execute",
+        }
+        if should_run:
+            proc = subprocess.run(
+                harness.get("command", ""),
+                cwd=repo,
+                shell=True,
+                text=True,
+                capture_output=True,
+            )
+            output = "\n".join(part.strip() for part in (proc.stdout, proc.stderr) if part.strip())
+            tail = "\n".join(output.splitlines()[-8:]) if output else ""
+            entry.update(
+                {
+                    "status": "pass" if proc.returncode == 0 else "fail",
+                    "exit_code": proc.returncode,
+                    "summary": tail or f"exit {proc.returncode}",
+                }
+            )
+            if proc.returncode != 0:
+                errors.append(f"harness failed: {entry['name']} ({harness.get('command', '')})")
+        tests.append(entry)
+    return tests, errors
+
+
+def write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2, sort_keys=False)
+        handle.write("\n")
+
+
+def print_summary(result: dict[str, Any]) -> None:
+    status = result["status"].upper()
+    print(f"Skipi Guard {result['schema_version']}: {status}")
+    print(f"home/task: {result['home']} / {result['task']}")
+    print(f"repo: {result['repo']}")
+    print(f"range: {result['base']} -> {result['head']} ({result.get('comparison', 'unknown')})")
+    print(f"sha: {result['sha']}")
+    print(f"changed files: {len(result['changed_files'])}")
+    if result["changed_files"]:
+        for file_path in result["changed_files"][:20]:
+            print(f"  - {file_path}")
+        if len(result["changed_files"]) > 20:
+            print(f"  ... {len(result['changed_files']) - 20} more")
+    print(f"protected touches: {len(result['protected_paths_touched'])}")
+    print(f"release changes: {'yes' if result['release_changes'] else 'no'}")
+    print(f"harness commands: {len(result['tests'])}")
+    for test in result["tests"]:
+        print(f"  - {test['name']}: {test['status']} :: {test['command']}")
+    if result["errors"]:
+        print("errors:")
+        for error in result["errors"]:
+            print(f"  - {error}")
+
+
+def verify(args: argparse.Namespace) -> int:
+    config = load_home_config(args.home)
+    repo = Path(args.repo or config["repo"]).expanduser().resolve()
+    override_token = args.override_protected or os.environ.get("SKIPI_GUARD_OVERRIDE_TOKEN", "")
+    override_present = bool(override_token)
+    errors: list[str] = []
+
+    if not repo.exists():
+        errors.append(f"repo does not exist: {repo}")
+    elif not (repo / ".git").exists():
+        errors.append(f"not a git repo: {repo}")
+
+    sha = "unknown"
+    changed_files: list[str] = []
+    comparison = "none"
+    if not errors:
+        sha, sha_error = short_sha(repo, args.head)
+        if sha_error:
+            errors.append(sha_error)
+        changed_files, comparison, diff_error = changed_files_between(repo, args.base, args.head)
+        if diff_error:
+            errors.append(diff_error)
+
+    protected_touches = classify_paths(changed_files, config.get("protected_paths", []), "protected")
+    release_touches = classify_paths(changed_files, config.get("release_sensitive_paths", []), "release-sensitive")
+    protected_paths_touched = protected_touches + release_touches
+    release_changes = bool(release_touches)
+
+    if protected_touches and not override_present:
+        errors.append("protected path touch requires --override-protected or SKIPI_GUARD_OVERRIDE_TOKEN")
+    if release_touches and not (override_present or is_release_task(config, args.task)):
+        errors.append("release-sensitive path touch is blocked for this task")
+
+    allowed_patterns = config.get("allowed_file_patterns", {}).get(args.task, [])
+    scope_violations: list[str] = []
+    if allowed_patterns:
+        scope_violations = [
+            file_path for file_path in changed_files if not any(pattern_matches(file_path, pattern) for pattern in allowed_patterns)
+        ]
+        if scope_violations and not override_present:
+            errors.append(f"changes outside allowed patterns for task '{args.task}'")
+
+    tests, test_errors = run_harness_commands(repo, configured_harnesses(config, args.task), args.run_harness)
+    errors.extend(test_errors)
+
+    result: dict[str, Any] = {
+        "schema_version": SCHEMA_VERSION,
+        "home": args.home,
+        "task": args.task,
+        "repo": str(repo),
+        "base": args.base,
+        "head": args.head,
+        "sha": sha,
+        "changed_files": changed_files,
+        "protected_paths_touched": protected_paths_touched,
+        "release_paths_touched": release_touches,
+        "release_changes": release_changes,
+        "allowed_file_patterns": allowed_patterns,
+        "scope_violations": scope_violations,
+        "tests": tests,
+        "override_present": override_present,
+        "comparison": comparison,
+        "status": "fail" if errors else "pass",
+        "errors": errors,
+    }
+
+    if args.json:
+        write_json(Path(args.json), result)
+    print_summary(result)
+    return 0 if result["status"] == "pass" else 1
+
+
+def list_homes() -> int:
+    for path in sorted(CONFIG_DIR.glob("*.json")):
+        with path.open("r", encoding="utf-8") as handle:
+            config = json.load(handle)
+        print(f"{path.stem}\t{config.get('repo', '')}")
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="skipi-guard", description="Stop-line guard for Skipi homes.")
+    parser.add_argument("--version", action="store_true", help="print version and exit")
+    subparsers = parser.add_subparsers(dest="command")
+
+    verify_parser = subparsers.add_parser("verify", help="verify a home/task diff against stop-line config")
+    verify_parser.add_argument("--home", required=True, help="configured Skipi home")
+    verify_parser.add_argument("--task", required=True, help="task key, for example plugin-host")
+    verify_parser.add_argument("--base", default="origin/main", help="base git ref")
+    verify_parser.add_argument("--head", default="HEAD", help="head git ref")
+    verify_parser.add_argument("--repo", help="override repo path for fixtures or dry-runs")
+    verify_parser.add_argument("--json", help="write machine-readable guard result JSON")
+    verify_parser.add_argument("--run-harness", action="store_true", help="execute configured harness commands")
+    verify_parser.add_argument(
+        "--override-protected",
+        metavar="TOKEN",
+        help="explicit token acknowledging protected-path stop-line override; token is not written to JSON",
+    )
+    verify_parser.set_defaults(func=verify)
+
+    homes_parser = subparsers.add_parser("list-homes", help="list configured homes")
+    homes_parser.set_defaults(func=lambda _args: list_homes())
+
+    version_parser = subparsers.add_parser("version", help="print version")
+    version_parser.set_defaults(func=lambda _args: print(f"skipi-guard {VERSION}") or 0)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    if args.version:
+        print(f"skipi-guard {VERSION}")
+        return 0
+    if not hasattr(args, "func"):
+        parser.print_help()
+        return 0
+    return int(args.func(args))
+
+
+if __name__ == "__main__":
+    sys.exit(main())

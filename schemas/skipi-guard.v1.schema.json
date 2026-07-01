@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "skipi-guard.v1",
+  "title": "Skipi Guard Result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "home",
+    "task",
+    "repo",
+    "base",
+    "head",
+    "sha",
+    "changed_files",
+    "protected_paths_touched",
+    "release_changes",
+    "tests",
+    "status",
+    "errors"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "skipi-guard.v1"
+    },
+    "home": {
+      "type": "string"
+    },
+    "task": {
+      "type": "string"
+    },
+    "repo": {
+      "type": "string"
+    },
+    "base": {
+      "type": "string"
+    },
+    "head": {
+      "type": "string"
+    },
+    "sha": {
+      "type": "string"
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "protected_paths_touched": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "kind", "rule", "pattern"],
+        "properties": {
+          "path": {"type": "string"},
+          "kind": {"type": "string"},
+          "rule": {"type": "string"},
+          "pattern": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "release_paths_touched": {
+      "type": "array"
+    },
+    "release_changes": {
+      "type": "boolean"
+    },
+    "allowed_file_patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scope_violations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "command", "status", "summary"],
+        "properties": {
+          "name": {"type": "string"},
+          "command": {"type": "string"},
+          "status": {"enum": ["not_run", "pass", "fail"]},
+          "summary": {"type": "string"},
+          "exit_code": {"type": "integer"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "override_present": {
+      "type": "boolean"
+    },
+    "comparison": {
+      "type": "string"
+    },
+    "status": {
+      "enum": ["pass", "fail"]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

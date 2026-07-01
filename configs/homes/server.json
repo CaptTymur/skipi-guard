@@ -1,0 +1,52 @@
+{
+  "home": "server",
+  "repo": "/home/linux/Developer/skipi-server",
+  "stop_lines": [
+    "no production data/secrets",
+    "no release latest/catalog edits without release task",
+    "no deploy/upload action",
+    "no signing key changes"
+  ],
+  "release_tasks": ["release", "release-infra", "build-release"],
+  "protected_paths": [
+    {
+      "name": "production data",
+      "patterns": ["data/prod/**", "prod/**", "production/**", "media/**", "uploads/**"]
+    },
+    {
+      "name": "secrets/signing keys",
+      "patterns": [".env", ".env.*", "**/.env", "**/.env.*", "keys/**", "signing/**", "**/*.pem", "**/*.p12", "**/*.keystore", "**/*secret*", "**/*token*"]
+    }
+  ],
+  "release_sensitive_paths": [
+    {
+      "name": "catalog/latest/release manifests",
+      "patterns": ["latest.json", "**/latest.json", "catalog/**", "**/catalog/**", "release/**", "releases/**", "downloads/**", "manifest*.json", "**/manifest*.json"]
+    },
+    {
+      "name": "versions/tags",
+      "patterns": ["VERSION", "version.txt", "pyproject.toml", "requirements.txt"]
+    },
+    {
+      "name": "deploy/upload",
+      "patterns": ["scripts/deploy*", "scripts/upload*", ".github/workflows/*release*", ".github/workflows/*deploy*"]
+    }
+  ],
+  "harness_commands": {
+    "backend": [
+      {
+        "name": "server_pytest",
+        "command": "pytest"
+      }
+    ],
+    "provenance": [
+      {
+        "name": "server_build_snapshot_manifest",
+        "command": "pytest tests/test_build_snapshot_manifest.py"
+      }
+    ]
+  },
+  "allowed_file_patterns": {
+    "plugin-host": ["plugins/**", "tests/*plugin*", "tests/*host*"]
+  }
+}
