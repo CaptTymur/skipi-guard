@@ -68,3 +68,30 @@ Templates are provided only as artifacts:
 - `templates/github-actions/skipi-guard.yml`
 
 Do not install them into app repos without a separate explicit GO.
+
+## Report Reality Verifier
+
+`skipi-report-verify` compares a worker report against the guard result, local git facts, and remote branch/PR facts when the claimed rung requires them.
+
+```bash
+/home/linux/Developer/skipi-guard/bin/skipi-report-verify \
+  --report /tmp/report.json \
+  --guard-result /tmp/guard.json \
+  --json /tmp/verify.json
+```
+
+Verifier JSON uses `schema_version: skipi-verifier.v1`:
+
+```json
+{
+  "schema_version": "skipi-verifier.v1",
+  "task": "broker-plugin-host-skeleton",
+  "status": "pass",
+  "claimed_rung": "pr_ready",
+  "verified_rung": "pr_ready",
+  "mismatches": [],
+  "evidence": []
+}
+```
+
+The verifier exits non-zero when the report disagrees with guard/git/PR reality. It tolerates legacy reports without `schema_version` by emitting a warning. The schema file is `schemas/skipi-verifier.v1.schema.json`.

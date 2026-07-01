@@ -1,0 +1,815 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import fnmatch
+import json
+import re
+import shutil
+import subprocess
+import sys
+import urllib.error
+import urllib.request
+from pathlib import Path
+from typing import Any
+
+
+VERSION = "0.1.0"
+SCHEMA_VERSION = "skipi-verifier.v1"
+REPORT_SCHEMA_VERSION = "skipi-report.v1"
+GUARD_SCHEMA_VERSION = "skipi-guard.v1"
+ROOT = Path(__file__).resolve().parents[1]
+CONFIG_DIR = ROOT / "configs" / "homes"
+RUNG_ORDER = ["unverified", "local", "branch_pushed", "pr_ready", "merged"]
+RUNG_ALIASES = {
+    "none": "unverified",
+    "not_started": "unverified",
+    "local_only": "local",
+    "committed": "local",
+    "branch": "branch_pushed",
+    "pushed": "branch_pushed",
+    "branch-ready": "branch_pushed",
+    "branch_ready": "branch_pushed",
+    "pr": "pr_ready",
+    "pull_request": "pr_ready",
+    "ready": "pr_ready",
+    "merged_to_main": "merged",
+    "done": "merged",
+}
+
+
+def run(cmd: list[str], cwd: Path | None = None, timeout: int = 20) -> subprocess.CompletedProcess[str]:
+    try:
+        return subprocess.run(cmd, cwd=cwd, text=True, capture_output=True, timeout=timeout)
+    except subprocess.TimeoutExpired as exc:
+        return subprocess.CompletedProcess(cmd, 124, exc.stdout or "", exc.stderr or "command timed out")
+
+
+def load_json(path: Path) -> dict[str, Any]:
+    with path.open("r", encoding="utf-8") as handle:
+        payload = json.load(handle)
+    if not isinstance(payload, dict):
+        raise ValueError(f"expected JSON object: {path}")
+    return payload
+
+
+def write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2, sort_keys=False)
+        handle.write("\n")
+
+
+def clean_path(path: str) -> str:
+    return path.replace("\\", "/").lstrip("./")
+
+
+def as_list(value: Any) -> list[Any]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return value
+    return [value]
+
+
+def path_list(value: Any) -> list[str]:
+    paths: list[str] = []
+    for item in as_list(value):
+        if isinstance(item, str):
+            paths.append(clean_path(item))
+            continue
+        if isinstance(item, dict):
+            for key in ("path", "file", "filename", "name"):
+                raw = item.get(key)
+                if isinstance(raw, str):
+                    paths.append(clean_path(raw))
+                    break
+    return sorted({path for path in paths if path})
+
+
+def nested_text(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, (str, int, float, bool)):
+        return str(value)
+    if isinstance(value, list):
+        return " ".join(nested_text(item) for item in value)
+    if isinstance(value, dict):
+        return " ".join(nested_text(item) for item in value.values())
+    return ""
+
+
+def normalize_rung(value: Any) -> str:
+    raw = str(value or "local").strip().lower().replace("-", "_")
+    return RUNG_ALIASES.get(raw, raw)
+
+
+def rung_at_least(rung: str, threshold: str) -> bool:
+    if rung not in RUNG_ORDER or threshold not in RUNG_ORDER:
+        return False
+    return RUNG_ORDER.index(rung) >= RUNG_ORDER.index(threshold)
+
+
+def load_home_config(home: str | None) -> dict[str, Any] | None:
+    if not home:
+        return None
+    path = CONFIG_DIR / f"{home}.json"
+    if not path.exists():
+        return None
+    return load_json(path)
+
+
+def pattern_matches(path: str, pattern: str) -> bool:
+    path = clean_path(path)
+    pattern = clean_path(pattern)
+    if not pattern:
+        return False
+    if pattern.endswith("/**"):
+        prefix = pattern[:-3]
+        return path == prefix or path.startswith(prefix + "/")
+    if fnmatch.fnmatchcase(path, pattern):
+        return True
+    if pattern.startswith("**/") and fnmatch.fnmatchcase(path, pattern[3:]):
+        return True
+    has_glob = any(char in pattern for char in "*?[")
+    if not has_glob and "/" not in pattern:
+        return path == pattern or path.endswith("/" + pattern) or path.startswith(pattern + "/")
+    return False
+
+
+def classify_paths(files: list[str], rules: list[dict[str, Any]], kind: str) -> list[dict[str, str]]:
+    touches: list[dict[str, str]] = []
+    seen: set[tuple[str, str, str]] = set()
+    for file_path in files:
+        for rule in rules:
+            for pattern in rule.get("patterns", []):
+                if pattern_matches(file_path, pattern):
+                    key = (file_path, kind, rule.get("name", "unnamed"))
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    touches.append(
+                        {
+                            "path": file_path,
+                            "kind": kind,
+                            "rule": rule.get("name", "unnamed"),
+                            "pattern": pattern,
+                        }
+                    )
+    return touches
+
+
+def git_sha(repo: Path, head: str) -> tuple[str | None, str | None, str | None]:
+    proc = run(["git", "-C", str(repo), "rev-parse", "--verify", head])
+    if proc.returncode != 0:
+        return None, None, proc.stderr.strip() or proc.stdout.strip() or f"cannot resolve {head}"
+    full = proc.stdout.strip()
+    return full, full[:12], None
+
+
+def git_changed_files(repo: Path, base: str, head: str) -> tuple[list[str], str | None]:
+    errors: list[str] = []
+    for spec in (f"{base}...{head}", f"{base}..{head}"):
+        proc = run(["git", "-C", str(repo), "diff", "--name-only", "--diff-filter=ACDMRTUXB", spec])
+        if proc.returncode == 0:
+            return sorted({clean_path(line) for line in proc.stdout.splitlines() if line.strip()}), None
+        errors.append(proc.stderr.strip() or proc.stdout.strip() or f"git diff failed for {spec}")
+    return [], " ; ".join(errors)
+
+
+def sha_matches(claimed: str, actual_full: str | None, guard_sha: str | None) -> bool:
+    claimed = claimed.strip()
+    candidates = [candidate.strip() for candidate in (actual_full or "", guard_sha or "") if candidate]
+    if len(claimed) < 4:
+        return False
+    return any(candidate.startswith(claimed) or claimed.startswith(candidate) for candidate in candidates if len(candidate) >= 4)
+
+
+def report_files(report: dict[str, Any]) -> list[str]:
+    for key in ("files", "changed_files", "changedFiles", "paths"):
+        if key in report:
+            return path_list(report.get(key))
+    return []
+
+
+def report_protected_paths(report: dict[str, Any]) -> tuple[bool, list[str]]:
+    for key in ("protected_paths_touched", "protected_paths", "protected", "release_paths_touched"):
+        if key in report:
+            return True, path_list(report.get(key))
+    return False, []
+
+
+def claim_status(value: Any) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return "pass" if value else "fail"
+    text = str(value).strip().lower()
+    if not text:
+        return None
+    if any(token in text for token in ("fail", "failed", "error", "red")):
+        return "fail"
+    if any(token in text for token in ("not_run", "not run", "skip", "unknown", "n/a")):
+        return "not_run"
+    return "pass"
+
+
+def report_test_claims(report: dict[str, Any]) -> tuple[dict[str, str], str | None]:
+    claims: dict[str, str] = {}
+    global_claim = claim_status(
+        report.get("tests_status", report.get("test_status", report.get("tests_passed")))
+    )
+    for index, item in enumerate(as_list(report.get("tests"))):
+        if isinstance(item, str):
+            status = claim_status(item)
+            if status:
+                claims[f"test_{index + 1}"] = status
+            continue
+        if not isinstance(item, dict):
+            continue
+        name = str(item.get("name") or item.get("test") or item.get("id") or f"test_{index + 1}")
+        status = claim_status(
+            item.get("status", item.get("claimed_status", item.get("claimed", item.get("result"))))
+        )
+        if status:
+            claims[name] = status
+    return claims, global_claim
+
+
+def normalized_repo(path: Any) -> str:
+    if not path:
+        return ""
+    return str(Path(str(path)).expanduser().resolve())
+
+
+def explicit_false(report: dict[str, Any], *keys: str) -> bool:
+    for key in keys:
+        if key not in report:
+            continue
+        value = report.get(key)
+        if value is False:
+            return True
+        if isinstance(value, str) and value.strip().lower() in {"false", "no", "none", "0"}:
+            return True
+    return False
+
+
+def no_clause_tokens(text: str) -> set[str]:
+    tokens: set[str] = set()
+    for match in re.finditer(r"\bno\s+([a-z0-9_.-]+(?:/[a-z0-9_.-]+)*)", text):
+        for token in match.group(1).split("/"):
+            token = token.strip(" ._-")
+            if token:
+                tokens.add(token)
+    return tokens
+
+
+def no_claims(report: dict[str, Any]) -> dict[str, bool]:
+    text = nested_text(
+        {
+            key: report.get(key)
+            for key in (
+                "scope_assertion",
+                "scope",
+                "stop_lines",
+                "release_assertion",
+                "release_claim",
+                "notes",
+                "summary",
+            )
+        }
+    ).lower()
+    no_tokens = no_clause_tokens(text)
+    return {
+        "release": explicit_false(report, "release_changes", "release_changed")
+        or "no release" in text
+        or "without release" in text
+        or "release" in no_tokens,
+        "backend": explicit_false(report, "backend_changes", "backend_changed")
+        or "no backend" in text
+        or "no server" in text
+        or "no prod" in text
+        or "no production" in text
+        or bool({"backend", "server", "prod", "production"} & no_tokens),
+        "catalog_latest": explicit_false(report, "catalog_changes", "latest_changes")
+        or "no catalog" in text
+        or "no latest" in text
+        or "no manifest" in text
+        or bool({"catalog", "latest", "manifest"} & no_tokens),
+        "version_tag": explicit_false(report, "version_changes", "tag_changes")
+        or "no version" in text
+        or "no app version" in text
+        or "no tag" in text
+        or bool({"version", "versions", "tag", "tags"} & no_tokens),
+    }
+
+
+def entry_path(entry: Any) -> str:
+    if isinstance(entry, dict):
+        return clean_path(str(entry.get("path", "")))
+    return clean_path(str(entry))
+
+
+def entry_rule(entry: Any) -> str:
+    if isinstance(entry, dict):
+        return str(entry.get("rule", ""))
+    return ""
+
+
+def is_backend_touch(entry: Any) -> bool:
+    path = entry_path(entry)
+    rule = entry_rule(entry).lower()
+    prefixes = ("backend/", "server/", "api/", "data/prod/", "prod/", "production/", "media/", "uploads/")
+    return path.startswith(prefixes) or any(token in rule for token in ("backend", "server", "prod", "production"))
+
+
+def is_catalog_latest_touch(entry: Any) -> bool:
+    path = entry_path(entry)
+    return (
+        path == "latest.json"
+        or path.endswith("/latest.json")
+        or path.startswith("catalog/")
+        or "/catalog/" in path
+        or path.startswith("release/")
+        or path.startswith("releases/")
+        or path.startswith("downloads/")
+        or "manifest" in Path(path).name
+    )
+
+
+def is_version_tag_touch(entry: Any) -> bool:
+    path = entry_path(entry)
+    name = Path(path).name
+    version_names = {
+        "VERSION",
+        "version.txt",
+        "package.json",
+        "package-lock.json",
+        "pnpm-lock.yaml",
+        "tauri.conf.json",
+        "Cargo.toml",
+        "Cargo.lock",
+        "pyproject.toml",
+        "requirements.txt",
+    }
+    return name in version_names
+
+
+def branch_name(report: dict[str, Any], guard: dict[str, Any]) -> str:
+    branch = str(report.get("branch") or guard.get("branch") or "").strip()
+    if branch.startswith("origin/"):
+        branch = branch[len("origin/") :]
+    return branch
+
+
+def remote_branch_exists(repo: Path, branch: str) -> tuple[bool, str]:
+    if not branch:
+        return False, "report has no branch"
+    proc = run(["git", "-C", str(repo), "ls-remote", "--heads", "origin", branch], timeout=30)
+    if proc.returncode == 0 and proc.stdout.strip():
+        return True, "found via git ls-remote origin"
+    detail = proc.stderr.strip() or proc.stdout.strip() or "not found via git ls-remote origin"
+    return False, detail
+
+
+def parse_github_pr_url(value: str) -> tuple[str, str, str] | None:
+    match = re.match(r"^https?://github\.com/([^/]+)/([^/]+)/pull/([0-9]+)(?:[/?#].*)?$", value.strip())
+    if not match:
+        return None
+    return match.group(1), match.group(2), match.group(3)
+
+
+def gh_pr_view(repo: Path, pr_ref: str) -> tuple[dict[str, Any] | None, str]:
+    if not pr_ref or shutil.which("gh") is None:
+        return None, "gh CLI unavailable or PR reference missing"
+    proc = run(
+        [
+            "gh",
+            "pr",
+            "view",
+            pr_ref,
+            "--json",
+            "number,state,headRefName,headRefOid,mergeCommit",
+        ],
+        cwd=repo,
+        timeout=30,
+    )
+    if proc.returncode != 0:
+        return None, proc.stderr.strip() or proc.stdout.strip() or "gh pr view failed"
+    try:
+        return json.loads(proc.stdout), "gh"
+    except json.JSONDecodeError as exc:
+        return None, f"gh returned invalid JSON: {exc}"
+
+
+def api_pr_view(pr_ref: str) -> tuple[dict[str, Any] | None, str]:
+    parsed = parse_github_pr_url(pr_ref)
+    if parsed is None:
+        return None, "PR reference is not a GitHub pull request URL"
+    owner, repo, number = parsed
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{number}"
+    request = urllib.request.Request(url, headers={"User-Agent": "skipi-report-verify"})
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        return None, f"GitHub API HTTP {exc.code} for {url}"
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+        return None, f"GitHub API lookup failed for {url}: {exc}"
+    merge_commit = payload.get("merge_commit_sha")
+    return (
+        {
+            "number": payload.get("number"),
+            "state": str(payload.get("state", "")).upper(),
+            "headRefName": payload.get("head", {}).get("ref"),
+            "headRefOid": payload.get("head", {}).get("sha"),
+            "mergeCommit": {"oid": merge_commit} if merge_commit else None,
+        },
+        "github-api",
+    )
+
+
+def pr_exists(repo: Path, pr_ref: str) -> tuple[bool, dict[str, Any] | None, str]:
+    if not pr_ref:
+        return False, None, "report has no pr"
+    gh_payload, gh_detail = gh_pr_view(repo, pr_ref)
+    if gh_payload:
+        return True, gh_payload, gh_detail
+    api_payload, api_detail = api_pr_view(pr_ref)
+    if api_payload:
+        return True, api_payload, api_detail
+    return False, None, f"{gh_detail}; {api_detail}"
+
+
+def merge_sha_candidates(report: dict[str, Any], pr_payload: dict[str, Any] | None) -> list[str]:
+    candidates: list[str] = []
+    for key in ("merge_sha", "merged_sha", "merge_commit_sha", "mergeCommit"):
+        value = report.get(key)
+        if isinstance(value, dict):
+            value = value.get("oid")
+        if value:
+            candidates.append(str(value))
+    if pr_payload:
+        merge_commit = pr_payload.get("mergeCommit")
+        if isinstance(merge_commit, dict) and merge_commit.get("oid"):
+            candidates.append(str(merge_commit["oid"]))
+    if report.get("sha"):
+        candidates.append(str(report["sha"]))
+    seen: set[str] = set()
+    unique: list[str] = []
+    for candidate in candidates:
+        if candidate not in seen:
+            seen.add(candidate)
+            unique.append(candidate)
+    return unique
+
+
+def sha_in_main(repo: Path, sha_candidates: list[str], preferred_base: str | None) -> tuple[bool, str]:
+    if not sha_candidates:
+        return False, "no merge SHA candidate in report or PR evidence"
+    refs: list[str] = []
+    if preferred_base and ("main" in preferred_base or "master" in preferred_base):
+        refs.append(preferred_base)
+    refs.extend(["origin/main", "main", "origin/master", "master"])
+    refs = list(dict.fromkeys(refs))
+    usable_refs: list[str] = []
+    for ref in refs:
+        ref_proc = run(["git", "-C", str(repo), "rev-parse", "--verify", ref])
+        if ref_proc.returncode == 0:
+            usable_refs.append(ref)
+    if not usable_refs:
+        return False, "no main/master ref available"
+    for candidate in sha_candidates:
+        for ref in usable_refs:
+            proc = run(["git", "-C", str(repo), "merge-base", "--is-ancestor", candidate, ref])
+            if proc.returncode == 0:
+                return True, f"{candidate} is in {ref}"
+    return False, f"none of {sha_candidates} is an ancestor of {usable_refs}"
+
+
+def add_mismatch(mismatches: list[dict[str, Any]], code: str, message: str, **facts: Any) -> None:
+    entry: dict[str, Any] = {"code": code, "message": message}
+    entry.update({key: value for key, value in facts.items() if value is not None})
+    mismatches.append(entry)
+
+
+def verify_payload(report: dict[str, Any], guard: dict[str, Any]) -> dict[str, Any]:
+    mismatches: list[dict[str, Any]] = []
+    warnings: list[str] = []
+    evidence: list[dict[str, Any]] = []
+
+    report_schema = report.get("schema_version")
+    if report_schema is None:
+        warnings.append("worker report has no schema_version; treating it as legacy skipi-report shape")
+    elif report_schema != REPORT_SCHEMA_VERSION:
+        warnings.append(f"worker report schema_version is {report_schema!r}, expected {REPORT_SCHEMA_VERSION}")
+
+    if guard.get("schema_version") != GUARD_SCHEMA_VERSION:
+        add_mismatch(
+            mismatches,
+            "guard_schema_mismatch",
+            f"guard result schema_version must be {GUARD_SCHEMA_VERSION}",
+            claimed=guard.get("schema_version"),
+        )
+
+    if report.get("task") and guard.get("task") and report.get("task") != guard.get("task"):
+        add_mismatch(
+            mismatches,
+            "task_mismatch",
+            "report task differs from guard task",
+            report_task=report.get("task"),
+            guard_task=guard.get("task"),
+        )
+    if report.get("home") and guard.get("home") and report.get("home") != guard.get("home"):
+        add_mismatch(
+            mismatches,
+            "home_mismatch",
+            "report home differs from guard home",
+            report_home=report.get("home"),
+            guard_home=guard.get("home"),
+        )
+
+    report_repo = normalized_repo(report.get("repo"))
+    guard_repo = normalized_repo(guard.get("repo"))
+    repo = Path(guard_repo or report_repo or ".")
+    if report_repo and guard_repo and report_repo != guard_repo:
+        add_mismatch(
+            mismatches,
+            "repo_mismatch",
+            "report repo differs from guard repo",
+            report_repo=report_repo,
+            guard_repo=guard_repo,
+        )
+    if not repo.exists() or not (repo / ".git").exists():
+        add_mismatch(mismatches, "repo_unavailable", "repo is not an accessible git repository", repo=str(repo))
+
+    home = str(report.get("home") or guard.get("home") or "")
+    config = load_home_config(home)
+    if home and config is None:
+        warnings.append(f"no skipi-guard home config found for {home!r}; using guard result classifications only")
+
+    head = str(guard.get("head") or "HEAD")
+    base = str(guard.get("base") or "origin/main")
+    actual_full_sha: str | None = None
+    actual_short_sha: str | None = None
+    if repo.exists() and (repo / ".git").exists():
+        actual_full_sha, actual_short_sha, sha_error = git_sha(repo, head)
+        if sha_error:
+            add_mismatch(mismatches, "git_sha_unavailable", "could not resolve guard head in git", head=head, error=sha_error)
+    guard_sha = str(guard.get("sha") or "")
+    claimed_sha = str(report.get("sha") or "")
+    if not claimed_sha:
+        add_mismatch(mismatches, "sha_missing", "report did not claim a git SHA")
+    elif not sha_matches(claimed_sha, actual_full_sha, guard_sha):
+        add_mismatch(
+            mismatches,
+            "sha_mismatch",
+            "claimed SHA does not match git/guard reality",
+            claimed=claimed_sha,
+            actual=actual_short_sha or guard_sha or "unknown",
+            head=head,
+        )
+    evidence.append({"kind": "git_sha", "head": head, "sha": actual_short_sha or guard_sha or "unknown"})
+
+    actual_files = path_list(guard.get("changed_files"))
+    changed_source = "guard"
+    if not actual_files and repo.exists() and (repo / ".git").exists():
+        actual_files, diff_error = git_changed_files(repo, base, head)
+        changed_source = "git"
+        if diff_error:
+            warnings.append(f"could not compute changed files from git: {diff_error}")
+    claimed_files = report_files(report)
+    missing_files = sorted(set(actual_files) - set(claimed_files))
+    extra_files = sorted(set(claimed_files) - set(actual_files))
+    if missing_files or extra_files:
+        add_mismatch(
+            mismatches,
+            "files_mismatch",
+            "claimed changed files differ from guard/git reality",
+            missing_from_report=missing_files,
+            extra_in_report=extra_files,
+        )
+    evidence.append({"kind": "changed_files", "source": changed_source, "count": len(actual_files), "files": actual_files})
+
+    computed_protected: list[dict[str, str]] = []
+    computed_release: list[dict[str, str]] = []
+    if config:
+        computed_protected = classify_paths(actual_files, config.get("protected_paths", []), "protected")
+        computed_release = classify_paths(actual_files, config.get("release_sensitive_paths", []), "release-sensitive")
+
+    guard_touched = as_list(guard.get("protected_paths_touched"))
+    if not guard_touched and (computed_protected or computed_release):
+        guard_touched = computed_protected + computed_release
+    guard_release_touched = as_list(guard.get("release_paths_touched")) or [
+        entry for entry in guard_touched if isinstance(entry, dict) and entry.get("kind") == "release-sensitive"
+    ]
+    if not guard_release_touched and computed_release:
+        guard_release_touched = computed_release
+
+    actual_protected_paths = sorted({entry_path(entry) for entry in guard_touched if entry_path(entry)})
+    has_protected_claim, claimed_protected_paths = report_protected_paths(report)
+    if has_protected_claim:
+        missing_protected = sorted(set(actual_protected_paths) - set(claimed_protected_paths))
+        extra_protected = sorted(set(claimed_protected_paths) - set(actual_protected_paths))
+        if missing_protected or extra_protected:
+            add_mismatch(
+                mismatches,
+                "protected_paths_mismatch",
+                "claimed protected paths differ from guard reality",
+                missing_from_report=missing_protected,
+                extra_in_report=extra_protected,
+            )
+    elif actual_protected_paths:
+        add_mismatch(
+            mismatches,
+            "protected_paths_missing",
+            "guard reports protected/release-sensitive paths but report did not list them",
+            actual=actual_protected_paths,
+        )
+    evidence.append({"kind": "protected_paths_touched", "count": len(actual_protected_paths), "paths": actual_protected_paths})
+
+    claims = no_claims(report)
+    release_changes = bool(guard.get("release_changes", bool(guard_release_touched)))
+    backend_touches = [entry_path(entry) for entry in guard_touched if is_backend_touch(entry)]
+    catalog_latest_touches = [entry_path(entry) for entry in guard_release_touched if is_catalog_latest_touch(entry)]
+    version_tag_touches = [entry_path(entry) for entry in guard_release_touched if is_version_tag_touch(entry)]
+    if claims["release"] and release_changes:
+        add_mismatch(
+            mismatches,
+            "release_claim_mismatch",
+            "report claims no release changes but guard/git reality has release-sensitive changes",
+            actual=sorted({entry_path(entry) for entry in guard_release_touched if entry_path(entry)}),
+        )
+    if claims["backend"] and backend_touches:
+        add_mismatch(
+            mismatches,
+            "backend_claim_mismatch",
+            "report claims no backend/prod changes but guard reality has protected backend/prod touches",
+            actual=sorted(set(backend_touches)),
+        )
+    if claims["catalog_latest"] and catalog_latest_touches:
+        add_mismatch(
+            mismatches,
+            "catalog_latest_claim_mismatch",
+            "report claims no catalog/latest changes but guard/git reality has catalog/latest touches",
+            actual=sorted(set(catalog_latest_touches)),
+        )
+    if claims["version_tag"] and version_tag_touches:
+        add_mismatch(
+            mismatches,
+            "version_tag_claim_mismatch",
+            "report claims no version/tag changes but guard/git reality has version-sensitive touches",
+            actual=sorted(set(version_tag_touches)),
+        )
+    evidence.append({"kind": "release_changes", "value": release_changes})
+
+    guard_tests = {
+        str(test.get("name")): str(test.get("status", ""))
+        for test in as_list(guard.get("tests"))
+        if isinstance(test, dict) and test.get("name")
+    }
+    test_claims, global_test_claim = report_test_claims(report)
+    guard_failed_tests = sorted(name for name, status in guard_tests.items() if status == "fail")
+    for name, claimed_status in test_claims.items():
+        guard_status = guard_tests.get(name)
+        if guard_status is None:
+            warnings.append(f"report claimed test {name!r}, but guard result has no matching test evidence")
+            continue
+        if claimed_status in {"pass", "fail"} and guard_status in {"pass", "fail"} and claimed_status != guard_status:
+            add_mismatch(
+                mismatches,
+                "test_claim_mismatch",
+                "claimed test status differs from guard test output",
+                test=name,
+                claimed=claimed_status,
+                actual=guard_status,
+            )
+        elif claimed_status == "pass" and guard_status == "not_run":
+            warnings.append(f"report claimed test {name!r} passed, but guard result says not_run")
+    if global_test_claim == "pass" and guard_failed_tests:
+        add_mismatch(
+            mismatches,
+            "test_claim_mismatch",
+            "report claims tests passed but guard has failing tests",
+            claimed="pass",
+            failing_tests=guard_failed_tests,
+        )
+    evidence.append({"kind": "guard_tests", "tests": guard_tests})
+
+    local_mismatch_count = len(mismatches)
+    claimed_rung = normalize_rung(report.get("claimed_rung"))
+    if claimed_rung not in RUNG_ORDER:
+        warnings.append(f"unknown claimed_rung {report.get('claimed_rung')!r}; treating as local")
+        claimed_rung = "local"
+
+    verified_rung = "local" if local_mismatch_count == 0 else "unverified"
+    branch_ok = False
+    if rung_at_least(claimed_rung, "branch_pushed"):
+        branch = branch_name(report, guard)
+        branch_ok, branch_detail = remote_branch_exists(repo, branch)
+        evidence.append({"kind": "remote_branch", "branch": branch, "ok": branch_ok, "detail": branch_detail})
+        if branch_ok and verified_rung == "local":
+            verified_rung = "branch_pushed"
+        if not branch_ok:
+            add_mismatch(
+                mismatches,
+                "remote_branch_missing",
+                "claimed rung requires a remotely pushed branch, but the branch was not found",
+                branch=branch,
+                detail=branch_detail,
+            )
+
+    pr_payload: dict[str, Any] | None = None
+    pr_ok = False
+    if rung_at_least(claimed_rung, "pr_ready"):
+        pr_ref = str(report.get("pr") or report.get("pull_request") or report.get("pr_url") or "").strip()
+        pr_ok, pr_payload, pr_detail = pr_exists(repo, pr_ref)
+        evidence.append({"kind": "pull_request", "pr": pr_ref, "ok": pr_ok, "detail": pr_detail})
+        if pr_ok and verified_rung == "branch_pushed":
+            verified_rung = "pr_ready"
+        if not pr_ok:
+            add_mismatch(
+                mismatches,
+                "pr_missing",
+                "claimed rung requires a pull request, but no PR exists or could be verified",
+                pr=pr_ref,
+                detail=pr_detail,
+            )
+
+    if rung_at_least(claimed_rung, "merged"):
+        merged_ok, merged_detail = sha_in_main(repo, merge_sha_candidates(report, pr_payload), base)
+        evidence.append({"kind": "merged_sha_in_main", "ok": merged_ok, "detail": merged_detail})
+        if merged_ok and verified_rung == "pr_ready":
+            verified_rung = "merged"
+        if not merged_ok:
+            add_mismatch(
+                mismatches,
+                "merged_sha_not_in_main",
+                "claimed rung requires merged SHA to be in main, but it was not found there",
+                detail=merged_detail,
+            )
+
+    status = "fail" if mismatches else "pass"
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "task": str(report.get("task") or guard.get("task") or ""),
+        "status": status,
+        "claimed_rung": claimed_rung,
+        "verified_rung": verified_rung if status == "pass" else min(verified_rung, claimed_rung, key=RUNG_ORDER.index),
+        "mismatches": mismatches,
+        "warnings": warnings,
+        "evidence": evidence,
+    }
+
+
+def print_summary(result: dict[str, Any]) -> None:
+    print(f"Skipi Report Verifier {result['schema_version']}: {result['status'].upper()}")
+    print(f"task: {result.get('task', '')}")
+    print(f"rung: claimed {result['claimed_rung']} / verified {result['verified_rung']}")
+    print(f"mismatches: {len(result['mismatches'])}")
+    for mismatch in result["mismatches"]:
+        print(f"  - {mismatch['code']}: {mismatch['message']}")
+    if result.get("warnings"):
+        print(f"warnings: {len(result['warnings'])}")
+        for warning in result["warnings"]:
+            print(f"  - {warning}")
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="skipi-report-verify",
+        description="Verify a Skipi worker report JSON against guard, git, and PR reality.",
+    )
+    parser.add_argument("--version", action="version", version=f"skipi-report-verify {VERSION}")
+    parser.add_argument("--report", required=True, help="worker report JSON path")
+    parser.add_argument("--guard-result", required=True, help="skipi-guard result JSON path")
+    parser.add_argument("--json", help="write verifier JSON result")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    try:
+        report = load_json(Path(args.report))
+        guard = load_json(Path(args.guard_result))
+        result = verify_payload(report, guard)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        result = {
+            "schema_version": SCHEMA_VERSION,
+            "task": "",
+            "status": "fail",
+            "claimed_rung": "unverified",
+            "verified_rung": "unverified",
+            "mismatches": [{"code": "input_error", "message": str(exc)}],
+            "warnings": [],
+            "evidence": [],
+        }
+    if args.json:
+        write_json(Path(args.json), result)
+    print_summary(result)
+    return 0 if result["status"] == "pass" else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
