@@ -79,7 +79,7 @@ def changed_files_between(repo: Path, base: str, head: str) -> tuple[list[str], 
     specs = [(f"{base}...{head}", "triple-dot"), (f"{base}..{head}", "two-dot")]
     errors: list[str] = []
     for spec, mode in specs:
-        proc = run(["git", "-C", str(repo), "diff", "--name-only", "--diff-filter=ACMRTUXB", spec])
+        proc = run(["git", "-C", str(repo), "diff", "--name-only", "--diff-filter=ACDMRTUXB", spec])
         if proc.returncode == 0:
             files = sorted({clean_path(line) for line in proc.stdout.splitlines() if line.strip()})
             return files, mode, None
