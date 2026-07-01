@@ -125,7 +125,10 @@ class SkipiReportVerifyTests(unittest.TestCase):
     def assert_failed_with(self, payload: dict[str, Any], code: str) -> None:
         self.assertEqual(payload["schema_version"], "skipi-verifier.v1")
         self.assertEqual(payload["status"], "fail")
-        self.assertIn(code, {entry["code"] for entry in payload["mismatches"]})
+        self.assertIn(code, self.mismatch_codes(payload))
+
+    def mismatch_codes(self, payload: dict[str, Any]) -> set[str]:
+        return {entry["code"] for entry in payload["mismatches"]}
 
     def test_positive_verification_demo_passes(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-report-verify-pass-") as tmp:
@@ -149,6 +152,20 @@ class SkipiReportVerifyTests(unittest.TestCase):
         self.assertNotEqual(proc.returncode, 0)
         self.assert_failed_with(payload, "sha_mismatch")
 
+    def test_report_and_guard_sha_stale_from_git_fails(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-report-verify-stale-sha-") as tmp:
+            root = Path(tmp)
+            repo, report, guard = self.make_repo_fixture(root)
+            stale_sha = self.run_git(repo, "rev-parse", "--short=12", "HEAD~1").stdout.strip()
+            report["sha"] = stale_sha
+            guard["sha"] = stale_sha
+            proc, payload = self.run_verify(root, report, guard)
+
+        self.assertNotEqual(proc.returncode, 0)
+        codes = self.mismatch_codes(payload)
+        self.assertIn("sha_mismatch", codes)
+        self.assertIn("guard_sha_mismatch", codes)
+
     def test_claimed_files_omit_changed_file_fails(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-report-verify-files-") as tmp:
             root = Path(tmp)
@@ -159,6 +176,22 @@ class SkipiReportVerifyTests(unittest.TestCase):
         self.assertNotEqual(proc.returncode, 0)
         self.assert_failed_with(payload, "files_mismatch")
 
+    def test_report_and_guard_omit_git_changed_file_fails(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-report-verify-guard-files-") as tmp:
+            root = Path(tmp)
+            _repo, report, guard = self.make_repo_fixture(
+                root,
+                changed_files=["dist/index.html", "tests/harness.js"],
+            )
+            report["files"] = ["dist/index.html"]
+            guard["changed_files"] = ["dist/index.html"]
+            proc, payload = self.run_verify(root, report, guard)
+
+        self.assertNotEqual(proc.returncode, 0)
+        codes = self.mismatch_codes(payload)
+        self.assertIn("files_mismatch", codes)
+        self.assertIn("guard_files_mismatch", codes)
+
     def test_no_release_claim_with_version_file_change_fails(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-report-verify-release-") as tmp:
             root = Path(tmp)
@@ -168,6 +201,30 @@ class SkipiReportVerifyTests(unittest.TestCase):
         self.assertNotEqual(proc.returncode, 0)
         self.assert_failed_with(payload, "release_claim_mismatch")
         self.assert_failed_with(payload, "version_tag_claim_mismatch")
+
+    def test_omitted_release_sensitive_git_file_still_fails_claims(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-report-verify-omitted-release-") as tmp:
+            root = Path(tmp)
+            _repo, report, guard = self.make_repo_fixture(
+                root,
+                changed_files=["dist/index.html", "package.json"],
+            )
+            report["files"] = ["dist/index.html"]
+            report["protected_paths_touched"] = []
+            guard["changed_files"] = ["dist/index.html"]
+            guard["protected_paths_touched"] = []
+            guard["release_paths_touched"] = []
+            guard["release_changes"] = False
+            proc, payload = self.run_verify(root, report, guard)
+
+        self.assertNotEqual(proc.returncode, 0)
+        codes = self.mismatch_codes(payload)
+        self.assertIn("files_mismatch", codes)
+        self.assertIn("guard_files_mismatch", codes)
+        self.assertIn("guard_protected_paths_mismatch", codes)
+        self.assertIn("protected_paths_mismatch", codes)
+        self.assertIn("release_claim_mismatch", codes)
+        self.assertIn("version_tag_claim_mismatch", codes)
 
     def test_pr_ready_claim_without_pr_fails(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-report-verify-pr-") as tmp:

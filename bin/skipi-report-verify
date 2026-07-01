@@ -177,12 +177,14 @@ def git_changed_files(repo: Path, base: str, head: str) -> tuple[list[str], str 
     return [], " ; ".join(errors)
 
 
-def sha_matches(claimed: str, actual_full: str | None, guard_sha: str | None) -> bool:
+def sha_matches(claimed: str, actual_full: str | None) -> bool:
     claimed = claimed.strip()
-    candidates = [candidate.strip() for candidate in (actual_full or "", guard_sha or "") if candidate]
+    actual = (actual_full or "").strip()
     if len(claimed) < 4:
         return False
-    return any(candidate.startswith(claimed) or claimed.startswith(candidate) for candidate in candidates if len(candidate) >= 4)
+    if len(actual) < 4:
+        return False
+    return actual.startswith(claimed) or claimed.startswith(actual)
 
 
 def report_files(report: dict[str, Any]) -> list[str]:
@@ -560,24 +562,40 @@ def verify_payload(report: dict[str, Any], guard: dict[str, Any]) -> dict[str, A
     claimed_sha = str(report.get("sha") or "")
     if not claimed_sha:
         add_mismatch(mismatches, "sha_missing", "report did not claim a git SHA")
-    elif not sha_matches(claimed_sha, actual_full_sha, guard_sha):
+    elif not sha_matches(claimed_sha, actual_full_sha):
         add_mismatch(
             mismatches,
             "sha_mismatch",
-            "claimed SHA does not match git/guard reality",
+            "claimed SHA does not match resolved git head",
             claimed=claimed_sha,
-            actual=actual_short_sha or guard_sha or "unknown",
+            actual=actual_short_sha or "unknown",
             head=head,
         )
-    evidence.append({"kind": "git_sha", "head": head, "sha": actual_short_sha or guard_sha or "unknown"})
+    if not guard_sha:
+        add_mismatch(mismatches, "guard_sha_missing", "guard result did not include a git SHA", head=head)
+    elif not sha_matches(guard_sha, actual_full_sha):
+        add_mismatch(
+            mismatches,
+            "guard_sha_mismatch",
+            "guard SHA does not match resolved git head",
+            claimed=guard_sha,
+            actual=actual_short_sha or "unknown",
+            head=head,
+        )
+    evidence.append({"kind": "git_sha", "head": head, "sha": actual_short_sha or "unknown", "guard_sha": guard_sha})
 
-    actual_files = path_list(guard.get("changed_files"))
-    changed_source = "guard"
-    if not actual_files and repo.exists() and (repo / ".git").exists():
+    actual_files: list[str] = []
+    if repo.exists() and (repo / ".git").exists():
         actual_files, diff_error = git_changed_files(repo, base, head)
-        changed_source = "git"
         if diff_error:
-            warnings.append(f"could not compute changed files from git: {diff_error}")
+            add_mismatch(
+                mismatches,
+                "git_changed_files_unavailable",
+                "could not compute changed files from git",
+                base=base,
+                head=head,
+                error=diff_error,
+            )
     claimed_files = report_files(report)
     missing_files = sorted(set(actual_files) - set(claimed_files))
     extra_files = sorted(set(claimed_files) - set(actual_files))
@@ -589,24 +607,68 @@ def verify_payload(report: dict[str, Any], guard: dict[str, Any]) -> dict[str, A
             missing_from_report=missing_files,
             extra_in_report=extra_files,
         )
-    evidence.append({"kind": "changed_files", "source": changed_source, "count": len(actual_files), "files": actual_files})
+    guard_files = path_list(guard.get("changed_files"))
+    missing_guard_files = sorted(set(actual_files) - set(guard_files))
+    extra_guard_files = sorted(set(guard_files) - set(actual_files))
+    if missing_guard_files or extra_guard_files:
+        add_mismatch(
+            mismatches,
+            "guard_files_mismatch",
+            "guard changed files differ from git reality",
+            missing_from_guard=missing_guard_files,
+            extra_in_guard=extra_guard_files,
+        )
+    evidence.append(
+        {
+            "kind": "changed_files",
+            "source": "git",
+            "base": base,
+            "head": head,
+            "count": len(actual_files),
+            "files": actual_files,
+            "guard_count": len(guard_files),
+        }
+    )
 
     computed_protected: list[dict[str, str]] = []
     computed_release: list[dict[str, str]] = []
     if config:
         computed_protected = classify_paths(actual_files, config.get("protected_paths", []), "protected")
         computed_release = classify_paths(actual_files, config.get("release_sensitive_paths", []), "release-sensitive")
+    computed_touched = computed_protected + computed_release
 
     guard_touched = as_list(guard.get("protected_paths_touched"))
-    if not guard_touched and (computed_protected or computed_release):
-        guard_touched = computed_protected + computed_release
     guard_release_touched = as_list(guard.get("release_paths_touched")) or [
         entry for entry in guard_touched if isinstance(entry, dict) and entry.get("kind") == "release-sensitive"
     ]
-    if not guard_release_touched and computed_release:
-        guard_release_touched = computed_release
+    actual_touched = computed_touched if config else guard_touched
+    actual_release_touched = computed_release if config else guard_release_touched
 
-    actual_protected_paths = sorted({entry_path(entry) for entry in guard_touched if entry_path(entry)})
+    actual_protected_paths = sorted({entry_path(entry) for entry in actual_touched if entry_path(entry)})
+    guard_protected_paths = sorted({entry_path(entry) for entry in guard_touched if entry_path(entry)})
+    if config:
+        missing_guard_protected = sorted(set(actual_protected_paths) - set(guard_protected_paths))
+        extra_guard_protected = sorted(set(guard_protected_paths) - set(actual_protected_paths))
+        if missing_guard_protected or extra_guard_protected:
+            add_mismatch(
+                mismatches,
+                "guard_protected_paths_mismatch",
+                "guard protected/release-sensitive paths differ from git reality",
+                missing_from_guard=missing_guard_protected,
+                extra_in_guard=extra_guard_protected,
+            )
+        actual_release_paths = sorted({entry_path(entry) for entry in actual_release_touched if entry_path(entry)})
+        guard_release_paths = sorted({entry_path(entry) for entry in guard_release_touched if entry_path(entry)})
+        missing_guard_release = sorted(set(actual_release_paths) - set(guard_release_paths))
+        extra_guard_release = sorted(set(guard_release_paths) - set(actual_release_paths))
+        if missing_guard_release or extra_guard_release:
+            add_mismatch(
+                mismatches,
+                "guard_release_paths_mismatch",
+                "guard release-sensitive paths differ from git reality",
+                missing_from_guard=missing_guard_release,
+                extra_in_guard=extra_guard_release,
+            )
     has_protected_claim, claimed_protected_paths = report_protected_paths(report)
     if has_protected_claim:
         missing_protected = sorted(set(actual_protected_paths) - set(claimed_protected_paths))
@@ -615,7 +677,7 @@ def verify_payload(report: dict[str, Any], guard: dict[str, Any]) -> dict[str, A
             add_mismatch(
                 mismatches,
                 "protected_paths_mismatch",
-                "claimed protected paths differ from guard reality",
+                "claimed protected/release-sensitive paths differ from git reality",
                 missing_from_report=missing_protected,
                 extra_in_report=extra_protected,
             )
@@ -623,28 +685,36 @@ def verify_payload(report: dict[str, Any], guard: dict[str, Any]) -> dict[str, A
         add_mismatch(
             mismatches,
             "protected_paths_missing",
-            "guard reports protected/release-sensitive paths but report did not list them",
+            "git reality has protected/release-sensitive paths but report did not list them",
             actual=actual_protected_paths,
         )
     evidence.append({"kind": "protected_paths_touched", "count": len(actual_protected_paths), "paths": actual_protected_paths})
 
     claims = no_claims(report)
-    release_changes = bool(guard.get("release_changes", bool(guard_release_touched)))
-    backend_touches = [entry_path(entry) for entry in guard_touched if is_backend_touch(entry)]
-    catalog_latest_touches = [entry_path(entry) for entry in guard_release_touched if is_catalog_latest_touch(entry)]
-    version_tag_touches = [entry_path(entry) for entry in guard_release_touched if is_version_tag_touch(entry)]
+    release_changes = bool(actual_release_touched)
+    if isinstance(guard.get("release_changes"), bool) and guard.get("release_changes") != release_changes:
+        add_mismatch(
+            mismatches,
+            "guard_release_changes_mismatch",
+            "guard release_changes differs from git reality",
+            claimed=guard.get("release_changes"),
+            actual=release_changes,
+        )
+    backend_touches = [entry_path(entry) for entry in actual_touched if is_backend_touch(entry)]
+    catalog_latest_touches = [entry_path(entry) for entry in actual_release_touched if is_catalog_latest_touch(entry)]
+    version_tag_touches = [entry_path(entry) for entry in actual_release_touched if is_version_tag_touch(entry)]
     if claims["release"] and release_changes:
         add_mismatch(
             mismatches,
             "release_claim_mismatch",
             "report claims no release changes but guard/git reality has release-sensitive changes",
-            actual=sorted({entry_path(entry) for entry in guard_release_touched if entry_path(entry)}),
+            actual=sorted({entry_path(entry) for entry in actual_release_touched if entry_path(entry)}),
         )
     if claims["backend"] and backend_touches:
         add_mismatch(
             mismatches,
             "backend_claim_mismatch",
-            "report claims no backend/prod changes but guard reality has protected backend/prod touches",
+            "report claims no backend/prod changes but git reality has protected backend/prod touches",
             actual=sorted(set(backend_touches)),
         )
     if claims["catalog_latest"] and catalog_latest_touches:
