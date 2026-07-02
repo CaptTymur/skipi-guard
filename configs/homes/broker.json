@@ -22,6 +22,10 @@
     {
       "name": "pairing/QR/camera bridge",
       "patterns": ["**/*pair*", "**/*Pair*", "**/*qr*", "**/*QR*", "**/*camera*", "**/*Camera*", "**/*barcode*", "**/*Barcode*"]
+    },
+    {
+      "name": "presence contracts",
+      "patterns": ["presence-manifest.json"]
     }
   ],
   "release_sensitive_paths": [
@@ -47,6 +51,14 @@
       {
         "name": "broker_plugin_isolation",
         "command": "node tests/broker_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "broker_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "broker_presence_contract",
+        "command": "node tests/broker_presence_contract_harness.mjs"
       }
     ],
     "provenance": [
@@ -57,6 +69,12 @@
     ]
   },
   "allowed_file_patterns": {
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/broker_plugin_isolation_harness.mjs"]
+    "plugin-host": [
+      "dist/index.html",
+      "dist/plugin-host-bridge.js",
+      "presence-manifest.json",
+      "tests/broker_plugin_isolation_harness.mjs",
+      "tests/broker_presence_contract_harness.mjs"
+    ]
   }
 }
