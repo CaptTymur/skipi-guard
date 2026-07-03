@@ -22,6 +22,10 @@
     {
       "name": "pairing/QR/camera bridge",
       "patterns": ["**/*pair*", "**/*Pair*", "**/*qr*", "**/*QR*", "**/*camera*", "**/*Camera*", "**/*barcode*", "**/*Barcode*"]
+    },
+    {
+      "name": "presence contracts",
+      "patterns": ["presence-manifest.json"]
     }
   ],
   "release_sensitive_paths": [
@@ -51,6 +55,10 @@
       {
         "name": "onboard_apps_launcher",
         "command": "node tests/apps_launcher_harness.mjs"
+      },
+      {
+        "name": "onboard_presence_contract",
+        "command": "node tests/onboard_presence_contract_harness.mjs"
       }
     ],
     "provenance": [
@@ -61,6 +69,6 @@
     ]
   },
   "allowed_file_patterns": {
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/plugin_isolation_harness.mjs", "tests/apps_launcher_harness.mjs"]
+    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/plugin_isolation_harness.mjs", "tests/apps_launcher_harness.mjs", "presence-manifest.json", "tests/onboard_presence_contract_harness.mjs"]
   }
 }
