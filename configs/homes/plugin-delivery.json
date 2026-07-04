@@ -1,0 +1,80 @@
+{
+  "home": "plugin-delivery",
+  "repo": "/home/linux/Developer/skipi-plugin-delivery",
+  "stop_lines": [
+    "no production publish",
+    "no production key read or generation",
+    "no live catalog/latest/release mutation",
+    "no backend/prod server touch",
+    "no feature flag enable"
+  ],
+  "release_tasks": ["plugin-delivery", "release-delivery"],
+  "protected_paths": [
+    {
+      "name": "secrets/signing keys",
+      "patterns": [".env", ".env.*", "**/.env", "**/.env.*", "keys/**", "signing/**", "**/*.pem", "**/*.p12", "**/*.keystore", "**/*secret*", "**/*token*"]
+    },
+    {
+      "name": "production/server touch",
+      "patterns": ["prod/**", "production/**", "data/prod/**", "uploads/**", "media/**", "deploy/prod/**"]
+    }
+  ],
+  "release_sensitive_paths": [
+    {
+      "name": "plugin catalog manifests",
+      "patterns": ["catalog.json", "**/catalog.json", "revocations.json", "**/revocations.json", "revocations.*.json", "**/revocations.*.json"]
+    },
+    {
+      "name": "plugin packs",
+      "patterns": ["packs/**", "**/packs/**", "*.skpack.json", "**/*.skpack.json"]
+    },
+    {
+      "name": "delivery staging/server bundles",
+      "patterns": ["server/**", "staging-deploy/**", "releases/**", "release/**", "latest.json", "**/latest.json", "downloads/**"]
+    },
+    {
+      "name": "ci/workflow publication gates",
+      "patterns": [".github/workflows/**", "templates/github-actions/**"]
+    }
+  ],
+  "harness_commands": {
+    "plugin-delivery": [
+      {
+        "name": "plugin_delivery_required_verify_prod_candidate",
+        "command": "node tests/ci-required-verify-prod-candidate.js"
+      }
+    ],
+    "release-delivery": [
+      {
+        "name": "plugin_delivery_required_verify_prod_candidate",
+        "command": "node tests/ci-required-verify-prod-candidate.js"
+      }
+    ]
+  },
+  "allowed_file_patterns": {
+    "plugin-delivery": [
+      ".github/workflows/plugin-delivery-guard.yml",
+      "fixtures/**",
+      "tests/**",
+      "tools/**",
+      ".gitignore",
+      "README.md",
+      "REPORT.md",
+      "server/catalog.json",
+      "server/packs/**",
+      "staging-deploy/**"
+    ],
+    "release-delivery": [
+      ".github/workflows/plugin-delivery-guard.yml",
+      "fixtures/**",
+      "tests/**",
+      "tools/**",
+      ".gitignore",
+      "README.md",
+      "REPORT.md",
+      "server/catalog.json",
+      "server/packs/**",
+      "staging-deploy/**"
+    ]
+  }
+}

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import hashlib
 import json
 import re
 import shutil
@@ -198,6 +199,39 @@ def report_files(report: dict[str, Any]) -> list[str]:
     return []
 
 
+def sha256_file(path: Path) -> tuple[str | None, str | None]:
+    try:
+        h = hashlib.sha256()
+        with path.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                h.update(chunk)
+        return h.hexdigest(), None
+    except OSError as exc:
+        return None, str(exc)
+
+
+def report_artifact_claims(report: dict[str, Any]) -> list[dict[str, str]]:
+    claims: list[dict[str, str]] = []
+
+    def add(kind: str, file_path: Any, digest: Any) -> None:
+        if not file_path or not digest:
+            return
+        claims.append({"kind": kind, "path": clean_path(str(file_path)), "sha256": str(digest).strip().lower()})
+
+    add("catalog", report.get("catalog_path") or report.get("catalog"), report.get("catalog_sha256") or report.get("catalog_sha"))
+    add("pack", report.get("pack_path") or report.get("pack"), report.get("pack_sha256") or report.get("pack_sha"))
+
+    for item in as_list(report.get("artifacts")):
+        if isinstance(item, dict):
+            add(str(item.get("kind") or item.get("type") or "artifact"), item.get("path") or item.get("file"), item.get("sha256") or item.get("sha"))
+
+    for item in as_list(report.get("artifact_sha256")):
+        if isinstance(item, dict):
+            add(str(item.get("kind") or item.get("type") or "artifact"), item.get("path") or item.get("file"), item.get("sha256") or item.get("sha"))
+
+    return claims
+
+
 def report_protected_paths(report: dict[str, Any]) -> tuple[bool, list[str]]:
     for key in ("protected_paths_touched", "protected_paths", "protected", "release_paths_touched"):
         if key in report:
@@ -322,9 +356,11 @@ def entry_rule(entry: Any) -> str:
     return ""
 
 
-def is_backend_touch(entry: Any) -> bool:
+def is_backend_touch(entry: Any, home: str = "") -> bool:
     path = entry_path(entry)
     rule = entry_rule(entry).lower()
+    if home == "plugin-delivery" and path.startswith("server/"):
+        return False
     prefixes = ("backend/", "server/", "api/", "data/prod/", "prod/", "production/", "media/", "uploads/")
     return path.startswith(prefixes) or any(token in rule for token in ("backend", "server", "prod", "production"))
 
@@ -704,7 +740,7 @@ def verify_payload(report: dict[str, Any], guard: dict[str, Any]) -> dict[str, A
             claimed=guard.get("release_changes"),
             actual=release_changes,
         )
-    backend_touches = [entry_path(entry) for entry in actual_touched if is_backend_touch(entry)]
+    backend_touches = [entry_path(entry) for entry in actual_touched if is_backend_touch(entry, home)]
     catalog_latest_touches = [entry_path(entry) for entry in actual_release_touched if is_catalog_latest_touch(entry)]
     version_tag_touches = [entry_path(entry) for entry in actual_release_touched if is_version_tag_touch(entry)]
     if claims["release"] and release_changes:
@@ -736,6 +772,38 @@ def verify_payload(report: dict[str, Any], guard: dict[str, Any]) -> dict[str, A
             actual=sorted(set(version_tag_touches)),
         )
     evidence.append({"kind": "release_changes", "value": release_changes})
+
+    artifact_evidence: list[dict[str, Any]] = []
+    for claim in report_artifact_claims(report):
+        artifact_path = repo / claim["path"]
+        actual_sha, sha_error = sha256_file(artifact_path)
+        item = {
+            "kind": claim["kind"],
+            "path": claim["path"],
+            "claimed_sha256": claim["sha256"],
+            "actual_sha256": actual_sha,
+        }
+        if sha_error:
+            item["error"] = sha_error
+            add_mismatch(
+                mismatches,
+                "artifact_sha_unavailable",
+                "claimed artifact sha could not be recomputed",
+                path=claim["path"],
+                error=sha_error,
+            )
+        elif actual_sha != claim["sha256"]:
+            add_mismatch(
+                mismatches,
+                "artifact_sha_mismatch",
+                "claimed artifact sha differs from file bytes",
+                path=claim["path"],
+                claimed=claim["sha256"],
+                actual=actual_sha,
+            )
+        artifact_evidence.append(item)
+    if artifact_evidence:
+        evidence.append({"kind": "artifact_sha256", "artifacts": artifact_evidence})
 
     guard_tests = {
         str(test.get("name")): str(test.get("status", ""))

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import subprocess
 import tempfile
 import unittest
@@ -291,6 +292,102 @@ class SkipiReportVerifyTests(unittest.TestCase):
 
         self.assertNotEqual(proc.returncode, 0)
         self.assert_failed_with(payload, "test_claim_mismatch")
+
+    def test_plugin_delivery_artifact_sha_claims_are_verified(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-report-verify-artifacts-") as tmp:
+            root = Path(tmp)
+            repo, report, guard = self.make_repo_fixture(
+                root,
+                changed_files=["server/catalog.json", "server/packs/demo-0.1.0.skpack.json"],
+            )
+            catalog = repo / "server" / "catalog.json"
+            pack = repo / "server" / "packs" / "demo-0.1.0.skpack.json"
+            report.update(
+                {
+                    "home": "plugin-delivery",
+                    "task": "plugin-delivery",
+                    "catalog_path": "server/catalog.json",
+                    "catalog_sha256": hashlib.sha256(catalog.read_bytes()).hexdigest(),
+                    "pack_path": "server/packs/demo-0.1.0.skpack.json",
+                    "pack_sha256": hashlib.sha256(pack.read_bytes()).hexdigest(),
+                    "scope_assertion": "plugin delivery candidate, no backend/prod/key changes",
+                    "protected_paths_touched": [
+                        {
+                            "path": "server/catalog.json",
+                            "kind": "release-sensitive",
+                            "rule": "delivery staging/server bundles",
+                            "pattern": "server/**",
+                        },
+                        {
+                            "path": "server/packs/demo-0.1.0.skpack.json",
+                            "kind": "release-sensitive",
+                            "rule": "plugin packs",
+                            "pattern": "**/packs/**",
+                        },
+                    ],
+                }
+            )
+            guard.update(
+                {
+                    "home": "plugin-delivery",
+                    "task": "plugin-delivery",
+                    "protected_paths_touched": report["protected_paths_touched"],
+                    "release_paths_touched": report["protected_paths_touched"],
+                    "release_changes": True,
+                }
+            )
+            proc, payload = self.run_verify(root, report, guard)
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertIn("artifact_sha256", {entry["kind"] for entry in payload["evidence"]})
+
+    def test_plugin_delivery_bad_pack_sha_claim_fails(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-report-verify-bad-pack-sha-") as tmp:
+            root = Path(tmp)
+            repo, report, guard = self.make_repo_fixture(
+                root,
+                changed_files=["server/catalog.json", "server/packs/demo-0.1.0.skpack.json"],
+            )
+            catalog = repo / "server" / "catalog.json"
+            report.update(
+                {
+                    "home": "plugin-delivery",
+                    "task": "plugin-delivery",
+                    "catalog_path": "server/catalog.json",
+                    "catalog_sha256": hashlib.sha256(catalog.read_bytes()).hexdigest(),
+                    "pack_path": "server/packs/demo-0.1.0.skpack.json",
+                    "pack_sha256": "0" * 64,
+                    "scope_assertion": "plugin delivery candidate, no backend/prod/key changes",
+                    "protected_paths_touched": [
+                        {
+                            "path": "server/catalog.json",
+                            "kind": "release-sensitive",
+                            "rule": "delivery staging/server bundles",
+                            "pattern": "server/**",
+                        },
+                        {
+                            "path": "server/packs/demo-0.1.0.skpack.json",
+                            "kind": "release-sensitive",
+                            "rule": "plugin packs",
+                            "pattern": "**/packs/**",
+                        },
+                    ],
+                }
+            )
+            guard.update(
+                {
+                    "home": "plugin-delivery",
+                    "task": "plugin-delivery",
+                    "protected_paths_touched": report["protected_paths_touched"],
+                    "release_paths_touched": report["protected_paths_touched"],
+                    "release_changes": True,
+                }
+            )
+            proc, payload = self.run_verify(root, report, guard)
+
+        self.assertNotEqual(proc.returncode, 0)
+        self.assert_failed_with(payload, "artifact_sha_mismatch")
 
 
 if __name__ == "__main__":
