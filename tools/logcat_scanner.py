@@ -67,6 +67,7 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--json", dest="json_path", default=None, help="Write JSON summary")
     args = parser.parse_args(argv)
 
+    missing_paths = [str(pathlib.Path(item)) for item in args.paths if not pathlib.Path(item).exists()]
     files = list(iter_files(args.paths))
     matches: list[dict[str, object]] = []
     for path in files:
@@ -75,6 +76,7 @@ def main(argv: list[str]) -> int:
     payload = {
         "files_scanned": len(files),
         "crash_signals": len(matches),
+        "missing_paths": missing_paths,
         "matches": matches,
     }
     if args.json_path:
@@ -84,8 +86,12 @@ def main(argv: list[str]) -> int:
         )
 
     print(f"files_scanned={payload['files_scanned']} crash_signals={payload['crash_signals']}")
+    for path in missing_paths:
+        print(f"missing_path={path}", file=sys.stderr)
     for match in matches[:20]:
         print(f"{match['file']}:{match['line']}: {match['text']}")
+    if missing_paths:
+        return 2
     return 1 if matches else 0
 
 

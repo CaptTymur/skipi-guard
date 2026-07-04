@@ -53,6 +53,11 @@ class LogcatScannerTest(unittest.TestCase):
             matches = scanner.scan_file(path)
         self.assertEqual(len(matches), 1)
 
+    def test_missing_path_is_error(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            missing = pathlib.Path(tmp) / "missing-logcat.txt"
+            self.assertEqual(scanner.main([str(missing)]), 2)
+
 
 if __name__ == "__main__":
     unittest.main()
