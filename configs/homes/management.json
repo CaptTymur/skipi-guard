@@ -22,6 +22,10 @@
     {
       "name": "pairing/QR/camera bridge",
       "patterns": ["**/*pair*", "**/*Pair*", "**/*qr*", "**/*QR*", "**/*camera*", "**/*Camera*", "**/*barcode*", "**/*Barcode*"]
+    },
+    {
+      "name": "presence contracts",
+      "patterns": ["presence-manifest.json"]
     }
   ],
   "release_sensitive_paths": [
@@ -47,6 +51,10 @@
       {
         "name": "management_plugin_isolation",
         "command": "node tests/management_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "management_presence_contract",
+        "command": "node tests/management_presence_contract_harness.mjs"
       }
     ],
     "provenance": [
@@ -57,7 +65,7 @@
     ]
   },
   "allowed_file_patterns": {
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/management_plugin_isolation_harness.mjs"],
+    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/management_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/management_presence_contract_harness.mjs"],
     "provenance": ["dist/index.html", "src-tauri/build.rs", "src-tauri/src/lib.rs", "tests/build_provenance_harness.mjs"]
   }
 }
