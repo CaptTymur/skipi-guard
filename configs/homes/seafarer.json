@@ -63,6 +63,32 @@
       {
         "name": "seafarer_theme_default",
         "command": "node tests/seafarer_theme_default_harness.mjs"
+      },
+      {
+        "name": "seafarer_remote_prod_delivery_config",
+        "command": "node tests/remote_prod_delivery_config_harness.mjs"
+      }
+    ],
+    "release": [
+      {
+        "name": "seafarer_bundled_plugin_isolation",
+        "command": "node tests/bundled_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "seafarer_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "seafarer_presence_contract",
+        "command": "node tests/seafarer_presence_contract_harness.mjs"
+      },
+      {
+        "name": "seafarer_theme_default",
+        "command": "node tests/seafarer_theme_default_harness.mjs"
+      },
+      {
+        "name": "seafarer_remote_prod_delivery_config",
+        "command": "node tests/remote_prod_delivery_config_harness.mjs"
       }
     ],
     "provenance": [
@@ -73,6 +99,6 @@
     ]
   },
   "allowed_file_patterns": {
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "tests/bundled_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/seafarer_presence_contract_harness.mjs", "tests/seafarer_theme_default_harness.mjs"]
+    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "tests/bundled_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/seafarer_presence_contract_harness.mjs", "tests/seafarer_theme_default_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs"]
   }
 }
