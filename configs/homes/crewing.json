@@ -90,6 +90,14 @@
       }
     ]
   },
+  "additive_task_checks": [
+    {
+      "name": "plugin-host protections follow release/provenance routing",
+      "task": "plugin-host",
+      "when_tasks": ["release", "provenance"],
+      "patterns": ["dist/**", "presence-manifest.json", "tests/crewing_*_harness.mjs"]
+    }
+  ],
   "allowed_file_patterns": {
     "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/crewing_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/crewing_presence_contract_harness.mjs", "tests/crewing_crew_flow_demo_harness.mjs"]
   }

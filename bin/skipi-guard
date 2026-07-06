@@ -105,6 +105,67 @@ def configured_harnesses(config: dict[str, Any], task: str) -> list[dict[str, An
     return list(commands_by_task.get(task, []))
 
 
+def unique_harnesses(harnesses: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    unique: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    for harness in harnesses:
+        key = (str(harness.get("name", "")), str(harness.get("command", "")))
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(harness)
+    return unique
+
+
+def additive_task_checks(config: dict[str, Any], task: str, changed_files: list[str]) -> list[dict[str, Any]]:
+    checks: list[dict[str, Any]] = []
+    for rule in config.get("additive_task_checks", []):
+        additive_task = rule.get("task")
+        if not additive_task or additive_task == task:
+            continue
+        when_tasks = rule.get("when_tasks", [])
+        if when_tasks and task not in when_tasks:
+            continue
+        patterns = rule.get("patterns", [])
+        matched_files = sorted(
+            {
+                file_path
+                for file_path in changed_files
+                if any(pattern_matches(file_path, pattern) for pattern in patterns)
+            }
+        )
+        if not matched_files:
+            continue
+        checks.append(
+            {
+                "name": rule.get("name", additive_task),
+                "task": additive_task,
+                "matched_files": matched_files,
+                "patterns": patterns,
+            }
+        )
+    return checks
+
+
+def scope_check_for_task(
+    config: dict[str, Any],
+    task: str,
+    files: list[str],
+) -> dict[str, Any] | None:
+    allowed_patterns = config.get("allowed_file_patterns", {}).get(task, [])
+    if not allowed_patterns:
+        return None
+    violations = [
+        file_path for file_path in files if not any(pattern_matches(file_path, pattern) for pattern in allowed_patterns)
+    ]
+    return {
+        "task": task,
+        "files": files,
+        "allowed_file_patterns": allowed_patterns,
+        "scope_violations": violations,
+    }
+
+
 def run_harness_commands(repo: Path, harnesses: list[dict[str, Any]], should_run: bool) -> tuple[list[dict[str, Any]], list[str]]:
     tests: list[dict[str, Any]] = []
     errors: list[str] = []
@@ -202,22 +263,38 @@ def verify(args: argparse.Namespace) -> int:
     if release_touches and not (override_present or is_release_task(config, args.task)):
         errors.append("release-sensitive path touch is blocked for this task")
 
+    additive_checks = additive_task_checks(config, args.task, changed_files)
+    effective_tasks = [args.task]
+    for check in additive_checks:
+        if check["task"] not in effective_tasks:
+            effective_tasks.append(check["task"])
+
     allowed_patterns = config.get("allowed_file_patterns", {}).get(args.task, [])
     scope_violations: list[str] = []
-    if allowed_patterns:
-        scope_violations = [
-            file_path for file_path in changed_files if not any(pattern_matches(file_path, pattern) for pattern in allowed_patterns)
-        ]
-        if scope_violations and not override_present:
-            errors.append(f"changes outside allowed patterns for task '{args.task}'")
+    scope_checks: list[dict[str, Any]] = []
+    main_scope_check = scope_check_for_task(config, args.task, changed_files)
+    if main_scope_check:
+        scope_checks.append(main_scope_check)
+    for check in additive_checks:
+        additive_scope_check = scope_check_for_task(config, check["task"], check["matched_files"])
+        if additive_scope_check:
+            scope_checks.append(additive_scope_check)
+    for scope_check in scope_checks:
+        scope_violations.extend(scope_check["scope_violations"])
+        if scope_check["scope_violations"] and not override_present:
+            errors.append(f"changes outside allowed patterns for task '{scope_check['task']}'")
 
-    tests, test_errors = run_harness_commands(repo, configured_harnesses(config, args.task), args.run_harness)
+    harnesses: list[dict[str, Any]] = []
+    for task in effective_tasks:
+        harnesses.extend(configured_harnesses(config, task))
+    tests, test_errors = run_harness_commands(repo, unique_harnesses(harnesses), args.run_harness)
     errors.extend(test_errors)
 
     result: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "home": args.home,
         "task": args.task,
+        "effective_tasks": effective_tasks,
         "repo": str(repo),
         "base": args.base,
         "head": args.head,
@@ -228,6 +305,8 @@ def verify(args: argparse.Namespace) -> int:
         "release_changes": release_changes,
         "allowed_file_patterns": allowed_patterns,
         "scope_violations": scope_violations,
+        "scope_checks": scope_checks,
+        "additive_task_checks": additive_checks,
         "tests": tests,
         "override_present": override_present,
         "comparison": comparison,
