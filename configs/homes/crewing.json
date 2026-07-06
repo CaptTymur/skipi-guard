@@ -61,6 +61,24 @@
         "command": "node tests/crewing_presence_contract_harness.mjs"
       }
     ],
+    "release": [
+      {
+        "name": "crewing_plugin_isolation",
+        "command": "node tests/crewing_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "shared_host_runtime_isolation",
+        "command": "node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs"
+      },
+      {
+        "name": "crewing_presence_contract",
+        "command": "node tests/crewing_presence_contract_harness.mjs"
+      },
+      {
+        "name": "crewing_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      }
+    ],
     "provenance": [
       {
         "name": "crewing_build_provenance",
