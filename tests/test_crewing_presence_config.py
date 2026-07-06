@@ -34,6 +34,7 @@ class CrewingPresenceConfigTests(unittest.TestCase):
             "node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs",
         )
         self.assertEqual(harnesses["crewing_presence_contract"], "node tests/crewing_presence_contract_harness.mjs")
+        self.assertEqual(harnesses["crewing_crew_flow_demo"], "node tests/crewing_crew_flow_demo_harness.mjs")
 
     def test_plugin_host_allows_presence_contract_files_but_not_workflow(self) -> None:
         allowed = set(self.config["allowed_file_patterns"]["plugin-host"])
