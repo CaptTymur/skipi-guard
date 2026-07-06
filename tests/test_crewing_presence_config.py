@@ -43,6 +43,14 @@ class CrewingPresenceConfigTests(unittest.TestCase):
         self.assertIn("tests/crewing_crew_flow_demo_harness.mjs", allowed)
         self.assertNotIn(".github/workflows/skipi-guard.yml", allowed)
 
+    def test_release_and_provenance_add_plugin_host_checks_for_plugin_surface(self) -> None:
+        rules = self.config["additive_task_checks"]
+        rule = next(entry for entry in rules if entry["task"] == "plugin-host")
+        self.assertEqual(rule["when_tasks"], ["release", "provenance"])
+        self.assertIn("dist/**", rule["patterns"])
+        self.assertIn("presence-manifest.json", rule["patterns"])
+        self.assertIn("tests/crewing_*_harness.mjs", rule["patterns"])
+
 
 if __name__ == "__main__":
     unittest.main()

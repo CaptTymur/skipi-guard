@@ -47,6 +47,54 @@ class SkipiGuardRegressionTests(unittest.TestCase):
         with result_json.open("r", encoding="utf-8") as handle:
             return proc, json.load(handle)
 
+    def run_home_guard(
+        self,
+        repo: Path,
+        result_json: Path,
+        *,
+        home: str,
+        task: str,
+    ) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
+        proc = subprocess.run(
+            [
+                str(GUARD),
+                "verify",
+                "--home",
+                home,
+                "--task",
+                task,
+                "--repo",
+                str(repo),
+                "--base",
+                "HEAD~1",
+                "--head",
+                "HEAD",
+                "--json",
+                str(result_json),
+            ],
+            text=True,
+            capture_output=True,
+        )
+        with result_json.open("r", encoding="utf-8") as handle:
+            return proc, json.load(handle)
+
+    def seed_crewing_repo(self, repo: Path) -> None:
+        (repo / "dist").mkdir()
+        (repo / "tests").mkdir()
+        (repo / "dist" / "index.html").write_text("<main>seed</main>\n", encoding="utf-8")
+        (repo / "package.json").write_text('{"version":"0.0.0"}\n', encoding="utf-8")
+        (repo / "tests" / "build_provenance_harness.mjs").write_text("console.log('seed');\n", encoding="utf-8")
+        self.run_git(repo, "add", "dist/index.html", "package.json", "tests/build_provenance_harness.mjs")
+        self.run_git(repo, "commit", "-q", "-m", "seed crewing files")
+
+    def commit_files(self, repo: Path, message: str, updates: dict[str, str]) -> None:
+        for relative, contents in updates.items():
+            path = repo / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(contents, encoding="utf-8")
+        self.run_git(repo, "add", "-A")
+        self.run_git(repo, "commit", "-q", "-m", message)
+
     def test_deleted_protected_and_release_sensitive_paths_fail(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-guard-delete-") as tmp:
             root = Path(tmp)
@@ -103,6 +151,130 @@ class SkipiGuardRegressionTests(unittest.TestCase):
         self.assertEqual(payload["changed_files"], ["backend/prod-data.json", "latest.json"])
         self.assertTrue(payload["protected_paths_touched"])
         self.assertTrue(payload["release_changes"])
+
+    def test_crewing_release_with_plugin_host_files_adds_plugin_host_checks(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-release-plugin-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.seed_crewing_repo(repo)
+            self.commit_files(
+                repo,
+                "release and plugin host",
+                {
+                    "dist/index.html": "<main>crew flow</main>\n",
+                    "package.json": '{"version":"0.0.1"}\n',
+                },
+            )
+
+            proc, payload = self.run_home_guard(repo, root / "result.json", home="crewing", task="release")
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertEqual(payload["effective_tasks"], ["release", "plugin-host"])
+        self.assertEqual(payload["scope_violations"], [])
+        self.assertEqual(payload["additive_task_checks"][0]["matched_files"], ["dist/index.html"])
+        harnesses = {entry["name"] for entry in payload["tests"]}
+        self.assertIn("crewing_crew_flow_demo", harnesses)
+        self.assertIn("crewing_plugin_isolation", harnesses)
+        self.assertIn("crewing_presence_contract", harnesses)
+        self.assertIn("crewing_build_provenance", harnesses)
+
+    def test_crewing_provenance_with_plugin_host_files_adds_plugin_host_checks(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-provenance-plugin-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.seed_crewing_repo(repo)
+            self.commit_files(
+                repo,
+                "provenance and plugin host",
+                {
+                    "dist/index.html": "<main>provenance plus crew flow</main>\n",
+                    "tests/build_provenance_harness.mjs": "console.log('updated');\n",
+                },
+            )
+
+            proc, payload = self.run_home_guard(repo, root / "result.json", home="crewing", task="provenance")
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertEqual(payload["effective_tasks"], ["provenance", "plugin-host"])
+        self.assertEqual(payload["scope_violations"], [])
+        harnesses = {entry["name"] for entry in payload["tests"]}
+        self.assertIn("crewing_crew_flow_demo", harnesses)
+        self.assertIn("crewing_plugin_isolation", harnesses)
+        self.assertIn("crewing_presence_contract", harnesses)
+        self.assertIn("crewing_build_provenance", harnesses)
+
+    def test_crewing_release_only_diff_does_not_add_plugin_host_task(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-release-only-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.seed_crewing_repo(repo)
+            self.commit_files(repo, "release only", {"package.json": '{"version":"0.0.2"}\n'})
+
+            proc, payload = self.run_home_guard(repo, root / "result.json", home="crewing", task="release")
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertEqual(payload["effective_tasks"], ["release"])
+        self.assertEqual(payload["additive_task_checks"], [])
+        harnesses = {entry["name"] for entry in payload["tests"]}
+        self.assertNotIn("crewing_crew_flow_demo", harnesses)
+
+    def test_crewing_plugin_host_task_keeps_plugin_host_harnesses(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-plugin-only-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.seed_crewing_repo(repo)
+            self.commit_files(repo, "plugin host only", {"dist/index.html": "<main>plugin only</main>\n"})
+
+            proc, payload = self.run_home_guard(repo, root / "result.json", home="crewing", task="plugin-host")
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertEqual(payload["effective_tasks"], ["plugin-host"])
+        harnesses = {entry["name"] for entry in payload["tests"]}
+        self.assertEqual(
+            harnesses,
+            {
+                "crewing_plugin_isolation",
+                "shared_host_runtime_isolation",
+                "crewing_presence_contract",
+                "crewing_crew_flow_demo",
+            },
+        )
+
+    def test_crewing_release_with_disallowed_dist_file_fails_plugin_host_scope(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-release-bad-dist-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.seed_crewing_repo(repo)
+            self.commit_files(
+                repo,
+                "release and bad dist",
+                {
+                    "dist/unreviewed.js": "console.log('bad');\n",
+                    "package.json": '{"version":"0.0.3"}\n',
+                },
+            )
+
+            proc, payload = self.run_home_guard(repo, root / "result.json", home="crewing", task="release")
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertEqual(payload["effective_tasks"], ["release", "plugin-host"])
+        self.assertEqual(payload["scope_violations"], ["dist/unreviewed.js"])
+        self.assertIn("changes outside allowed patterns for task 'plugin-host'", payload["errors"])
 
 
 if __name__ == "__main__":
