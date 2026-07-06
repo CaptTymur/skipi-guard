@@ -59,6 +59,10 @@
       {
         "name": "crewing_presence_contract",
         "command": "node tests/crewing_presence_contract_harness.mjs"
+      },
+      {
+        "name": "crewing_crew_flow_demo",
+        "command": "node tests/crewing_crew_flow_demo_harness.mjs"
       }
     ],
     "release": [
