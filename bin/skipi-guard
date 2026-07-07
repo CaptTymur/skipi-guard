@@ -351,10 +351,58 @@ def harness_commands_by_task(config: dict[str, Any]) -> dict[str, dict[str, str]
     return commands
 
 
+def canonical_json(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"))
+
+
+def missing_additive_checks(old_config: dict[str, Any], new_config: dict[str, Any]) -> list[dict[str, Any]]:
+    new_checks = {canonical_json(entry) for entry in new_config.get("additive_task_checks", [])}
+    return [
+        entry
+        for entry in old_config.get("additive_task_checks", [])
+        if canonical_json(entry) not in new_checks
+    ]
+
+
+def missing_allowed_patterns(old_config: dict[str, Any], new_config: dict[str, Any]) -> list[dict[str, str]]:
+    missing: list[dict[str, str]] = []
+    old_patterns = old_config.get("allowed_file_patterns", {})
+    new_patterns = new_config.get("allowed_file_patterns", {})
+    for task, patterns in sorted(old_patterns.items()):
+        new_for_task = set(str(pattern) for pattern in new_patterns.get(task, []))
+        for pattern in sorted(str(pattern) for pattern in patterns):
+            if pattern not in new_for_task:
+                missing.append({"task": str(task), "pattern": pattern})
+    return missing
+
+
+def missing_named_rule_patterns(
+    old_config: dict[str, Any],
+    new_config: dict[str, Any],
+    section: str,
+) -> list[dict[str, str]]:
+    missing: list[dict[str, str]] = []
+    new_rules: dict[str, set[str]] = {}
+    for rule in new_config.get(section, []):
+        name = str(rule.get("name", "unnamed"))
+        new_rules.setdefault(name, set()).update(str(pattern) for pattern in rule.get("patterns", []))
+    for rule in old_config.get(section, []):
+        name = str(rule.get("name", "unnamed"))
+        new_patterns = new_rules.get(name, set())
+        for pattern in sorted(str(pattern) for pattern in rule.get("patterns", [])):
+            if pattern not in new_patterns:
+                missing.append({"rule": name, "pattern": pattern})
+    return missing
+
+
 def assert_config_superset(args: argparse.Namespace) -> int:
     repo = Path(args.repo or ROOT).expanduser().resolve()
     errors: list[str] = []
     missing_harnesses: list[dict[str, str]] = []
+    missing_additive: list[dict[str, Any]] = []
+    missing_allowed: list[dict[str, str]] = []
+    missing_release_sensitive: list[dict[str, str]] = []
+    missing_protected: list[dict[str, str]] = []
     old_config: dict[str, Any] = {}
     new_config: dict[str, Any] = {}
 
@@ -386,6 +434,18 @@ def assert_config_superset(args: argparse.Namespace) -> int:
                     )
         if missing_harnesses:
             errors.append("new guard config removes harness_commands from the current config")
+        missing_additive = missing_additive_checks(old_config, new_config)
+        if missing_additive:
+            errors.append("new guard config removes additive_task_checks from the current config")
+        missing_allowed = missing_allowed_patterns(old_config, new_config)
+        if missing_allowed:
+            errors.append("new guard config removes allowed_file_patterns from the current config")
+        missing_release_sensitive = missing_named_rule_patterns(old_config, new_config, "release_sensitive_paths")
+        if missing_release_sensitive:
+            errors.append("new guard config removes release_sensitive_paths from the current config")
+        missing_protected = missing_named_rule_patterns(old_config, new_config, "protected_paths")
+        if missing_protected:
+            errors.append("new guard config removes protected_paths from the current config")
 
     result: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
@@ -396,6 +456,10 @@ def assert_config_superset(args: argparse.Namespace) -> int:
         "old_tasks": sorted(old_harnesses),
         "new_tasks": sorted(new_harnesses),
         "missing_harnesses": missing_harnesses,
+        "missing_additive_task_checks": missing_additive,
+        "missing_allowed_file_patterns": missing_allowed,
+        "missing_release_sensitive_paths": missing_release_sensitive,
+        "missing_protected_paths": missing_protected,
         "status": "fail" if errors else "pass",
         "errors": errors,
     }
@@ -411,6 +475,22 @@ def assert_config_superset(args: argparse.Namespace) -> int:
         print("missing harnesses:")
         for harness in missing_harnesses:
             print(f"  - {harness['task']} / {harness['name']}: {harness['command']}")
+    if missing_additive:
+        print("missing additive task checks:")
+        for check in missing_additive:
+            print(f"  - {canonical_json(check)}")
+    if missing_allowed:
+        print("missing allowed file patterns:")
+        for pattern in missing_allowed:
+            print(f"  - {pattern['task']}: {pattern['pattern']}")
+    if missing_release_sensitive:
+        print("missing release-sensitive paths:")
+        for pattern in missing_release_sensitive:
+            print(f"  - {pattern['rule']}: {pattern['pattern']}")
+    if missing_protected:
+        print("missing protected paths:")
+        for pattern in missing_protected:
+            print(f"  - {pattern['rule']}: {pattern['pattern']}")
     if errors:
         print("errors:")
         for error in errors:

@@ -16,8 +16,31 @@ def config_with_harnesses(entries: list[dict[str, str]]) -> dict[str, Any]:
     return {
         "home": "crewing",
         "repo": "/tmp/skipi-crewing-fixture",
+        "protected_paths": [
+            {
+                "name": "presence contracts",
+                "patterns": ["presence-manifest.json"],
+            }
+        ],
+        "release_sensitive_paths": [
+            {
+                "name": "versions/tags",
+                "patterns": ["package.json", "Cargo.lock"],
+            }
+        ],
         "harness_commands": {
             "plugin-host": entries,
+        },
+        "additive_task_checks": [
+            {
+                "name": "plugin-host protections follow release/provenance routing",
+                "task": "plugin-host",
+                "when_tasks": ["release", "provenance"],
+                "patterns": ["dist/**", "presence-manifest.json", "tests/crewing_*_harness.mjs"],
+            }
+        ],
+        "allowed_file_patterns": {
+            "plugin-host": ["dist/index.html", "presence-manifest.json"],
         },
     }
 
@@ -82,6 +105,10 @@ class SkipiGuardConfigSupersetTests(unittest.TestCase):
         self.assertEqual(code, 0, payload)
         self.assertEqual(payload["status"], "pass")
         self.assertEqual(payload["missing_harnesses"], [])
+        self.assertEqual(payload["missing_additive_task_checks"], [])
+        self.assertEqual(payload["missing_allowed_file_patterns"], [])
+        self.assertEqual(payload["missing_release_sensitive_paths"], [])
+        self.assertEqual(payload["missing_protected_paths"], [])
 
     def test_superset_config_passes(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-guard-superset-add-") as tmp:
@@ -109,6 +136,10 @@ class SkipiGuardConfigSupersetTests(unittest.TestCase):
         self.assertEqual(code, 0, payload)
         self.assertEqual(payload["status"], "pass")
         self.assertEqual(payload["missing_harnesses"], [])
+        self.assertEqual(payload["missing_additive_task_checks"], [])
+        self.assertEqual(payload["missing_allowed_file_patterns"], [])
+        self.assertEqual(payload["missing_release_sensitive_paths"], [])
+        self.assertEqual(payload["missing_protected_paths"], [])
 
     def test_removed_harness_fails(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-guard-superset-remove-") as tmp:
@@ -146,6 +177,86 @@ class SkipiGuardConfigSupersetTests(unittest.TestCase):
             ],
         )
         self.assertIn("new guard config removes harness_commands from the current config", payload["errors"])
+
+    def test_removed_additive_task_check_fails(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-superset-remove-additive-") as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            base_config = config_with_harnesses([
+                {"name": "crewing_presence_contract", "command": "node tests/crewing_presence_contract_harness.mjs"},
+            ])
+            base = self.commit_config(repo, "base", base_config)
+            next_config = dict(base_config)
+            next_config["additive_task_checks"] = []
+            next_ref = self.commit_config(repo, "remove additive", next_config)
+
+            code, payload = self.run_superset(repo, base, next_ref, Path(tmp) / "result.json")
+
+        self.assertEqual(code, 1, payload)
+        self.assertEqual(payload["status"], "fail")
+        self.assertEqual(payload["missing_additive_task_checks"], base_config["additive_task_checks"])
+        self.assertIn("new guard config removes additive_task_checks from the current config", payload["errors"])
+
+    def test_removed_allowed_file_pattern_fails(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-superset-remove-allowed-") as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            base_config = config_with_harnesses([
+                {"name": "crewing_presence_contract", "command": "node tests/crewing_presence_contract_harness.mjs"},
+            ])
+            base = self.commit_config(repo, "base", base_config)
+            next_config = dict(base_config)
+            next_config["allowed_file_patterns"] = {"plugin-host": ["dist/index.html"]}
+            next_ref = self.commit_config(repo, "remove allowed", next_config)
+
+            code, payload = self.run_superset(repo, base, next_ref, Path(tmp) / "result.json")
+
+        self.assertEqual(code, 1, payload)
+        self.assertEqual(payload["status"], "fail")
+        self.assertEqual(payload["missing_allowed_file_patterns"], [{"task": "plugin-host", "pattern": "presence-manifest.json"}])
+        self.assertIn("new guard config removes allowed_file_patterns from the current config", payload["errors"])
+
+    def test_removed_release_sensitive_path_fails(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-superset-remove-release-") as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            base_config = config_with_harnesses([
+                {"name": "crewing_presence_contract", "command": "node tests/crewing_presence_contract_harness.mjs"},
+            ])
+            base = self.commit_config(repo, "base", base_config)
+            next_config = dict(base_config)
+            next_config["release_sensitive_paths"] = [{"name": "versions/tags", "patterns": ["package.json"]}]
+            next_ref = self.commit_config(repo, "remove release-sensitive", next_config)
+
+            code, payload = self.run_superset(repo, base, next_ref, Path(tmp) / "result.json")
+
+        self.assertEqual(code, 1, payload)
+        self.assertEqual(payload["status"], "fail")
+        self.assertEqual(payload["missing_release_sensitive_paths"], [{"rule": "versions/tags", "pattern": "Cargo.lock"}])
+        self.assertIn("new guard config removes release_sensitive_paths from the current config", payload["errors"])
+
+    def test_removed_protected_path_fails(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-superset-remove-protected-") as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            base_config = config_with_harnesses([
+                {"name": "crewing_presence_contract", "command": "node tests/crewing_presence_contract_harness.mjs"},
+            ])
+            base = self.commit_config(repo, "base", base_config)
+            next_config = dict(base_config)
+            next_config["protected_paths"] = []
+            next_ref = self.commit_config(repo, "remove protected", next_config)
+
+            code, payload = self.run_superset(repo, base, next_ref, Path(tmp) / "result.json")
+
+        self.assertEqual(code, 1, payload)
+        self.assertEqual(payload["status"], "fail")
+        self.assertEqual(payload["missing_protected_paths"], [{"rule": "presence contracts", "pattern": "presence-manifest.json"}])
+        self.assertIn("new guard config removes protected_paths from the current config", payload["errors"])
 
 
 if __name__ == "__main__":
