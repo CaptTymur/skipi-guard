@@ -115,7 +115,18 @@ def is_release_task(config: dict[str, Any], task: str) -> bool:
 
 def configured_harnesses(config: dict[str, Any], task: str) -> list[dict[str, Any]]:
     commands_by_task = config.get("harness_commands", {})
-    return list(commands_by_task.get(task, []))
+    harnesses = list(commands_by_task.get(task, []))
+    if is_release_task(config, task):
+        for inherited_task in ("plugin-host", "provenance", "backend", "landing"):
+            harnesses.extend(commands_by_task.get(inherited_task, []))
+    return harnesses
+
+
+def configured_tasks(config: dict[str, Any]) -> set[str]:
+    tasks: set[str] = set(str(task) for task in config.get("release_tasks", []))
+    tasks.update(str(task) for task in config.get("harness_commands", {}))
+    tasks.update(str(task) for task in config.get("allowed_file_patterns", {}))
+    return tasks
 
 
 def unique_harnesses(harnesses: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -160,12 +171,41 @@ def additive_task_checks(config: dict[str, Any], task: str, changed_files: list[
     return checks
 
 
+def rule_patterns(rules: list[dict[str, Any]]) -> list[str]:
+    patterns: list[str] = []
+    for rule in rules:
+        patterns.extend(str(pattern) for pattern in rule.get("patterns", []))
+    return patterns
+
+
+def effective_allowed_patterns(
+    config: dict[str, Any],
+    task: str,
+    additive_checks: list[dict[str, Any]],
+) -> list[str]:
+    patterns = list(config.get("allowed_file_patterns", {}).get(task, []))
+    if is_release_task(config, task):
+        patterns.extend(rule_patterns(config.get("release_sensitive_paths", [])))
+        for check in additive_checks:
+            patterns.extend(config.get("allowed_file_patterns", {}).get(check["task"], []))
+    unique: list[str] = []
+    seen: set[str] = set()
+    for pattern in patterns:
+        if pattern in seen:
+            continue
+        seen.add(pattern)
+        unique.append(pattern)
+    return unique
+
+
 def scope_check_for_task(
     config: dict[str, Any],
     task: str,
     files: list[str],
+    allowed_patterns: list[str] | None = None,
 ) -> dict[str, Any] | None:
-    allowed_patterns = config.get("allowed_file_patterns", {}).get(task, [])
+    if allowed_patterns is None:
+        allowed_patterns = config.get("allowed_file_patterns", {}).get(task, [])
     if not allowed_patterns:
         return None
     violations = [
@@ -177,6 +217,64 @@ def scope_check_for_task(
         "allowed_file_patterns": allowed_patterns,
         "scope_violations": violations,
     }
+
+
+def presence_override_allowed_patterns(config: dict[str, Any], *, include_workflow: bool) -> list[str]:
+    patterns = [
+        pattern
+        for rule in config.get("protected_paths", [])
+        if "presence" in str(rule.get("name", "")).lower()
+        for pattern in rule.get("patterns", [])
+    ]
+    for task_patterns in config.get("allowed_file_patterns", {}).values():
+        for pattern in task_patterns:
+            if "presence" in str(pattern):
+                patterns.append(str(pattern))
+    if include_workflow:
+        patterns.append(".github/workflows/skipi-guard.yml")
+    return list(dict.fromkeys(patterns))
+
+
+def bootstrap_override_allowed_patterns(token: str) -> list[str] | None:
+    if token == "skipi-guard-workflow-bootstrap":
+        return [".github/workflows/skipi-guard.yml"]
+    if token.endswith("-presence-contracts-bootstrap"):
+        return ["presence-manifest.json", "tests/*presence*_harness.mjs", ".github/workflows/skipi-guard.yml"]
+    if token.endswith("-theme-default-bootstrap"):
+        return ["dist/index.html", "tests/*theme*_harness.mjs", ".github/workflows/skipi-guard.yml"]
+    return None
+
+
+def override_policy_errors(config: dict[str, Any], token: str, changed_files: list[str]) -> list[str]:
+    if not token:
+        return []
+    if token.endswith("-presence-modification-approved") or token.endswith("-presence-main-merge-replay"):
+        allowed_patterns = presence_override_allowed_patterns(config, include_workflow=False)
+        disallowed = [
+            file_path
+            for file_path in changed_files
+            if not any(pattern_matches(file_path, pattern) for pattern in allowed_patterns)
+        ]
+        if disallowed:
+            return [
+                "presence override requires presence-only changes",
+                f"presence override disallowed files: {', '.join(disallowed)}",
+            ]
+        return []
+    allowed_patterns = bootstrap_override_allowed_patterns(token)
+    if allowed_patterns is None:
+        return []
+    disallowed = [
+        file_path
+        for file_path in changed_files
+        if not any(pattern_matches(file_path, pattern) for pattern in allowed_patterns)
+    ]
+    if disallowed:
+        return [
+            f"override token '{token}' is limited to its bootstrap file set",
+            f"override disallowed files: {', '.join(disallowed)}",
+        ]
+    return []
 
 
 def run_harness_commands(repo: Path, harnesses: list[dict[str, Any]], should_run: bool) -> tuple[list[dict[str, Any]], list[str]]:
@@ -266,6 +364,10 @@ def verify(args: argparse.Namespace) -> int:
         if diff_error:
             errors.append(diff_error)
 
+    task_known = args.task in configured_tasks(config) or is_release_task(config, args.task)
+    if not task_known:
+        errors.append(f"unknown or unconfigured task '{args.task}'")
+
     protected_touches = classify_paths(changed_files, config.get("protected_paths", []), "protected")
     release_touches = classify_paths(changed_files, config.get("release_sensitive_paths", []), "release-sensitive")
     protected_paths_touched = protected_touches + release_touches
@@ -282,10 +384,10 @@ def verify(args: argparse.Namespace) -> int:
         if check["task"] not in effective_tasks:
             effective_tasks.append(check["task"])
 
-    allowed_patterns = config.get("allowed_file_patterns", {}).get(args.task, [])
+    allowed_patterns = effective_allowed_patterns(config, args.task, additive_checks)
     scope_violations: list[str] = []
     scope_checks: list[dict[str, Any]] = []
-    main_scope_check = scope_check_for_task(config, args.task, changed_files)
+    main_scope_check = scope_check_for_task(config, args.task, changed_files, allowed_patterns)
     if main_scope_check:
         scope_checks.append(main_scope_check)
     for check in additive_checks:
@@ -293,13 +395,19 @@ def verify(args: argparse.Namespace) -> int:
         if additive_scope_check:
             scope_checks.append(additive_scope_check)
     for scope_check in scope_checks:
-        scope_violations.extend(scope_check["scope_violations"])
+        for violation in scope_check["scope_violations"]:
+            if violation not in scope_violations:
+                scope_violations.append(violation)
         if scope_check["scope_violations"] and not override_present:
             errors.append(f"changes outside allowed patterns for task '{scope_check['task']}'")
+    if override_present:
+        errors.extend(override_policy_errors(config, override_token, changed_files))
 
     harnesses: list[dict[str, Any]] = []
     for task in effective_tasks:
         harnesses.extend(configured_harnesses(config, task))
+    if is_release_task(config, args.task) and not unique_harnesses(harnesses):
+        errors.append(f"release task '{args.task}' requires harness_commands")
     tests, test_errors = run_harness_commands(repo, unique_harnesses(harnesses), args.run_harness)
     errors.extend(test_errors)
 

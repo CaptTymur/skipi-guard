@@ -54,24 +54,28 @@ class SkipiGuardRegressionTests(unittest.TestCase):
         *,
         home: str,
         task: str,
+        override: str | None = None,
     ) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
+        command = [
+            str(GUARD),
+            "verify",
+            "--home",
+            home,
+            "--task",
+            task,
+            "--repo",
+            str(repo),
+            "--base",
+            "HEAD~1",
+            "--head",
+            "HEAD",
+            "--json",
+            str(result_json),
+        ]
+        if override:
+            command.extend(["--override-protected", override])
         proc = subprocess.run(
-            [
-                str(GUARD),
-                "verify",
-                "--home",
-                home,
-                "--task",
-                task,
-                "--repo",
-                str(repo),
-                "--base",
-                "HEAD~1",
-                "--head",
-                "HEAD",
-                "--json",
-                str(result_json),
-            ],
+            command,
             text=True,
             capture_output=True,
         )
@@ -225,7 +229,9 @@ class SkipiGuardRegressionTests(unittest.TestCase):
         self.assertEqual(payload["effective_tasks"], ["release"])
         self.assertEqual(payload["additive_task_checks"], [])
         harnesses = {entry["name"] for entry in payload["tests"]}
-        self.assertNotIn("crewing_crew_flow_demo", harnesses)
+        self.assertIn("crewing_crew_flow_demo", harnesses)
+        self.assertIn("crewing_plugin_isolation", harnesses)
+        self.assertIn("crewing_presence_contract", harnesses)
 
     def test_crewing_plugin_host_task_keeps_plugin_host_harnesses(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-plugin-only-") as tmp:
@@ -275,6 +281,110 @@ class SkipiGuardRegressionTests(unittest.TestCase):
         self.assertEqual(payload["effective_tasks"], ["release", "plugin-host"])
         self.assertEqual(payload["scope_violations"], ["dist/unreviewed.js"])
         self.assertIn("changes outside allowed patterns for task 'plugin-host'", payload["errors"])
+
+    def test_presence_modification_override_rejects_non_presence_files(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-presence-smuggle-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+
+            (repo / "dist").mkdir()
+            (repo / "presence-manifest.json").write_text('{"contracts":[]}\n', encoding="utf-8")
+            (repo / "dist" / "index.html").write_text("<main>seed</main>\n", encoding="utf-8")
+            self.run_git(repo, "add", "-A")
+            self.run_git(repo, "commit", "-q", "-m", "seed presence")
+
+            (repo / "presence-manifest.json").write_text('{"contracts":["changed"]}\n', encoding="utf-8")
+            (repo / "dist" / "index.html").write_text("<main>smuggled</main>\n", encoding="utf-8")
+            self.run_git(repo, "add", "-A")
+            self.run_git(repo, "commit", "-q", "-m", "presence plus dist")
+
+            proc, payload = self.run_home_guard(
+                repo,
+                root / "result.json",
+                home="crewing",
+                task="release",
+                override="crewing-presence-modification-approved",
+            )
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertIn("presence override requires presence-only changes", payload["errors"])
+        self.assertTrue(any("dist/index.html" in error for error in payload["errors"]))
+
+    def test_presence_modification_override_allows_presence_only_files(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-presence-only-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+
+            (repo / "presence-manifest.json").write_text('{"contracts":[]}\n', encoding="utf-8")
+            self.run_git(repo, "add", "-A")
+            self.run_git(repo, "commit", "-q", "-m", "seed presence")
+
+            (repo / "presence-manifest.json").write_text('{"contracts":["changed"]}\n', encoding="utf-8")
+            self.run_git(repo, "add", "-A")
+            self.run_git(repo, "commit", "-q", "-m", "presence only")
+
+            proc, payload = self.run_home_guard(
+                repo,
+                root / "result.json",
+                home="crewing",
+                task="release",
+                override="crewing-presence-modification-approved",
+            )
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertEqual(payload["scope_violations"], [])
+
+    def test_release_task_rejects_non_release_non_additive_files(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-release-src-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+
+            (repo / "package.json").write_text('{"version":"0.0.0"}\n', encoding="utf-8")
+            self.run_git(repo, "add", "-A")
+            self.run_git(repo, "commit", "-q", "-m", "seed release")
+
+            (repo / "src").mkdir()
+            (repo / "package.json").write_text('{"version":"0.0.1"}\n', encoding="utf-8")
+            (repo / "src" / "side.js").write_text("console.log('smuggled');\n", encoding="utf-8")
+            self.run_git(repo, "add", "-A")
+            self.run_git(repo, "commit", "-q", "-m", "release plus src")
+
+            proc, payload = self.run_home_guard(repo, root / "result.json", home="crewing", task="release")
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertIn("src/side.js", payload["scope_violations"])
+        self.assertIn("changes outside allowed patterns for task 'release'", payload["errors"])
+
+    def test_unknown_task_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-unknown-task-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+
+            (repo / "dist").mkdir()
+            (repo / "dist" / "index.html").write_text("<main>seed</main>\n", encoding="utf-8")
+            self.run_git(repo, "add", "-A")
+            self.run_git(repo, "commit", "-q", "-m", "seed dist")
+
+            (repo / "dist" / "index.html").write_text("<main>changed</main>\n", encoding="utf-8")
+            self.run_git(repo, "add", "-A")
+            self.run_git(repo, "commit", "-q", "-m", "dist change")
+
+            proc, payload = self.run_home_guard(repo, root / "result.json", home="crewing", task="typo-task")
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertIn("unknown or unconfigured task 'typo-task'", payload["errors"])
 
 
 if __name__ == "__main__":
