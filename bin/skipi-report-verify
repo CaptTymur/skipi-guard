@@ -134,7 +134,7 @@ def pattern_matches(path: str, pattern: str) -> bool:
         return True
     has_glob = any(char in pattern for char in "*?[")
     if not has_glob and "/" not in pattern:
-        return path == pattern or path.endswith("/" + pattern) or path.startswith(pattern + "/")
+        return path == pattern or path.endswith("/" + pattern)
     return False
 
 
