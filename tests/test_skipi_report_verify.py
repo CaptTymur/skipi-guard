@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import importlib.util
+from importlib.machinery import SourceFileLoader
 import json
 import hashlib
 import subprocess
@@ -11,6 +13,11 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 VERIFY = ROOT / "bin" / "skipi-report-verify"
+VERIFY_LOADER = SourceFileLoader("skipi_report_verify", str(VERIFY))
+VERIFY_SPEC = importlib.util.spec_from_loader("skipi_report_verify", VERIFY_LOADER)
+assert VERIFY_SPEC and VERIFY_SPEC.loader
+VERIFY_MODULE = importlib.util.module_from_spec(VERIFY_SPEC)
+VERIFY_SPEC.loader.exec_module(VERIFY_MODULE)
 
 
 class SkipiReportVerifyTests(unittest.TestCase):
@@ -130,6 +137,14 @@ class SkipiReportVerifyTests(unittest.TestCase):
 
     def mismatch_codes(self, payload: dict[str, Any]) -> set[str]:
         return {entry["code"] for entry in payload["mismatches"]}
+
+    def test_bare_file_pattern_does_not_match_directory_child(self) -> None:
+        self.assertTrue(VERIFY_MODULE.pattern_matches("package.json", "package.json"))
+        self.assertTrue(VERIFY_MODULE.pattern_matches("x/presence-manifest.json", "presence-manifest.json"))
+        self.assertFalse(VERIFY_MODULE.pattern_matches("package.json/evil", "package.json"))
+        self.assertFalse(VERIFY_MODULE.pattern_matches("presence-manifest.json/evil.js", "presence-manifest.json"))
+        self.assertFalse(VERIFY_MODULE.pattern_matches("dist/index.html/evil", "dist/index.html"))
+        self.assertTrue(VERIFY_MODULE.pattern_matches("dist/index.html", "dist/**"))
 
     def test_positive_verification_demo_passes(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-report-verify-pass-") as tmp:
