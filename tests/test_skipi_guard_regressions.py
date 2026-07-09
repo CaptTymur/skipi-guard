@@ -1,15 +1,23 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
+from importlib.machinery import SourceFileLoader
 
 
 ROOT = Path(__file__).resolve().parents[1]
 GUARD = ROOT / "bin" / "skipi-guard"
+GUARD_LOADER = SourceFileLoader("skipi_guard_cli", str(GUARD))
+GUARD_SPEC = importlib.util.spec_from_loader(GUARD_LOADER.name, GUARD_LOADER)
+if GUARD_SPEC is None:
+    raise RuntimeError(f"cannot load guard module from {GUARD}")
+GUARD_MODULE = importlib.util.module_from_spec(GUARD_SPEC)
+GUARD_LOADER.exec_module(GUARD_MODULE)
 
 
 class SkipiGuardRegressionTests(unittest.TestCase):
@@ -98,6 +106,38 @@ class SkipiGuardRegressionTests(unittest.TestCase):
             path.write_text(contents, encoding="utf-8")
         self.run_git(repo, "add", "-A")
         self.run_git(repo, "commit", "-q", "-m", message)
+
+    def test_bare_file_pattern_does_not_match_directory_child(self) -> None:
+        self.assertTrue(GUARD_MODULE.pattern_matches("package.json", "package.json"))
+        self.assertTrue(GUARD_MODULE.pattern_matches("x/presence-manifest.json", "presence-manifest.json"))
+        self.assertFalse(GUARD_MODULE.pattern_matches("package.json/evil", "package.json"))
+        self.assertFalse(GUARD_MODULE.pattern_matches("presence-manifest.json/evil.js", "presence-manifest.json"))
+        self.assertFalse(GUARD_MODULE.pattern_matches("dist/index.html/evil", "dist/index.html"))
+        self.assertTrue(GUARD_MODULE.pattern_matches("dist/index.html", "dist/**"))
+
+    def test_bare_presence_pattern_directory_smuggle_fails_scope(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-bare-presence-smuggle-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+
+            (repo / "presence-manifest.json").write_text('{"contracts":[]}\n', encoding="utf-8")
+            self.run_git(repo, "add", "-A")
+            self.run_git(repo, "commit", "-q", "-m", "seed presence file")
+
+            (repo / "presence-manifest.json").unlink()
+            (repo / "presence-manifest.json").mkdir()
+            (repo / "presence-manifest.json" / "evil.js").write_text("console.log('smuggled');\n", encoding="utf-8")
+            self.run_git(repo, "add", "-A")
+            self.run_git(repo, "commit", "-q", "-m", "replace presence file with directory")
+
+            proc, payload = self.run_home_guard(repo, root / "result.json", home="crewing", task="plugin-host")
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertIn("presence-manifest.json/evil.js", payload["scope_violations"])
+        self.assertIn("changes outside allowed patterns for task 'plugin-host'", payload["errors"])
 
     def test_deleted_protected_and_release_sensitive_paths_fail(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-guard-delete-") as tmp:
