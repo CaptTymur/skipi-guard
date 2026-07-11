@@ -74,7 +74,12 @@
       "dist/plugin-host-bridge.js",
       "presence-manifest.json",
       "tests/broker_plugin_isolation_harness.mjs",
-      "tests/broker_presence_contract_harness.mjs"
+      "tests/broker_presence_contract_harness.mjs",
+      "dist/map.js",
+      "dist/map.css",
+      "tests/map_contract_harness.mjs",
+      "tests/csp_inline_handlers_harness.mjs",
+      "tests/trial_gate_wired_harness.mjs"
     ]
   }
 }
