@@ -57,6 +57,6 @@
     ]
   },
   "allowed_file_patterns": {
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "tests/bundled_plugin_isolation_harness.mjs"]
+    "plugin-host": ["dist/index.html", "dist/plugin-host-ui.js", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "tests/bundled_plugin_isolation_harness.mjs"]
   }
 }
