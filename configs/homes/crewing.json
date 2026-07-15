@@ -61,6 +61,6 @@
     ]
   },
   "allowed_file_patterns": {
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/crewing_plugin_isolation_harness.mjs"]
+    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/crewing_plugin_isolation_harness.mjs", "tests/csp_inline_handlers_harness.mjs", "tests/trial_gate_wired_harness.mjs"]
   }
 }
