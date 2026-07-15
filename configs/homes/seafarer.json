@@ -69,6 +69,42 @@
         "command": "node tests/remote_prod_delivery_config_harness.mjs"
       }
     ],
+    "demo-vault": [
+      {
+        "name": "seafarer_demo_vault_contract",
+        "command": "node tests/demo_vault_contract_harness.mjs"
+      }
+    ],
+    "contract-sync": [
+      {
+        "name": "seafarer_bundled_plugin_isolation",
+        "command": "node tests/bundled_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "seafarer_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "seafarer_presence_contract",
+        "command": "node tests/seafarer_presence_contract_harness.mjs"
+      },
+      {
+        "name": "seafarer_theme_default",
+        "command": "node tests/seafarer_theme_default_harness.mjs"
+      },
+      {
+        "name": "seafarer_remote_prod_delivery_config",
+        "command": "node tests/remote_prod_delivery_config_harness.mjs"
+      },
+      {
+        "name": "seafarer_demo_vault_contract",
+        "command": "node tests/demo_vault_contract_harness.mjs"
+      },
+      {
+        "name": "seafarer_plugin_remote_over_bundled",
+        "command": "node tests/plugin_remote_over_bundled_harness.mjs"
+      }
+    ],
     "release": [
       {
         "name": "seafarer_bundled_plugin_isolation",
@@ -100,6 +136,8 @@
   },
   "allowed_file_patterns": {
     "repo-meta": ["AGENTS.md", "CLAUDE.md"],
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "tests/bundled_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/seafarer_presence_contract_harness.mjs", "tests/seafarer_theme_default_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs"]
+    "plugin-host": ["dist/index.html", "dist/plugin-host-ui.js", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "tests/bundled_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/seafarer_presence_contract_harness.mjs", "tests/seafarer_theme_default_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs", "tests/plugin_remote_over_bundled_harness.mjs"],
+    "demo-vault": ["dist/index.html", "src-tauri/resources/demo-vault.zip", "src-tauri/src/db.rs", "tests/demo_vault_contract_harness.mjs"],
+    "contract-sync": ["dist/index.html", "dist/plugin-host-ui.js", "src-tauri/resources/demo-vault.zip", "src-tauri/src/db.rs", "tests/demo_vault_contract_harness.mjs", "tests/plugin_remote_over_bundled_harness.mjs"]
   }
 }
