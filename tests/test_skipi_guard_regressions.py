@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import subprocess
 import tempfile
 import unittest
@@ -63,6 +64,7 @@ class SkipiGuardRegressionTests(unittest.TestCase):
         home: str,
         task: str,
         override: str | None = None,
+        override_env: str | None = None,
     ) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
         command = [
             str(GUARD),
@@ -86,6 +88,7 @@ class SkipiGuardRegressionTests(unittest.TestCase):
             command,
             text=True,
             capture_output=True,
+            env={**os.environ, **({"SKIPI_GUARD_OVERRIDE_TOKEN": override_env} if override_env else {})},
         )
         with result_json.open("r", encoding="utf-8") as handle:
             return proc, json.load(handle)
@@ -352,6 +355,66 @@ class SkipiGuardRegressionTests(unittest.TestCase):
         self.assertEqual(payload["status"], "fail")
         self.assertIn("presence override requires presence-only changes", payload["errors"])
         self.assertTrue(any("dist/index.html" in error for error in payload["errors"]))
+
+    def test_unknown_cli_override_token_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-unknown-cli-override-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.commit_files(repo, "seed", {"AGENTS.md": "# fixture\n"})
+            self.commit_files(repo, "scope violation", {"sneaky_payload.txt": "bypass\n"})
+
+            proc, payload = self.run_home_guard(
+                repo,
+                root / "result.json",
+                home="broker",
+                task="repo-meta",
+                override="totally-made-up-xyz",
+            )
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertIn("unknown override token", payload["errors"])
+
+    def test_override_token_bound_to_another_home_fails_closed(self) -> None:
+        errors = GUARD_MODULE.override_policy_errors(
+            {"home": "broker"},
+            "crewing-presence-contracts-bootstrap",
+            ["presence-manifest.json"],
+        )
+        self.assertEqual(errors, ["unknown override token"])
+
+    def test_known_bootstrap_override_is_limited_to_its_file_set(self) -> None:
+        config = {"home": "broker"}
+        token = "broker-presence-contracts-bootstrap"
+        self.assertEqual(
+            GUARD_MODULE.override_policy_errors(config, token, ["presence-manifest.json"]),
+            [],
+        )
+        errors = GUARD_MODULE.override_policy_errors(config, token, ["sneaky_payload.txt"])
+        self.assertTrue(any("limited to its bootstrap file set" in error for error in errors))
+
+    def test_unknown_env_override_token_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-unknown-env-override-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.commit_files(repo, "seed", {"README.md": "# fixture\n"})
+            self.commit_files(repo, "protected path", {"keys/signing.pem": "not-a-real-key\n"})
+
+            proc, payload = self.run_home_guard(
+                repo,
+                root / "result.json",
+                home="broker",
+                task="plugin-host",
+                override_env="env-junk",
+            )
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertIn("unknown override token", payload["errors"])
 
     def test_presence_modification_override_allows_presence_only_files(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-guard-presence-only-") as tmp:

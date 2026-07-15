@@ -27,10 +27,12 @@ Harness commands are not run by default:
   --json /tmp/out.json
 ```
 
-Protected-path overrides must be explicit. The token is not written to JSON.
+Protected-path overrides must use a recognized token bound to the selected home
+and its allowed file set. Unknown tokens fail closed. The token is not written
+to JSON.
 
 ```bash
-SKIPI_GUARD_OVERRIDE_TOKEN=ack-stop-line \
+SKIPI_GUARD_OVERRIDE_TOKEN=broker-presence-contracts-bootstrap \
   /home/linux/Developer/skipi-guard/bin/skipi-guard verify \
   --home broker \
   --task plugin-host \

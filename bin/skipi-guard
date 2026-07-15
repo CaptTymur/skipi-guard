@@ -235,12 +235,13 @@ def presence_override_allowed_patterns(config: dict[str, Any], *, include_workfl
     return list(dict.fromkeys(patterns))
 
 
-def bootstrap_override_allowed_patterns(token: str) -> list[str] | None:
+def bootstrap_override_allowed_patterns(config: dict[str, Any], token: str) -> list[str] | None:
     if token == "skipi-guard-workflow-bootstrap":
         return [".github/workflows/skipi-guard.yml"]
-    if token.endswith("-presence-contracts-bootstrap"):
+    home = str(config.get("home", ""))
+    if token == f"{home}-presence-contracts-bootstrap":
         return ["presence-manifest.json", "tests/*presence*_harness.mjs", ".github/workflows/skipi-guard.yml"]
-    if token.endswith("-theme-default-bootstrap"):
+    if token == f"{home}-theme-default-bootstrap":
         return ["dist/index.html", "tests/*theme*_harness.mjs", ".github/workflows/skipi-guard.yml"]
     return None
 
@@ -248,7 +249,12 @@ def bootstrap_override_allowed_patterns(token: str) -> list[str] | None:
 def override_policy_errors(config: dict[str, Any], token: str, changed_files: list[str]) -> list[str]:
     if not token:
         return []
-    if token.endswith("-presence-modification-approved") or token.endswith("-presence-main-merge-replay"):
+    home = str(config.get("home", ""))
+    presence_tokens = {
+        f"{home}-presence-modification-approved",
+        f"{home}-presence-main-merge-replay",
+    }
+    if token in presence_tokens:
         allowed_patterns = presence_override_allowed_patterns(config, include_workflow=False)
         disallowed = [
             file_path
@@ -261,9 +267,9 @@ def override_policy_errors(config: dict[str, Any], token: str, changed_files: li
                 f"presence override disallowed files: {', '.join(disallowed)}",
             ]
         return []
-    allowed_patterns = bootstrap_override_allowed_patterns(token)
+    allowed_patterns = bootstrap_override_allowed_patterns(config, token)
     if allowed_patterns is None:
-        return []
+        return ["unknown override token"]
     disallowed = [
         file_path
         for file_path in changed_files
