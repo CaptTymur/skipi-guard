@@ -69,6 +69,7 @@
     ]
   },
   "allowed_file_patterns": {
+    "repo-meta": ["AGENTS.md", "CLAUDE.md"],
     "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/plugin_isolation_harness.mjs", "tests/apps_launcher_harness.mjs", "presence-manifest.json", "tests/onboard_presence_contract_harness.mjs"]
   }
 }

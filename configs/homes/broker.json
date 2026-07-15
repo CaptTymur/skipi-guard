@@ -69,6 +69,7 @@
     ]
   },
   "allowed_file_patterns": {
+    "repo-meta": ["AGENTS.md", "CLAUDE.md"],
     "plugin-host": [
       "dist/index.html",
       "dist/plugin-host-bridge.js",
