@@ -25,11 +25,19 @@ jobs:
       - name: Run skipi-guard
         env:
           SKIPI_GUARD_HOME: ${{ vars.SKIPI_GUARD_HOME }}
-          SKIPI_GUARD_TASK: ${{ vars.SKIPI_GUARD_TASK || 'plugin-host' }}
+          SKIPI_GUARD_TASK: ${{ vars.SKIPI_GUARD_TASK }}
         run: |
+          # Default: resolve the task from the diff via the declarative
+          # task_routing rules in configs/homes/<home>.json (same source as
+          # the pre-push hooks). vars.SKIPI_GUARD_TASK stays an explicit
+          # per-repo override.
+          TASK_ARGS=(--auto-task)
+          if [ -n "${SKIPI_GUARD_TASK:-}" ]; then
+            TASK_ARGS=(--task "$SKIPI_GUARD_TASK")
+          fi
           .skipi-guard/bin/skipi-guard verify \
             --home "$SKIPI_GUARD_HOME" \
-            --task "$SKIPI_GUARD_TASK" \
+            "${TASK_ARGS[@]}" \
             --repo "$GITHUB_WORKSPACE" \
             --base "origin/${GITHUB_BASE_REF:-main}" \
             --head "$GITHUB_SHA" \
