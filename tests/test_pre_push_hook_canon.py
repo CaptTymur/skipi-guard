@@ -402,6 +402,36 @@ class PrePushHookCanonTests(unittest.TestCase):
             "plugin-host",
         )
 
+    def test_broker_settings_adopt_routing(self) -> None:
+        """BACKLOG п.47: a settings-module adopt diff (vendored dist/skipi-settings*
+        bytes + dist/index.html wiring) routes to settings-adopt; anything mixed
+        with a foreign file falls back to the default task and is blocked by the
+        plugin-host allowlist (fail closed)."""
+        config = GUARD_MODULE.load_home_config("broker")
+        adopt_files = [
+            "dist/index.html",
+            "dist/skipi-settings.js",
+            "dist/skipi-settings.css",
+            "dist/skipi-settings.inline.html",
+            "dist/skipi-settings.SETTINGS_VERSION",
+        ]
+        self.assertEqual(GUARD_MODULE.resolve_task(config, adopt_files)["task"], "settings-adopt")
+        self.assertEqual(
+            GUARD_MODULE.resolve_task(config, ["dist/skipi-settings.js"])["task"], "settings-adopt"
+        )
+        # index.html alone is a plugin-host change, not an adopt (require_any_of).
+        self.assertEqual(GUARD_MODULE.resolve_task(config, ["dist/index.html"])["task"], "plugin-host")
+        # Mixed diff with a foreign file: default task...
+        mixed = ["dist/skipi-settings.js", "src/other.js"]
+        self.assertEqual(GUARD_MODULE.resolve_task(config, mixed)["task"], "plugin-host")
+        # ...and blocked by the plugin-host allowed patterns.
+        scope = GUARD_MODULE.scope_check_for_task(config, "plugin-host", mixed)
+        self.assertIn("src/other.js", scope["scope_violations"])
+        self.assertIn("dist/skipi-settings.js", scope["scope_violations"])
+        # settings-adopt itself must not smuggle foreign files either.
+        adopt_scope = GUARD_MODULE.scope_check_for_task(config, "settings-adopt", mixed)
+        self.assertIn("src/other.js", adopt_scope["scope_violations"])
+
     def test_management_provenance_routing_requires_provenance_file(self) -> None:
         config = GUARD_MODULE.load_home_config("management")
         self.assertEqual(GUARD_MODULE.resolve_task(config, ["dist/index.html"])["task"], "plugin-host")

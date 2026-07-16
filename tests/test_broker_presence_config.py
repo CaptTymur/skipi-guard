@@ -38,6 +38,26 @@ class BrokerPresenceConfigTests(unittest.TestCase):
         self.assertIn("tests/broker_presence_contract_harness.mjs", allowed)
         self.assertNotIn(".github/workflows/skipi-guard.yml", allowed)
 
+    def test_settings_adopt_runs_the_full_plugin_host_harness_set(self) -> None:
+        """BACKLOG п.47: settings-adopt is fail-closed with the same three
+        harnesses as plugin-host — no weaker gate for the adopt path."""
+        plugin_host = {
+            entry["name"]: entry["command"]
+            for entry in self.config["harness_commands"]["plugin-host"]
+        }
+        settings_adopt = {
+            entry["name"]: entry["command"]
+            for entry in self.config["harness_commands"]["settings-adopt"]
+        }
+        self.assertEqual(settings_adopt, plugin_host)
+
+    def test_settings_adopt_allowlist_is_exactly_wiring_plus_vendored_module(self) -> None:
+        """BACKLOG п.47: only the index.html wiring and the vendored
+        dist/skipi-settings* module bytes; nothing else (no presence manifest,
+        no harness files, no workflow)."""
+        allowed = self.config["allowed_file_patterns"]["settings-adopt"]
+        self.assertEqual(sorted(allowed), ["dist/index.html", "dist/skipi-settings*"])
+
 
 if __name__ == "__main__":
     unittest.main()
