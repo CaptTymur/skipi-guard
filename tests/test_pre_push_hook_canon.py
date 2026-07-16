@@ -402,6 +402,36 @@ class PrePushHookCanonTests(unittest.TestCase):
             "plugin-host",
         )
 
+    def test_broker_settings_adopt_routing(self) -> None:
+        """BACKLOG п.47: a settings-module adopt diff (vendored dist/skipi-settings*
+        bytes + dist/index.html wiring) routes to settings-adopt; anything mixed
+        with a foreign file falls back to the default task and is blocked by the
+        plugin-host allowlist (fail closed)."""
+        config = GUARD_MODULE.load_home_config("broker")
+        adopt_files = [
+            "dist/index.html",
+            "dist/skipi-settings.js",
+            "dist/skipi-settings.css",
+            "dist/skipi-settings.inline.html",
+            "dist/skipi-settings.SETTINGS_VERSION",
+        ]
+        self.assertEqual(GUARD_MODULE.resolve_task(config, adopt_files)["task"], "settings-adopt")
+        self.assertEqual(
+            GUARD_MODULE.resolve_task(config, ["dist/skipi-settings.js"])["task"], "settings-adopt"
+        )
+        # index.html alone is a plugin-host change, not an adopt (require_any_of).
+        self.assertEqual(GUARD_MODULE.resolve_task(config, ["dist/index.html"])["task"], "plugin-host")
+        # Mixed diff with a foreign file: default task...
+        mixed = ["dist/skipi-settings.js", "src/other.js"]
+        self.assertEqual(GUARD_MODULE.resolve_task(config, mixed)["task"], "plugin-host")
+        # ...and blocked by the plugin-host allowed patterns.
+        scope = GUARD_MODULE.scope_check_for_task(config, "plugin-host", mixed)
+        self.assertIn("src/other.js", scope["scope_violations"])
+        self.assertIn("dist/skipi-settings.js", scope["scope_violations"])
+        # settings-adopt itself must not smuggle foreign files either.
+        adopt_scope = GUARD_MODULE.scope_check_for_task(config, "settings-adopt", mixed)
+        self.assertIn("src/other.js", adopt_scope["scope_violations"])
+
     def test_management_provenance_routing_requires_provenance_file(self) -> None:
         config = GUARD_MODULE.load_home_config("management")
         self.assertEqual(GUARD_MODULE.resolve_task(config, ["dist/index.html"])["task"], "plugin-host")
@@ -467,6 +497,110 @@ class PrePushHookCanonTests(unittest.TestCase):
                 1,
                 "temporary pushed-bytes worktree must be removed after the run",
             )
+
+    # --- harness worktree placement (BACKLOG п.40, variant А) ----------------
+
+    def test_run_harness_worktree_sits_next_to_repo_and_resolves_sibling_imports(self) -> None:
+        """Harnesses in crewing/broker/management import sibling-repo modules
+        via `../../<sibling>/...` relative to the repo root. The pushed-bytes
+        worktree therefore must be a direct sibling of the real repo (variant
+        А, decision 2026-07-16), not a nested /tmp path where the sibling does
+        not exist and node dies with ERR_MODULE_NOT_FOUND."""
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-sibling-import-") as tmp:
+            root = Path(tmp)
+            sibling = root / "sibling-runtime"
+            sibling.mkdir()
+            (sibling / "isolation-contract.mjs").write_text(
+                "export const contract = \"fixture\";\n", encoding="utf-8"
+            )
+            seed = dict(BROKER_SEED)
+            # Same import shape as tests/*_plugin_isolation_harness.mjs in the
+            # three affected homes: relative resolve through the repo parent.
+            seed["tests/broker_plugin_isolation_harness.mjs"] = (
+                'import { contract } from "../../sibling-runtime/isolation-contract.mjs";\n'
+                'if (contract !== "fixture") process.exit(1);\n'
+                "process.exit(0);\n"
+            )
+            _origin, clone = self.make_fixture(root, seed)
+            branch_sha = self.make_branch(
+                clone, "host-change", "plugin-host change", {"dist/index.html": "<main>v2</main>\n"}
+            )
+            result_json = root / "result.json"
+            proc = self.run_guard(
+                "pre-push-ref",
+                "--home",
+                "broker",
+                "--repo",
+                str(clone),
+                "--local-ref",
+                "refs/heads/host-change",
+                "--local-sha",
+                branch_sha,
+                "--remote-ref",
+                "refs/heads/host-change",
+                "--remote-sha",
+                ZERO_SHA,
+                "--json",
+                str(result_json),
+            )
+            self.assertEqual(
+                proc.returncode,
+                0,
+                "harness with a sibling-relative import must pass from the pushed-bytes worktree: "
+                + proc.stdout
+                + proc.stderr,
+            )
+            with result_json.open("r", encoding="utf-8") as handle:
+                payload = json.load(handle)
+            self.assertEqual(payload["status"], "pass")
+            harness_status = {entry["name"]: entry["status"] for entry in payload["tests"]}
+            self.assertEqual(harness_status.get("broker_plugin_isolation"), "pass")
+            worktree_repo = Path(payload["repo"])
+            self.assertEqual(
+                worktree_repo.parent,
+                clone.parent,
+                f"pushed-bytes worktree must be a direct sibling of the real repo, got {worktree_repo}",
+            )
+            leftovers = [path for path in clone.parent.iterdir() if path.name.startswith(".skipi-guard")]
+            self.assertEqual(leftovers, [], "harness worktree must be cleaned up after the run")
+            worktrees = self.run_git(clone, "worktree", "list", "--porcelain").stdout
+            self.assertEqual(
+                worktrees.count("worktree "),
+                1,
+                "temporary pushed-bytes worktree must be deregistered after the run",
+            )
+
+    def test_run_harness_worktree_is_cleaned_up_after_harness_failure(self) -> None:
+        """Fail-closed path keeps the parent directory clean: a failing harness
+        must not leave `.skipi-guard-*` worktree litter beside the real repo."""
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-sibling-cleanup-") as tmp:
+            root = Path(tmp)
+            seed = dict(BROKER_SEED)
+            seed["tests/broker_plugin_isolation_harness.mjs"] = "process.exit(1);\n"
+            _origin, clone = self.make_fixture(root, seed)
+            branch_sha = self.make_branch(
+                clone, "host-change", "plugin-host change", {"dist/index.html": "<main>v2</main>\n"}
+            )
+            proc = self.run_guard(
+                "pre-push-ref",
+                "--home",
+                "broker",
+                "--repo",
+                str(clone),
+                "--local-ref",
+                "refs/heads/host-change",
+                "--local-sha",
+                branch_sha,
+                "--remote-ref",
+                "refs/heads/host-change",
+                "--remote-sha",
+                ZERO_SHA,
+            )
+            self.assertNotEqual(proc.returncode, 0, "failing harness must fail the guard")
+            leftovers = [path for path in clone.parent.iterdir() if path.name.startswith(".skipi-guard")]
+            self.assertEqual(leftovers, [], "harness worktree must be cleaned up on failure too")
+            worktrees = self.run_git(clone, "worktree", "list", "--porcelain").stdout
+            self.assertEqual(worktrees.count("worktree "), 1)
 
     # --- canon render / install / drift check ------------------------------
 

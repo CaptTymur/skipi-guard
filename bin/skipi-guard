@@ -537,7 +537,10 @@ def pre_push_ref(args: argparse.Namespace) -> int:
 
     base/head come from the pushed ref (stdin), never from the checkout HEAD
     (SKI-INC-2026-07-16). Harnesses run against the pushed bytes in a
-    temporary detached worktree at local_sha.
+    temporary detached worktree at local_sha. The worktree lives in the
+    parent directory of the real repo (variant А, decision 2026-07-16,
+    BACKLOG п.40): home harnesses resolve sibling repos relative to the repo
+    root (../../skipi-plugins/...), which never exist next to a /tmp path.
     """
     config = load_home_config(args.home)
     # Hooks run with GIT_DIR set relative to the repo root; drop it so git
@@ -561,8 +564,15 @@ def pre_push_ref(args: argparse.Namespace) -> int:
         return 1
 
     json_path = args.json or f"/tmp/skipi-guard-pre-push-{args.home}.json"
-    staging = Path(tempfile.mkdtemp(prefix=f"skipi-guard-pre-push-{args.home}-"))
-    worktree = staging / "pushed"
+    # mkdtemp in the repo parent: unique name (no clash with existing
+    # checkouts/worktrees), created as a DIRECT sibling of the real repo so
+    # that ../../<sibling> imports in home harnesses resolve exactly as they
+    # do from the real checkout. git worktree add accepts the empty dir.
+    try:
+        worktree = Path(tempfile.mkdtemp(prefix=f".skipi-guard-harness-wt-{args.home}-", dir=repo.parent))
+    except OSError as exc:
+        print(f"Skipi Guard pre-push: FAIL cannot create harness worktree beside {repo}: {exc}")
+        return 1
     worktree_added = False
     try:
         proc = run(["git", "-C", str(repo), "worktree", "add", "--detach", str(worktree), local_sha])
@@ -594,7 +604,7 @@ def pre_push_ref(args: argparse.Namespace) -> int:
     finally:
         if worktree_added:
             run(["git", "-C", str(repo), "worktree", "remove", "--force", str(worktree)])
-        shutil.rmtree(staging, ignore_errors=True)
+        shutil.rmtree(worktree, ignore_errors=True)
 
 
 def default_guard_bin() -> str:

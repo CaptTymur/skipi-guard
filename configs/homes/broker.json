@@ -16,6 +16,12 @@
       "name": "repo-meta routing",
       "task": "repo-meta",
       "when_all_files_in": ["AGENTS.md", "CLAUDE.md"]
+    },
+    {
+      "name": "settings-adopt routing",
+      "task": "settings-adopt",
+      "when_all_files_in": ["dist/index.html", "dist/skipi-settings*"],
+      "require_any_of": ["dist/skipi-settings*"]
     }
   ],
   "protected_paths": [
@@ -74,6 +80,20 @@
         "name": "broker_build_provenance",
         "command": "node tests/build_provenance_harness.mjs"
       }
+    ],
+    "settings-adopt": [
+      {
+        "name": "broker_plugin_isolation",
+        "command": "node tests/broker_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "broker_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "broker_presence_contract",
+        "command": "node tests/broker_presence_contract_harness.mjs"
+      }
     ]
   },
   "allowed_file_patterns": {
@@ -84,6 +104,10 @@
       "presence-manifest.json",
       "tests/broker_plugin_isolation_harness.mjs",
       "tests/broker_presence_contract_harness.mjs"
+    ],
+    "settings-adopt": [
+      "dist/index.html",
+      "dist/skipi-settings*"
     ]
   }
 }
