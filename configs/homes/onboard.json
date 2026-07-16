@@ -10,6 +10,14 @@
     "no Play/TestFlight/upload/deploy"
   ],
   "release_tasks": ["release", "release-infra", "build-release"],
+  "default_task": "plugin-host",
+  "task_routing": [
+    {
+      "name": "repo-meta routing",
+      "task": "repo-meta",
+      "when_all_files_in": ["AGENTS.md", "CLAUDE.md"]
+    }
+  ],
   "protected_paths": [
     {
       "name": "backend/server/prod data",

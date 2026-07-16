@@ -10,6 +10,19 @@
     "no Play/TestFlight/upload/deploy"
   ],
   "release_tasks": ["release", "release-infra", "build-release"],
+  "default_task": "plugin-host",
+  "task_routing": [
+    {
+      "name": "repo-meta routing",
+      "task": "repo-meta",
+      "when_all_files_in": ["AGENTS.md", "CLAUDE.md"]
+    },
+    {
+      "name": "provenance routing",
+      "task": "provenance",
+      "when_all_files_in": ["tests/build_provenance_harness.mjs", "src-tauri/build.rs", "src-tauri/src/lib.rs"]
+    }
+  ],
   "protected_paths": [
     {
       "name": "backend/server/prod data",

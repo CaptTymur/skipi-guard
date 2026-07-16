@@ -3,11 +3,14 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import hashlib
 import json
 import os
 import shlex
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +19,9 @@ VERSION = "0.1.0"
 SCHEMA_VERSION = "skipi-guard.v1"
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_DIR = ROOT / "configs" / "homes"
+HOOK_TEMPLATE_PATH = ROOT / "templates" / "git-hooks" / "pre-push.skipi-guard.sh"
+BOOTSTRAP_WORKFLOW_PATH = ".github/workflows/skipi-guard.yml"
+BOOTSTRAP_WORKFLOW_TOKEN = "skipi-guard-workflow-bootstrap"
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
@@ -105,6 +111,60 @@ def short_sha(repo: Path, head: str) -> tuple[str, str | None]:
     if proc.returncode != 0:
         return "unknown", proc.stderr.strip() or proc.stdout.strip() or f"cannot resolve {head}"
     return proc.stdout.strip(), None
+
+
+def is_zero_sha(sha: str) -> bool:
+    return len(sha) >= 40 and set(sha) == {"0"}
+
+
+def git_commit_exists(repo: Path, sha: str) -> bool:
+    return run(["git", "-C", str(repo), "cat-file", "-e", f"{sha}^{{commit}}"]).returncode == 0
+
+
+def resolve_push_base(repo: Path, local_sha: str, remote_sha: str) -> tuple[str | None, str, str | None]:
+    """Resolve the diff base for one pushed ref: (base, mode, error).
+
+    Base is the remote sha when it is non-zero and known locally; otherwise
+    the merge-base of the pushed sha with origin/main (new branch / unfetched
+    remote). No base resolvable -> fail closed (base None + error).
+    """
+    if remote_sha and not is_zero_sha(remote_sha) and git_commit_exists(repo, remote_sha):
+        return remote_sha, "remote-sha", None
+    proc = run(["git", "-C", str(repo), "merge-base", local_sha, "origin/main"])
+    if proc.returncode == 0 and proc.stdout.strip():
+        return proc.stdout.strip(), "merge-base-origin-main", None
+    detail = proc.stderr.strip() or proc.stdout.strip() or "cannot resolve merge-base with origin/main"
+    return None, "none", detail
+
+
+def resolve_task(config: dict[str, Any], changed_files: list[str]) -> dict[str, Any]:
+    """Resolve the guard task from the diff via declarative task_routing rules.
+
+    Semantics (decision 2026-07-16, management-style): a rule matches only if
+    ALL changed files are inside the rule's file set (and, when present, at
+    least one file matches require_any_of). A mixed diff falls back to the
+    default task. First matching rule wins. Empty diff -> default task.
+    """
+    default_task = str(config.get("default_task", "plugin-host"))
+    if changed_files:
+        for rule in config.get("task_routing", []):
+            task = str(rule.get("task", ""))
+            all_patterns = [str(pattern) for pattern in rule.get("when_all_files_in", [])]
+            if not task or not all_patterns:
+                continue
+            if not all(
+                any(pattern_matches(file_path, pattern) for pattern in all_patterns)
+                for file_path in changed_files
+            ):
+                continue
+            require_any = [str(pattern) for pattern in rule.get("require_any_of", [])]
+            if require_any and not any(
+                any(pattern_matches(file_path, pattern) for pattern in require_any)
+                for file_path in changed_files
+            ):
+                continue
+            return {"task": task, "rule": str(rule.get("name", task))}
+    return {"task": default_task, "rule": None}
 
 
 def is_release_task(config: dict[str, Any], task: str) -> bool:
@@ -349,9 +409,11 @@ def print_summary(result: dict[str, Any]) -> None:
 
 def verify(args: argparse.Namespace) -> int:
     config = load_home_config(args.home)
+    auto_task = bool(getattr(args, "auto_task", False))
+    if auto_task == bool(args.task):
+        raise SystemExit("verify requires exactly one of --task or --auto-task")
     repo = Path(args.repo or config["repo"]).expanduser().resolve()
     override_token = args.override_protected or os.environ.get("SKIPI_GUARD_OVERRIDE_TOKEN", "")
-    override_present = bool(override_token)
     errors: list[str] = []
 
     if not repo.exists():
@@ -370,9 +432,26 @@ def verify(args: argparse.Namespace) -> int:
         if diff_error:
             errors.append(diff_error)
 
-    task_known = args.task in configured_tasks(config) or is_release_task(config, args.task)
+    task = args.task
+    task_rule: str | None = None
+    if auto_task:
+        routed = resolve_task(config, changed_files)
+        task = routed["task"]
+        task_rule = routed["rule"]
+
+    auto_bootstrap_override = False
+    if (
+        not override_token
+        and getattr(args, "auto_bootstrap_override", False)
+        and changed_files == [BOOTSTRAP_WORKFLOW_PATH]
+    ):
+        override_token = BOOTSTRAP_WORKFLOW_TOKEN
+        auto_bootstrap_override = True
+    override_present = bool(override_token)
+
+    task_known = task in configured_tasks(config) or is_release_task(config, task)
     if not task_known:
-        errors.append(f"unknown or unconfigured task '{args.task}'")
+        errors.append(f"unknown or unconfigured task '{task}'")
 
     protected_touches = classify_paths(changed_files, config.get("protected_paths", []), "protected")
     release_touches = classify_paths(changed_files, config.get("release_sensitive_paths", []), "release-sensitive")
@@ -381,19 +460,19 @@ def verify(args: argparse.Namespace) -> int:
 
     if protected_touches and not override_present:
         errors.append("protected path touch requires --override-protected or SKIPI_GUARD_OVERRIDE_TOKEN")
-    if release_touches and not (override_present or is_release_task(config, args.task)):
+    if release_touches and not (override_present or is_release_task(config, task)):
         errors.append("release-sensitive path touch is blocked for this task")
 
-    additive_checks = additive_task_checks(config, args.task, changed_files)
-    effective_tasks = [args.task]
+    additive_checks = additive_task_checks(config, task, changed_files)
+    effective_tasks = [task]
     for check in additive_checks:
         if check["task"] not in effective_tasks:
             effective_tasks.append(check["task"])
 
-    allowed_patterns = effective_allowed_patterns(config, args.task, additive_checks)
+    allowed_patterns = effective_allowed_patterns(config, task, additive_checks)
     scope_violations: list[str] = []
     scope_checks: list[dict[str, Any]] = []
-    main_scope_check = scope_check_for_task(config, args.task, changed_files, allowed_patterns)
+    main_scope_check = scope_check_for_task(config, task, changed_files, allowed_patterns)
     if main_scope_check:
         scope_checks.append(main_scope_check)
     for check in additive_checks:
@@ -410,17 +489,19 @@ def verify(args: argparse.Namespace) -> int:
         errors.extend(override_policy_errors(config, override_token, changed_files))
 
     harnesses: list[dict[str, Any]] = []
-    for task in effective_tasks:
-        harnesses.extend(configured_harnesses(config, task))
-    if is_release_task(config, args.task) and not unique_harnesses(harnesses):
-        errors.append(f"release task '{args.task}' requires harness_commands")
+    for effective_task in effective_tasks:
+        harnesses.extend(configured_harnesses(config, effective_task))
+    if is_release_task(config, task) and not unique_harnesses(harnesses):
+        errors.append(f"release task '{task}' requires harness_commands")
     tests, test_errors = run_harness_commands(repo, unique_harnesses(harnesses), args.run_harness)
     errors.extend(test_errors)
 
     result: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "home": args.home,
-        "task": args.task,
+        "task": task,
+        "task_source": "auto" if auto_task else "explicit",
+        "task_rule": task_rule,
         "effective_tasks": effective_tasks,
         "repo": str(repo),
         "base": args.base,
@@ -436,15 +517,154 @@ def verify(args: argparse.Namespace) -> int:
         "additive_task_checks": additive_checks,
         "tests": tests,
         "override_present": override_present,
+        "auto_bootstrap_override": auto_bootstrap_override,
         "comparison": comparison,
         "status": "fail" if errors else "pass",
         "errors": errors,
     }
+    push_ref_info = getattr(args, "push_ref_info", None)
+    if push_ref_info:
+        result["push_ref"] = push_ref_info
 
     if args.json:
         write_json(Path(args.json), result)
     print_summary(result)
     return 0 if result["status"] == "pass" else 1
+
+
+def pre_push_ref(args: argparse.Namespace) -> int:
+    """Validate one pushed ref from the pre-push stdin line.
+
+    base/head come from the pushed ref (stdin), never from the checkout HEAD
+    (SKI-INC-2026-07-16). Harnesses run against the pushed bytes in a
+    temporary detached worktree at local_sha.
+    """
+    config = load_home_config(args.home)
+    # Hooks run with GIT_DIR set relative to the repo root; drop it so git
+    # calls against the temporary pushed-bytes worktree resolve correctly.
+    for variable in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE"):
+        os.environ.pop(variable, None)
+    local_sha = args.local_sha
+    if is_zero_sha(local_sha):
+        print(f"Skipi Guard pre-push: skip ref deletion {args.remote_ref} (zero local sha)")
+        return 0
+    repo = Path(args.repo or config["repo"]).expanduser().resolve()
+    if not repo.exists() or not (repo / ".git").exists():
+        print(f"Skipi Guard pre-push: FAIL not a git repo: {repo}")
+        return 1
+    if not git_commit_exists(repo, local_sha):
+        print(f"Skipi Guard pre-push: FAIL pushed sha {local_sha} not found locally in {repo}")
+        return 1
+    base, base_mode, base_error = resolve_push_base(repo, local_sha, args.remote_sha)
+    if base is None:
+        print(f"Skipi Guard pre-push: FAIL cannot resolve base for {args.local_ref}: {base_error}")
+        return 1
+
+    json_path = args.json or f"/tmp/skipi-guard-pre-push-{args.home}.json"
+    staging = Path(tempfile.mkdtemp(prefix=f"skipi-guard-pre-push-{args.home}-"))
+    worktree = staging / "pushed"
+    worktree_added = False
+    try:
+        proc = run(["git", "-C", str(repo), "worktree", "add", "--detach", str(worktree), local_sha])
+        if proc.returncode != 0:
+            detail = proc.stderr.strip() or proc.stdout.strip() or "git worktree add failed"
+            print(f"Skipi Guard pre-push: FAIL cannot stage pushed bytes for {args.local_ref}: {detail}")
+            return 1
+        worktree_added = True
+        verify_args = argparse.Namespace(
+            home=args.home,
+            task=None,
+            auto_task=True,
+            base=base,
+            head=local_sha,
+            repo=str(worktree),
+            json=json_path,
+            run_harness=True,
+            override_protected=None,
+            auto_bootstrap_override=True,
+            push_ref_info={
+                "local_ref": args.local_ref,
+                "local_sha": local_sha,
+                "remote_ref": args.remote_ref,
+                "remote_sha": args.remote_sha,
+                "base_mode": base_mode,
+            },
+        )
+        return verify(verify_args)
+    finally:
+        if worktree_added:
+            run(["git", "-C", str(repo), "worktree", "remove", "--force", str(worktree)])
+        shutil.rmtree(staging, ignore_errors=True)
+
+
+def default_guard_bin() -> str:
+    return str(ROOT / "bin" / "skipi-guard")
+
+
+def render_hook(home: str, guard_bin: str | None = None) -> str:
+    load_home_config(home)  # fail fast on unknown homes
+    template = HOOK_TEMPLATE_PATH.read_text(encoding="utf-8")
+    rendered = template.replace("__SKIPI_GUARD_BIN__", guard_bin or default_guard_bin())
+    rendered = rendered.replace("__SKIPI_GUARD_HOME__", home)
+    if "__SKIPI_GUARD_" in rendered:
+        raise SystemExit("hook template contains unrendered placeholders")
+    return rendered
+
+
+def hook_path_for_repo(repo: Path) -> Path:
+    proc = run(["git", "-C", str(repo), "rev-parse", "--git-path", "hooks"])
+    if proc.returncode != 0:
+        raise SystemExit(proc.stderr.strip() or f"cannot resolve hooks dir for {repo}")
+    hooks_dir = Path(proc.stdout.strip())
+    if not hooks_dir.is_absolute():
+        hooks_dir = (repo / hooks_dir).resolve()
+    return hooks_dir / "pre-push"
+
+
+def resolve_hook_repo(args: argparse.Namespace) -> Path:
+    config = load_home_config(args.home)
+    repo = Path(args.repo or config["repo"]).expanduser().resolve()
+    if not repo.exists() or not (repo / ".git").exists():
+        raise SystemExit(f"not a git repo: {repo}")
+    return repo
+
+
+def sha256_hex(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def hooks_render(args: argparse.Namespace) -> int:
+    sys.stdout.write(render_hook(args.home, args.guard_bin))
+    return 0
+
+
+def hooks_install(args: argparse.Namespace) -> int:
+    repo = resolve_hook_repo(args)
+    rendered = render_hook(args.home, args.guard_bin)
+    hook_path = hook_path_for_repo(repo)
+    hook_path.parent.mkdir(parents=True, exist_ok=True)
+    hook_path.write_text(rendered, encoding="utf-8")
+    hook_path.chmod(0o755)
+    print(f"installed {hook_path} (home={args.home}, sha256={sha256_hex(rendered.encode('utf-8'))})")
+    return 0
+
+
+def hooks_check(args: argparse.Namespace) -> int:
+    repo = resolve_hook_repo(args)
+    rendered = render_hook(args.home, args.guard_bin).encode("utf-8")
+    hook_path = hook_path_for_repo(repo)
+    if not hook_path.exists():
+        print(f"MISSING {hook_path} (home={args.home}): no deployed pre-push hook")
+        return 1
+    deployed = hook_path.read_bytes()
+    if deployed == rendered:
+        print(f"MATCH {hook_path} (home={args.home}, sha256={sha256_hex(deployed)})")
+        return 0
+    print(
+        f"DRIFT {hook_path} (home={args.home}): "
+        f"deployed sha256={sha256_hex(deployed)} != render(canon) sha256={sha256_hex(rendered)}"
+    )
+    return 1
 
 
 def list_homes() -> int:
@@ -620,7 +840,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     verify_parser = subparsers.add_parser("verify", help="verify a home/task diff against stop-line config")
     verify_parser.add_argument("--home", required=True, help="configured Skipi home")
-    verify_parser.add_argument("--task", required=True, help="task key, for example plugin-host")
+    verify_parser.add_argument("--task", help="task key, for example plugin-host")
+    verify_parser.add_argument(
+        "--auto-task",
+        action="store_true",
+        help="resolve the task from the diff via declarative task_routing rules (exactly one of --task/--auto-task)",
+    )
     verify_parser.add_argument("--base", default="origin/main", help="base git ref")
     verify_parser.add_argument("--head", default="HEAD", help="head git ref")
     verify_parser.add_argument("--repo", help="override repo path for fixtures or dry-runs")
@@ -631,7 +856,52 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="TOKEN",
         help="explicit token acknowledging protected-path stop-line override; token is not written to JSON",
     )
+    verify_parser.add_argument(
+        "--auto-bootstrap-override",
+        action="store_true",
+        help=f"apply the {BOOTSTRAP_WORKFLOW_TOKEN} token when the diff is exactly {BOOTSTRAP_WORKFLOW_PATH}",
+    )
     verify_parser.set_defaults(func=verify)
+
+    pre_push_parser = subparsers.add_parser(
+        "pre-push-ref",
+        help="validate one pushed ref from a pre-push stdin line (base/head from the pushed ref, not checkout HEAD)",
+    )
+    pre_push_parser.add_argument("--home", required=True, help="configured Skipi home")
+    pre_push_parser.add_argument("--repo", help="repo being pushed; defaults to the configured home repo")
+    pre_push_parser.add_argument("--local-ref", required=True, help="local ref from pre-push stdin")
+    pre_push_parser.add_argument("--local-sha", required=True, help="local sha from pre-push stdin")
+    pre_push_parser.add_argument("--remote-ref", required=True, help="remote ref from pre-push stdin")
+    pre_push_parser.add_argument("--remote-sha", required=True, help="remote sha from pre-push stdin")
+    pre_push_parser.add_argument(
+        "--json",
+        help="write machine-readable guard result JSON (default /tmp/skipi-guard-pre-push-<home>.json)",
+    )
+    pre_push_parser.set_defaults(func=pre_push_ref)
+
+    hooks_parser = subparsers.add_parser("hooks", help="git-tracked pre-push hook canon: render, install, drift check")
+    hooks_subparsers = hooks_parser.add_subparsers(dest="hooks_command", required=True)
+
+    hooks_render_parser = hooks_subparsers.add_parser("render", help="print the canonical pre-push hook for a home")
+    hooks_render_parser.add_argument("--home", required=True, help="configured Skipi home")
+    hooks_render_parser.add_argument("--guard-bin", help="skipi-guard binary path baked into the hook (default: this checkout)")
+    hooks_render_parser.set_defaults(func=hooks_render)
+
+    hooks_install_parser = hooks_subparsers.add_parser(
+        "install", help="install the canonical pre-push hook into a home checkout"
+    )
+    hooks_install_parser.add_argument("--home", required=True, help="configured Skipi home")
+    hooks_install_parser.add_argument("--repo", help="target checkout; defaults to the configured home repo")
+    hooks_install_parser.add_argument("--guard-bin", help="skipi-guard binary path baked into the hook (default: this checkout)")
+    hooks_install_parser.set_defaults(func=hooks_install)
+
+    hooks_check_parser = hooks_subparsers.add_parser(
+        "check", help="fail (exit 1) when the deployed pre-push hook drifts from render(canon)"
+    )
+    hooks_check_parser.add_argument("--home", required=True, help="configured Skipi home")
+    hooks_check_parser.add_argument("--repo", help="target checkout; defaults to the configured home repo")
+    hooks_check_parser.add_argument("--guard-bin", help="skipi-guard binary path baked into the hook (default: this checkout)")
+    hooks_check_parser.set_defaults(func=hooks_check)
 
     homes_parser = subparsers.add_parser("list-homes", help="list configured homes")
     homes_parser.set_defaults(func=lambda _args: list_homes())
