@@ -69,6 +69,10 @@
       {
         "name": "management_presence_contract",
         "command": "node tests/management_presence_contract_harness.mjs"
+      },
+      {
+        "name": "management_theme_default",
+        "command": "node tests/management_theme_default_harness.mjs"
       }
     ],
     "provenance": [
@@ -80,7 +84,7 @@
   },
   "allowed_file_patterns": {
     "repo-meta": ["AGENTS.md", "CLAUDE.md"],
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/management_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/management_presence_contract_harness.mjs"],
+    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/management_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/management_presence_contract_harness.mjs", "tests/management_theme_default_harness.mjs"],
     "provenance": ["dist/index.html", "src-tauri/build.rs", "src-tauri/src/lib.rs", "tests/build_provenance_harness.mjs"]
   }
 }

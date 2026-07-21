@@ -74,6 +74,10 @@
         "command": "node tests/crewing_presence_contract_harness.mjs"
       },
       {
+        "name": "crewing_theme_default",
+        "command": "node tests/crewing_theme_default_harness.mjs"
+      },
+      {
         "name": "crewing_crew_flow_demo",
         "command": "node tests/crewing_crew_flow_demo_harness.mjs"
       }
@@ -113,6 +117,6 @@
   ],
   "allowed_file_patterns": {
     "repo-meta": ["AGENTS.md", "CLAUDE.md"],
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/crewing_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/crewing_presence_contract_harness.mjs", "tests/crewing_crew_flow_demo_harness.mjs"]
+    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/crewing_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/crewing_presence_contract_harness.mjs", "tests/crewing_crew_flow_demo_harness.mjs", "tests/crewing_theme_default_harness.mjs"]
   }
 }
