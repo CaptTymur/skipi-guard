@@ -29,15 +29,16 @@ Harness commands are not run by default:
 
 Protected-path overrides must use a recognized token bound to the selected home
 and its allowed file set. Unknown tokens fail closed. The token is not written
-to JSON.
+to JSON. Ambient `SKIPI_GUARD_OVERRIDE_TOKEN` does not authorize an override;
+pass a recognized token explicitly with `--override-protected`.
 
 ```bash
-SKIPI_GUARD_OVERRIDE_TOKEN=broker-presence-contracts-bootstrap \
-  /home/linux/Developer/skipi-guard/bin/skipi-guard verify \
+/home/linux/Developer/skipi-guard/bin/skipi-guard verify \
   --home broker \
   --task plugin-host \
   --base origin/main \
-  --head HEAD
+  --head HEAD \
+  --override-protected broker-presence-contracts-bootstrap
 ```
 
 ## JSON Contract

@@ -16,6 +16,7 @@ GUARD = ROOT / "bin" / "skipi-guard"
 TEMPLATE = ROOT / "templates" / "git-hooks" / "pre-push.skipi-guard.sh"
 ZERO_SHA = "0" * 40
 HOOKED_HOMES = ["seafarer", "crewing", "broker", "onboard", "management"]
+OVERRIDE_ENV = "SKIPI_GUARD_OVERRIDE_TOKEN"
 
 GUARD_LOADER = SourceFileLoader("skipi_guard_cli_hooks", str(GUARD))
 GUARD_SPEC = importlib.util.spec_from_loader(GUARD_LOADER.name, GUARD_LOADER)
@@ -68,21 +69,58 @@ BROKER_SEED = {
 
 
 class PrePushHookCanonTests(unittest.TestCase):
-    def run_git(self, repo: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
-        return subprocess.run(["git", "-C", str(repo), *args], text=True, capture_output=True, check=check)
+    def child_env(self, *, override_env: str | None = None) -> dict[str, str]:
+        env = os.environ.copy()
+        env.pop(OVERRIDE_ENV, None)
+        if override_env is not None:
+            env[OVERRIDE_ENV] = override_env
+        return env
+
+    def run_git(
+        self,
+        repo: Path,
+        *args: str,
+        check: bool = True,
+        env: dict[str, str] | None = None,
+    ) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ["git", "-C", str(repo), *args],
+            text=True,
+            capture_output=True,
+            check=check,
+            env=env if env is not None else self.child_env(),
+        )
 
     def rev(self, repo: Path, ref: str) -> str:
         return self.run_git(repo, "rev-parse", ref).stdout.strip()
 
     def run_guard(self, *args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
-        return subprocess.run([str(GUARD), *args], text=True, capture_output=True, cwd=cwd)
+        return subprocess.run(
+            [str(GUARD), *args],
+            text=True,
+            capture_output=True,
+            cwd=cwd,
+            env=self.child_env(),
+        )
 
     def make_fixture(self, root: Path, seed: dict[str, str]) -> tuple[Path, Path]:
         origin = root / "origin.git"
-        subprocess.run(["git", "init", "--bare", "-q", str(origin)], check=True, text=True, capture_output=True)
+        subprocess.run(
+            ["git", "init", "--bare", "-q", str(origin)],
+            check=True,
+            text=True,
+            capture_output=True,
+            env=self.child_env(),
+        )
         clone = root / "clone"
         clone.mkdir()
-        subprocess.run(["git", "init", "-q", "-b", "main", str(clone)], check=True, text=True, capture_output=True)
+        subprocess.run(
+            ["git", "init", "-q", "-b", "main", str(clone)],
+            check=True,
+            text=True,
+            capture_output=True,
+            env=self.child_env(),
+        )
         self.run_git(clone, "config", "user.email", "skipi-guard@example.invalid")
         self.run_git(clone, "config", "user.name", "Skipi Guard Fixture")
         self.commit_files(clone, "seed", seed)
@@ -127,6 +165,7 @@ class PrePushHookCanonTests(unittest.TestCase):
             text=True,
             capture_output=True,
             check=True,
+            env=self.child_env(),
         )
         return branch in proc.stdout
 
@@ -280,7 +319,13 @@ class PrePushHookCanonTests(unittest.TestCase):
             root = Path(tmp)
             repo = root / "repo"
             repo.mkdir()
-            subprocess.run(["git", "init", "-q", "-b", "main", str(repo)], check=True, text=True, capture_output=True)
+            subprocess.run(
+                ["git", "init", "-q", "-b", "main", str(repo)],
+                check=True,
+                text=True,
+                capture_output=True,
+                env=self.child_env(),
+            )
             self.run_git(repo, "config", "user.email", "skipi-guard@example.invalid")
             self.run_git(repo, "config", "user.name", "Skipi Guard Fixture")
             self.commit_files(repo, "seed", {"README.md": "# fixture\n"})
@@ -333,10 +378,33 @@ class PrePushHookCanonTests(unittest.TestCase):
                 stdin=subprocess.DEVNULL,
                 text=True,
                 capture_output=True,
+                env=self.child_env(),
             )
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
 
     # --- bootstrap override from the pushed diff ---------------------------
+
+    def test_inherited_recognized_env_does_not_authorize_canonical_hook(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-env-hook-") as tmp:
+            root = Path(tmp)
+            origin, clone = self.make_fixture(root, BROKER_SEED)
+            self.make_branch(
+                clone,
+                "presence-change",
+                "touch protected presence path",
+                {"presence-manifest.json": '{"contracts":[]}\n'},
+            )
+            self.install_canon_hook("broker", clone)
+            push = self.run_git(
+                clone,
+                "push",
+                "origin",
+                "presence-change",
+                check=False,
+                env=self.child_env(override_env="broker-presence-contracts-bootstrap"),
+            )
+            self.assertNotEqual(push.returncode, 0, push.stdout + push.stderr)
+            self.assertFalse(self.remote_has_branch(origin, "presence-change"))
 
     def test_bootstrap_override_applies_to_pushed_workflow_only_diff(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-guard-bootstrap-") as tmp:

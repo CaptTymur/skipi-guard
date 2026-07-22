@@ -413,7 +413,7 @@ def verify(args: argparse.Namespace) -> int:
     if auto_task == bool(args.task):
         raise SystemExit("verify requires exactly one of --task or --auto-task")
     repo = Path(args.repo or config["repo"]).expanduser().resolve()
-    override_token = args.override_protected or os.environ.get("SKIPI_GUARD_OVERRIDE_TOKEN", "")
+    override_token = args.override_protected or ""
     errors: list[str] = []
 
     if not repo.exists():
@@ -459,7 +459,7 @@ def verify(args: argparse.Namespace) -> int:
     release_changes = bool(release_touches)
 
     if protected_touches and not override_present:
-        errors.append("protected path touch requires --override-protected or SKIPI_GUARD_OVERRIDE_TOKEN")
+        errors.append("protected path touch requires --override-protected")
     if release_touches and not (override_present or is_release_task(config, task)):
         errors.append("release-sensitive path touch is blocked for this task")
 
