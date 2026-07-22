@@ -23,6 +23,21 @@ if GUARD_SPEC is None:
 GUARD_MODULE = importlib.util.module_from_spec(GUARD_SPEC)
 GUARD_LOADER.exec_module(GUARD_MODULE)
 
+THEME_HARNESS_ROUTES = {
+    "crewing": {
+        "path": "tests/crewing_theme_default_harness.mjs",
+        "name": "crewing_theme_default",
+    },
+    "onboard": {
+        "path": "tests/onboard_theme_default_harness.mjs",
+        "name": "onboard_theme_default",
+    },
+    "management": {
+        "path": "tests/management_theme_default_harness.mjs",
+        "name": "management_theme_default",
+    },
+}
+
 
 class SkipiGuardRegressionTests(unittest.TestCase):
     def child_env(self, *, override_env: str | None = None) -> dict[str, str]:
@@ -79,7 +94,8 @@ class SkipiGuardRegressionTests(unittest.TestCase):
         result_json: Path,
         *,
         home: str,
-        task: str,
+        task: str | None = None,
+        auto_task: bool = False,
         override: str | None = None,
         override_env: str | None = None,
     ) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
@@ -88,8 +104,6 @@ class SkipiGuardRegressionTests(unittest.TestCase):
             "verify",
             "--home",
             home,
-            "--task",
-            task,
             "--repo",
             str(repo),
             "--base",
@@ -99,6 +113,12 @@ class SkipiGuardRegressionTests(unittest.TestCase):
             "--json",
             str(result_json),
         ]
+        if auto_task:
+            command.append("--auto-task")
+        elif task:
+            command.extend(["--task", task])
+        else:
+            raise ValueError("task or auto_task is required")
         if override:
             command.extend(["--override-protected", override])
         proc = subprocess.run(
@@ -126,6 +146,75 @@ class SkipiGuardRegressionTests(unittest.TestCase):
             path.write_text(contents, encoding="utf-8")
         self.run_git(repo, "add", "-A")
         self.run_git(repo, "commit", "-q", "-m", message)
+
+    def test_theme_default_harness_routes_are_allowed_and_registered(self) -> None:
+        for home, route in THEME_HARNESS_ROUTES.items():
+            with self.subTest(home=home):
+                with tempfile.TemporaryDirectory(prefix=f"skipi-guard-{home}-theme-route-") as tmp:
+                    root = Path(tmp)
+                    repo = root / "repo"
+                    repo.mkdir()
+                    self.init_repo(repo)
+                    self.commit_files(repo, "seed theme surface", {"dist/index.html": "<main>dark</main>\n"})
+                    self.commit_files(
+                        repo,
+                        "switch default theme",
+                        {
+                            "dist/index.html": "<main>light</main>\n",
+                            route["path"]: "console.log('theme default ok');\n",
+                        },
+                    )
+
+                    proc, payload = self.run_home_guard(
+                        repo,
+                        root / "result.json",
+                        home=home,
+                        auto_task=True,
+                    )
+
+                self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+                self.assertEqual(payload["status"], "pass")
+                self.assertEqual(payload["task"], "plugin-host")
+                self.assertEqual(payload["changed_files"], ["dist/index.html", route["path"]])
+                self.assertEqual(payload["protected_paths_touched"], [])
+                self.assertFalse(payload["release_changes"])
+                self.assertEqual(payload["scope_violations"], [])
+                harnesses = {entry["name"]: entry["command"] for entry in payload["tests"]}
+                self.assertEqual(harnesses[route["name"]], f"node {route['path']}")
+
+    def test_theme_default_harness_routes_do_not_allow_unrelated_paths(self) -> None:
+        for home, route in THEME_HARNESS_ROUTES.items():
+            with self.subTest(home=home):
+                with tempfile.TemporaryDirectory(prefix=f"skipi-guard-{home}-theme-negative-") as tmp:
+                    root = Path(tmp)
+                    repo = root / "repo"
+                    repo.mkdir()
+                    self.init_repo(repo)
+                    self.commit_files(repo, "seed theme surface", {"dist/index.html": "<main>dark</main>\n"})
+                    self.commit_files(
+                        repo,
+                        "theme plus unrelated source",
+                        {
+                            "dist/index.html": "<main>light</main>\n",
+                            route["path"]: "console.log('theme default ok');\n",
+                            "src/unreviewed.js": "console.log('must stay blocked');\n",
+                        },
+                    )
+
+                    proc, payload = self.run_home_guard(
+                        repo,
+                        root / "result.json",
+                        home=home,
+                        auto_task=True,
+                    )
+
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertEqual(payload["status"], "fail")
+                self.assertEqual(payload["task"], "plugin-host")
+                self.assertEqual(payload["scope_violations"], ["src/unreviewed.js"])
+                self.assertIn("changes outside allowed patterns for task 'plugin-host'", payload["errors"])
+                self.assertEqual(payload["protected_paths_touched"], [])
+                self.assertFalse(payload["release_changes"])
 
     def test_bare_file_pattern_does_not_match_directory_child(self) -> None:
         self.assertTrue(GUARD_MODULE.pattern_matches("package.json", "package.json"))
@@ -314,6 +403,7 @@ class SkipiGuardRegressionTests(unittest.TestCase):
                 "crewing_plugin_isolation",
                 "shared_host_runtime_isolation",
                 "crewing_presence_contract",
+                "crewing_theme_default",
                 "crewing_crew_flow_demo",
             },
         )

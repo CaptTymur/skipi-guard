@@ -67,6 +67,10 @@
       {
         "name": "onboard_presence_contract",
         "command": "node tests/onboard_presence_contract_harness.mjs"
+      },
+      {
+        "name": "onboard_theme_default",
+        "command": "node tests/onboard_theme_default_harness.mjs"
       }
     ],
     "provenance": [
@@ -78,6 +82,6 @@
   },
   "allowed_file_patterns": {
     "repo-meta": ["AGENTS.md", "CLAUDE.md"],
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/plugin_isolation_harness.mjs", "tests/apps_launcher_harness.mjs", "presence-manifest.json", "tests/onboard_presence_contract_harness.mjs"]
+    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/plugin_isolation_harness.mjs", "tests/apps_launcher_harness.mjs", "presence-manifest.json", "tests/onboard_presence_contract_harness.mjs", "tests/onboard_theme_default_harness.mjs"]
   }
 }
