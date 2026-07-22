@@ -28,6 +28,12 @@
       "task": "settings-adopt",
       "when_all_files_in": ["dist/index.html", "dist/skipi-settings*", "dist/SETTINGS_VERSION", "tests/unified_settings_fallback_harness.mjs"],
       "require_any_of": ["dist/skipi-settings*"]
+    },
+    {
+      "name": "publication-infra routing",
+      "task": "publication-infra",
+      "when_all_files_in": [".github/workflows/skipi-guard.yml", "scripts/publish-rf-mirror.sh", "scripts/prepare-rf-mirror.sh", "scripts/RF_MIRROR_PUBLISH.md", "tests/rf_mirror_publish_contract_harness.mjs"],
+      "require_any_of": ["scripts/publish-rf-mirror.sh"]
     }
   ],
   "protected_paths": [
@@ -153,6 +159,12 @@
         "command": "node tests/build_provenance_harness.mjs"
       }
     ],
+    "publication-infra": [
+      {
+        "name": "seafarer_rf_mirror_publish_contract",
+        "command": "node tests/rf_mirror_publish_contract_harness.mjs"
+      }
+    ],
     "settings-adopt": [
       {
         "name": "seafarer_bundled_plugin_isolation",
@@ -185,6 +197,7 @@
     "plugin-host": ["dist/index.html", "dist/plugin-host-ui.js", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "tests/bundled_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/seafarer_presence_contract_harness.mjs", "tests/seafarer_theme_default_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs", "tests/plugin_remote_over_bundled_harness.mjs"],
     "demo-vault": ["dist/index.html", "src-tauri/resources/demo-vault.zip", "src-tauri/src/db.rs", "tests/demo_vault_contract_harness.mjs"],
     "contract-sync": ["dist/index.html", "dist/plugin-host-ui.js", "src-tauri/resources/demo-vault.zip", "src-tauri/src/db.rs", "tests/demo_vault_contract_harness.mjs", "tests/plugin_remote_over_bundled_harness.mjs"],
+    "publication-infra": [".github/workflows/skipi-guard.yml", "scripts/publish-rf-mirror.sh", "scripts/prepare-rf-mirror.sh", "scripts/RF_MIRROR_PUBLISH.md", "tests/rf_mirror_publish_contract_harness.mjs"],
     "settings-adopt": ["dist/index.html", "dist/skipi-settings*", "dist/SETTINGS_VERSION", "tests/unified_settings_fallback_harness.mjs"],
     "release": ["dist/index.html"]
   }
