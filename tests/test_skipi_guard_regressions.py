@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import importlib.util
 import json
 import os
@@ -8,11 +9,13 @@ import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 from importlib.machinery import SourceFileLoader
 
 
 ROOT = Path(__file__).resolve().parents[1]
 GUARD = ROOT / "bin" / "skipi-guard"
+OVERRIDE_ENV = "SKIPI_GUARD_OVERRIDE_TOKEN"
 GUARD_LOADER = SourceFileLoader("skipi_guard_cli", str(GUARD))
 GUARD_SPEC = importlib.util.spec_from_loader(GUARD_LOADER.name, GUARD_LOADER)
 if GUARD_SPEC is None:
@@ -37,8 +40,21 @@ THEME_HARNESS_ROUTES = {
 
 
 class SkipiGuardRegressionTests(unittest.TestCase):
+    def child_env(self, *, override_env: str | None = None) -> dict[str, str]:
+        env = os.environ.copy()
+        env.pop(OVERRIDE_ENV, None)
+        if override_env is not None:
+            env[OVERRIDE_ENV] = override_env
+        return env
+
     def run_git(self, repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
-        return subprocess.run(["git", "-C", str(repo), *args], text=True, capture_output=True, check=True)
+        return subprocess.run(
+            ["git", "-C", str(repo), *args],
+            text=True,
+            capture_output=True,
+            check=True,
+            env=self.child_env(),
+        )
 
     def init_repo(self, repo: Path) -> None:
         self.run_git(repo, "init", "-q")
@@ -67,6 +83,7 @@ class SkipiGuardRegressionTests(unittest.TestCase):
             ],
             text=True,
             capture_output=True,
+            env=self.child_env(),
         )
         with result_json.open("r", encoding="utf-8") as handle:
             return proc, json.load(handle)
@@ -108,7 +125,7 @@ class SkipiGuardRegressionTests(unittest.TestCase):
             command,
             text=True,
             capture_output=True,
-            env={**os.environ, **({"SKIPI_GUARD_OVERRIDE_TOKEN": override_env} if override_env else {})},
+            env=self.child_env(override_env=override_env),
         )
         with result_json.open("r", encoding="utf-8") as handle:
             return proc, json.load(handle)
@@ -485,26 +502,124 @@ class SkipiGuardRegressionTests(unittest.TestCase):
         errors = GUARD_MODULE.override_policy_errors(config, token, ["sneaky_payload.txt"])
         self.assertTrue(any("limited to its bootstrap file set" in error for error in errors))
 
-    def test_unknown_env_override_token_fails_closed(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="skipi-guard-unknown-env-override-") as tmp:
+    def test_recognized_env_override_does_not_remove_protected_stop_line(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-env-protected-") as tmp:
             root = Path(tmp)
             repo = root / "repo"
             repo.mkdir()
             self.init_repo(repo)
             self.commit_files(repo, "seed", {"README.md": "# fixture\n"})
-            self.commit_files(repo, "protected path", {"keys/signing.pem": "not-a-real-key\n"})
+            self.commit_files(repo, "protected path", {"presence-manifest.json": '{"contracts":[]}\n'})
+
+            proc, payload = self.run_home_guard(
+                repo,
+                root / "result.json",
+                home="broker",
+                task="release",
+                override_env="broker-presence-contracts-bootstrap",
+            )
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertIn("protected path touch requires --override-protected", payload["errors"])
+
+    def test_recognized_env_override_does_not_remove_release_stop_line(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-env-release-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.commit_files(repo, "seed", {"README.md": "# fixture\n"})
+            self.commit_files(
+                repo,
+                "release-sensitive path",
+                {".github/workflows/skipi-guard.yml": "name: skipi-guard\n"},
+            )
+            result_json = root / "result.json"
+            config = {
+                "home": "broker",
+                "release_tasks": ["release"],
+                "protected_paths": [],
+                "release_sensitive_paths": [
+                    {
+                        "name": "release workflow fixture",
+                        "patterns": [".github/workflows/skipi-guard.yml"],
+                    }
+                ],
+                "harness_commands": {"plugin-host": []},
+                "allowed_file_patterns": {"plugin-host": [".github/workflows/skipi-guard.yml"]},
+            }
+            args = argparse.Namespace(
+                home="broker",
+                task="plugin-host",
+                auto_task=False,
+                repo=str(repo),
+                base="HEAD~1",
+                head="HEAD",
+                json=str(result_json),
+                run_harness=False,
+                override_protected=None,
+                auto_bootstrap_override=False,
+            )
+            controlled_env = self.child_env(override_env="skipi-guard-workflow-bootstrap")
+            with (
+                patch.object(GUARD_MODULE, "load_home_config", return_value=config),
+                patch.object(GUARD_MODULE, "print_summary"),
+                patch.dict(os.environ, controlled_env, clear=True),
+            ):
+                returncode = GUARD_MODULE.verify(args)
+            with result_json.open("r", encoding="utf-8") as handle:
+                payload = json.load(handle)
+
+        self.assertEqual(returncode, 1)
+        self.assertEqual(payload["status"], "fail")
+        self.assertIn("release-sensitive path touch is blocked for this task", payload["errors"])
+
+    def test_recognized_env_override_does_not_remove_scope_stop_line(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-env-scope-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.commit_files(repo, "seed", {"README.md": "# fixture\n"})
+            self.commit_files(
+                repo,
+                "out-of-scope workflow",
+                {".github/workflows/skipi-guard.yml": "name: skipi-guard\n"},
+            )
 
             proc, payload = self.run_home_guard(
                 repo,
                 root / "result.json",
                 home="broker",
                 task="plugin-host",
-                override_env="env-junk",
+                override_env="broker-presence-contracts-bootstrap",
             )
 
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
         self.assertEqual(payload["status"], "fail")
-        self.assertIn("unknown override token", payload["errors"])
+        self.assertIn("changes outside allowed patterns for task 'plugin-host'", payload["errors"])
+
+    def test_recognized_env_override_does_not_set_override_present(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-env-override-present-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.commit_files(repo, "seed", {"dist/index.html": "<main>seed</main>\n"})
+            self.commit_files(repo, "host change", {"dist/index.html": "<main>changed</main>\n"})
+
+            proc, payload = self.run_home_guard(
+                repo,
+                root / "result.json",
+                home="broker",
+                task="plugin-host",
+                override_env="broker-theme-default-bootstrap",
+            )
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertFalse(payload["override_present"])
 
     def test_presence_modification_override_allows_presence_only_files(self) -> None:
         with tempfile.TemporaryDirectory(prefix="skipi-guard-presence-only-") as tmp:
