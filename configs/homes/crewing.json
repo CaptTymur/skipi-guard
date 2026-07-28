@@ -33,6 +33,12 @@
       "task": "settings-adopt",
       "when_all_files_in": ["dist/SETTINGS_VERSION", "dist/index.html", "dist/skipi-settings.css", "dist/skipi-settings.js", "tests/crewing_theme_default_harness.mjs"],
       "require_any_of": ["dist/SETTINGS_VERSION", "dist/skipi-settings.css", "dist/skipi-settings.js"]
+    },
+    {
+      "name": "theme-default routing",
+      "task": "theme-default",
+      "when_all_files_in": ["dist/index.html", "tests/crewing_theme_default_harness.mjs"],
+      "require_any_of": ["tests/crewing_theme_default_harness.mjs"]
     }
   ],
   "protected_paths": [
@@ -86,10 +92,6 @@
         "command": "node tests/crewing_presence_contract_harness.mjs"
       },
       {
-        "name": "crewing_theme_default",
-        "command": "node tests/crewing_theme_default_harness.mjs"
-      },
-      {
         "name": "crewing_crew_flow_demo",
         "command": "node tests/crewing_crew_flow_demo_harness.mjs"
       }
@@ -139,6 +141,28 @@
         "name": "crewing_crew_flow_demo",
         "command": "node tests/crewing_crew_flow_demo_harness.mjs"
       }
+    ],
+    "theme-default": [
+      {
+        "name": "crewing_plugin_isolation",
+        "command": "node tests/crewing_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "shared_host_runtime_isolation",
+        "command": "node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs"
+      },
+      {
+        "name": "crewing_presence_contract",
+        "command": "node tests/crewing_presence_contract_harness.mjs"
+      },
+      {
+        "name": "crewing_theme_default",
+        "command": "node tests/crewing_theme_default_harness.mjs"
+      },
+      {
+        "name": "crewing_crew_flow_demo",
+        "command": "node tests/crewing_crew_flow_demo_harness.mjs"
+      }
     ]
   },
   "additive_task_checks": [
@@ -153,6 +177,7 @@
     "repo-meta": ["AGENTS.md", "CLAUDE.md"],
     "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/crewing_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/crewing_presence_contract_harness.mjs", "tests/crewing_crew_flow_demo_harness.mjs", "tests/crewing_theme_default_harness.mjs"],
     "settings-adopt": ["dist/SETTINGS_VERSION", "dist/index.html", "dist/skipi-settings.css", "dist/skipi-settings.js", "tests/crewing_theme_default_harness.mjs"],
+    "theme-default": ["dist/index.html", "tests/crewing_theme_default_harness.mjs"],
     "release": ["dist/index.html"]
   }
 }

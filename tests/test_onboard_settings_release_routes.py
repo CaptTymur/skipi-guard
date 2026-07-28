@@ -265,6 +265,19 @@ class OnboardSettingsReleaseRoutesTests(unittest.TestCase):
         }
         self.assertEqual(settings_adopt, plugin_host | {SETTINGS_HARNESS})
 
+    def test_no_task_references_absent_theme_harness(self) -> None:
+        """Defect Д1: tests/onboard_theme_default_harness.mjs is absent from
+        onboard main and is not part of any onboard route's file set (the
+        settings-adopt allowlist does not include it), so no diff can carry it
+        into the pushed tree. Any task referencing it would fail every push
+        with MODULE_NOT_FOUND. Re-add together with the file (theme-default
+        route, precedent crewing/management)."""
+        with CONFIG_PATH.open("r", encoding="utf-8") as handle:
+            config = json.load(handle)
+        for task, entries in config["harness_commands"].items():
+            names = {entry["name"] for entry in entries}
+            self.assertNotIn("onboard_theme_default", names, task)
+
     def test_release_allowlist_is_exactly_the_version_banner(self) -> None:
         with CONFIG_PATH.open("r", encoding="utf-8") as handle:
             config = json.load(handle)

@@ -79,6 +79,7 @@ class CrewingSettingsReleaseRoutesTests(unittest.TestCase):
         task: str | None = None,
         auto_task: bool = False,
         override: str | None = None,
+        auto_bootstrap_override: bool = False,
     ) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
         command = [
             str(GUARD),
@@ -102,6 +103,8 @@ class CrewingSettingsReleaseRoutesTests(unittest.TestCase):
             raise ValueError("task or auto_task is required")
         if override:
             command.extend(["--override-protected", override])
+        if auto_bootstrap_override:
+            command.append("--auto-bootstrap-override")
         proc = subprocess.run(
             command,
             text=True,
@@ -244,9 +247,12 @@ class CrewingSettingsReleaseRoutesTests(unittest.TestCase):
         allowed = config["allowed_file_patterns"]["settings-adopt"]
         self.assertEqual(sorted(allowed), sorted(SETTINGS_ADOPT_SET))
 
-    def test_settings_adopt_runs_the_full_plugin_host_harness_set(self) -> None:
-        """BACKLOG п.47 precedent (broker): settings-adopt is fail-closed
-        with the same harness set as plugin-host."""
+    def test_settings_adopt_runs_plugin_host_harnesses_plus_theme_default(self) -> None:
+        """BACKLOG п.47 precedent (broker): settings-adopt is fail-closed with
+        the plugin-host harness set, plus the theme-default harness — the
+        settings-adopt candidate diff carries the harness file, while
+        plugin-host (default task, reached by any main-based diff) must not
+        reference a file absent from crewing main (defect Д1)."""
         with CONFIG_PATH.open("r", encoding="utf-8") as handle:
             config = json.load(handle)
         plugin_host = {
@@ -257,7 +263,129 @@ class CrewingSettingsReleaseRoutesTests(unittest.TestCase):
             (entry["name"], entry["command"])
             for entry in config["harness_commands"]["settings-adopt"]
         }
-        self.assertEqual(settings_adopt, plugin_host)
+        theme_harness = ("crewing_theme_default", "node tests/crewing_theme_default_harness.mjs")
+        self.assertNotIn(theme_harness, plugin_host)
+        self.assertEqual(settings_adopt, plugin_host | {theme_harness})
+
+    def test_plugin_host_and_release_do_not_reference_absent_theme_harness(self) -> None:
+        """Defect Д1: tests/crewing_theme_default_harness.mjs exists only in
+        the theme branch, not on crewing main. Any task reachable by a
+        main-based diff (plugin-host as default; release, which also inherits
+        plugin-host harnesses) must not execute it, otherwise every main-based
+        push fails with MODULE_NOT_FOUND (live repro: crewing pin-bump push
+        rejected by the pre-push hook)."""
+        with CONFIG_PATH.open("r", encoding="utf-8") as handle:
+            config = json.load(handle)
+        for task in ("plugin-host", "release", "provenance"):
+            names = {entry["name"] for entry in config["harness_commands"][task]}
+            self.assertNotIn("crewing_theme_default", names, task)
+
+    def test_workflow_pin_bump_routes_to_plugin_host_without_theme_harness(self) -> None:
+        """Live repro of Д1: a one-file guard-pin bump of
+        .github/workflows/skipi-guard.yml (bootstrap override set) lands in the
+        default plugin-host task; its configured harnesses must all exist on
+        crewing main (the theme harness does not, so it must not be there)."""
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-pin-bump-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.commit_files(
+                repo,
+                "bump skipi-guard pin",
+                {".github/workflows/skipi-guard.yml": "name: skipi-guard # pin e04dfab3\n"},
+            )
+
+            proc, payload = self.run_guard(
+                repo, root / "result.json", auto_task=True, auto_bootstrap_override=True
+            )
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertEqual(payload["task"], "plugin-host")
+        harnesses = {entry["name"] for entry in payload["tests"]}
+        self.assertNotIn("crewing_theme_default", harnesses)
+        self.assertIn("crewing_plugin_isolation", harnesses)
+        self.assertIn("crewing_presence_contract", harnesses)
+        self.assertIn("crewing_crew_flow_demo", harnesses)
+
+    # --- theme-default route ------------------------------------------------
+
+    def theme_default_change(self) -> dict[str, str]:
+        # Literal file set of the crewing light-theme candidate
+        # (theme-crewing-20260721 @ 59f06243, diff vs crewing main 79070627).
+        return {
+            "dist/index.html": "appVersion: '0.4.133' /* light theme default */\n",
+            "tests/crewing_theme_default_harness.mjs": "// light theme default harness\n",
+        }
+
+    def test_auto_routes_exact_theme_default_set(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-theme-route-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.commit_files(repo, "light theme by default", self.theme_default_change())
+
+            proc, payload = self.run_guard(repo, root / "result.json", auto_task=True)
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertEqual(payload["task"], "theme-default")
+        self.assertEqual(payload["task_rule"], "theme-default routing")
+        self.assertEqual(payload["scope_violations"], [])
+        self.assertFalse(payload["release_changes"])
+        harnesses = {entry["name"]: entry["command"] for entry in payload["tests"]}
+        self.assertEqual(
+            harnesses["crewing_theme_default"], "node tests/crewing_theme_default_harness.mjs"
+        )
+        self.assertIn("crewing_plugin_isolation", harnesses)
+        self.assertIn("crewing_presence_contract", harnesses)
+        self.assertIn("crewing_crew_flow_demo", harnesses)
+
+    def test_theme_default_set_plus_unrelated_source_stays_blocked(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-theme-scope-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            updates = self.theme_default_change()
+            updates["src/unreviewed.js"] = "console.log('must stay blocked');\n"
+            self.commit_files(repo, "theme plus unrelated source", updates)
+
+            proc, payload = self.run_guard(repo, root / "result.json", auto_task=True)
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertEqual(payload["task"], "plugin-host")
+        self.assertIn("src/unreviewed.js", payload["scope_violations"])
+        self.assertIn("changes outside allowed patterns for task 'plugin-host'", payload["errors"])
+
+    def test_index_only_diff_stays_plugin_host_without_theme_harness(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-index-only-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.commit_files(
+                repo, "host change", {"dist/index.html": "appVersion: '0.4.133' /* host */\n"}
+            )
+
+            proc, payload = self.run_guard(repo, root / "result.json", auto_task=True)
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertEqual(payload["task"], "plugin-host")
+        harnesses = {entry["name"] for entry in payload["tests"]}
+        self.assertNotIn("crewing_theme_default", harnesses)
+
+    def test_theme_default_allowlist_is_exactly_the_candidate_file_set(self) -> None:
+        with CONFIG_PATH.open("r", encoding="utf-8") as handle:
+            config = json.load(handle)
+        self.assertEqual(
+            config["allowed_file_patterns"]["theme-default"],
+            ["dist/index.html", "tests/crewing_theme_default_harness.mjs"],
+        )
 
     def test_release_allowlist_is_exactly_the_version_banner(self) -> None:
         with CONFIG_PATH.open("r", encoding="utf-8") as handle:

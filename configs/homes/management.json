@@ -49,6 +49,12 @@
         "tests/management_theme_default_harness.mjs"
       ],
       "require_any_of": ["dist/SETTINGS_VERSION", "dist/settings-adapter.js", "dist/skipi-settings.css", "dist/skipi-settings.js"]
+    },
+    {
+      "name": "theme-default routing",
+      "task": "theme-default",
+      "when_all_files_in": ["dist/index.html", "tests/management_theme_default_harness.mjs"],
+      "require_any_of": ["tests/management_theme_default_harness.mjs"]
     }
   ],
   "protected_paths": [
@@ -96,10 +102,6 @@
       {
         "name": "management_presence_contract",
         "command": "node tests/management_presence_contract_harness.mjs"
-      },
-      {
-        "name": "management_theme_default",
-        "command": "node tests/management_theme_default_harness.mjs"
       }
     ],
     "provenance": [
@@ -132,12 +134,22 @@
         "command": "node tests/management_presence_contract_harness.mjs"
       },
       {
-        "name": "management_theme_default",
-        "command": "node tests/management_theme_default_harness.mjs"
-      },
-      {
         "name": "management_build_provenance",
         "command": "node tests/build_provenance_harness.mjs"
+      }
+    ],
+    "theme-default": [
+      {
+        "name": "management_plugin_isolation",
+        "command": "node tests/management_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "management_presence_contract",
+        "command": "node tests/management_presence_contract_harness.mjs"
+      },
+      {
+        "name": "management_theme_default",
+        "command": "node tests/management_theme_default_harness.mjs"
       }
     ]
   },
@@ -161,6 +173,7 @@
       "tests/management_presence_contract_harness.mjs",
       "tests/management_theme_default_harness.mjs"
     ],
+    "theme-default": ["dist/index.html", "tests/management_theme_default_harness.mjs"],
     "release": ["dist/index.html"]
   }
 }
