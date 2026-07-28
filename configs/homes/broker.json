@@ -18,6 +18,12 @@
       "when_all_files_in": ["AGENTS.md", "CLAUDE.md"]
     },
     {
+      "name": "canonical version-bump routing",
+      "task": "release",
+      "when_all_files_in": ["dist/index.html", "src-tauri/Cargo.toml", "src-tauri/Cargo.lock", "src-tauri/tauri.conf.json"],
+      "require_any_of": ["src-tauri/Cargo.toml", "src-tauri/Cargo.lock", "src-tauri/tauri.conf.json"]
+    },
+    {
       "name": "settings-adopt routing",
       "task": "settings-adopt",
       "when_all_files_in": ["dist/index.html", "dist/skipi-settings*"],
@@ -94,6 +100,20 @@
         "name": "broker_presence_contract",
         "command": "node tests/broker_presence_contract_harness.mjs"
       }
+    ],
+    "release": [
+      {
+        "name": "broker_plugin_isolation",
+        "command": "node tests/broker_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "broker_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "broker_presence_contract",
+        "command": "node tests/broker_presence_contract_harness.mjs"
+      }
     ]
   },
   "allowed_file_patterns": {
@@ -108,6 +128,7 @@
     "settings-adopt": [
       "dist/index.html",
       "dist/skipi-settings*"
-    ]
+    ],
+    "release": ["dist/index.html"]
   }
 }
