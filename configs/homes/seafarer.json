@@ -27,7 +27,7 @@
       "name": "settings-adopt routing",
       "task": "settings-adopt",
       "when_all_files_in": ["dist/index.html", "dist/skipi-settings*", "dist/SETTINGS_VERSION", "tests/unified_settings_fallback_harness.mjs"],
-      "require_any_of": ["dist/skipi-settings*"]
+      "require_any_of": ["dist/skipi-settings*", "tests/unified_settings_fallback_harness.mjs"]
     },
     {
       "name": "publication-infra routing",

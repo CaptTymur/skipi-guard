@@ -23,18 +23,30 @@ if GUARD_SPEC is None:
 GUARD_MODULE = importlib.util.module_from_spec(GUARD_SPEC)
 GUARD_LOADER.exec_module(GUARD_MODULE)
 
+# Homes with a declarative theme-default route: the theme harness file is
+# guaranteed in the pushed tree (require_any_of), so the harness is fail-closed
+# and satisfiable. Onboard has no theme-default route yet: its theme harness
+# file is absent from onboard main, so no task may reference it (defect Д1 of
+# skipi-guard#35 config state; re-add together with the file).
 THEME_HARNESS_ROUTES = {
     "crewing": {
         "path": "tests/crewing_theme_default_harness.mjs",
         "name": "crewing_theme_default",
-    },
-    "onboard": {
-        "path": "tests/onboard_theme_default_harness.mjs",
-        "name": "onboard_theme_default",
+        "task": "theme-default",
+        "rule": "theme-default routing",
     },
     "management": {
         "path": "tests/management_theme_default_harness.mjs",
         "name": "management_theme_default",
+        "task": "theme-default",
+        "rule": "theme-default routing",
+    },
+}
+
+THEME_HARNESS_PENDING = {
+    "onboard": {
+        "path": "tests/onboard_theme_default_harness.mjs",
+        "name": "onboard_theme_default",
     },
 }
 
@@ -174,7 +186,8 @@ class SkipiGuardRegressionTests(unittest.TestCase):
 
                 self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
                 self.assertEqual(payload["status"], "pass")
-                self.assertEqual(payload["task"], "plugin-host")
+                self.assertEqual(payload["task"], route["task"])
+                self.assertEqual(payload["task_rule"], route["rule"])
                 self.assertEqual(payload["changed_files"], ["dist/index.html", route["path"]])
                 self.assertEqual(payload["protected_paths_touched"], [])
                 self.assertFalse(payload["release_changes"])
@@ -182,8 +195,20 @@ class SkipiGuardRegressionTests(unittest.TestCase):
                 harnesses = {entry["name"]: entry["command"] for entry in payload["tests"]}
                 self.assertEqual(harnesses[route["name"]], f"node {route['path']}")
 
+    def test_pending_theme_homes_do_not_reference_absent_harness_files(self) -> None:
+        """Defect Д1 (config state after skipi-guard#35): a task whose diff does
+        not guarantee the harness file in the pushed tree must not run that
+        harness — the file is absent on the home's main, so every main-based
+        push fails with MODULE_NOT_FOUND. Re-add together with the file."""
+        for home, route in THEME_HARNESS_PENDING.items():
+            with self.subTest(home=home):
+                config = GUARD_MODULE.load_home_config(home)
+                for task, entries in config.get("harness_commands", {}).items():
+                    names = {entry["name"] for entry in entries}
+                    self.assertNotIn(route["name"], names, f"{home}/{task}")
+
     def test_theme_default_harness_routes_do_not_allow_unrelated_paths(self) -> None:
-        for home, route in THEME_HARNESS_ROUTES.items():
+        for home, route in {**THEME_HARNESS_ROUTES, **THEME_HARNESS_PENDING}.items():
             with self.subTest(home=home):
                 with tempfile.TemporaryDirectory(prefix=f"skipi-guard-{home}-theme-negative-") as tmp:
                     root = Path(tmp)
@@ -397,13 +422,16 @@ class SkipiGuardRegressionTests(unittest.TestCase):
         self.assertEqual(payload["status"], "pass")
         self.assertEqual(payload["effective_tasks"], ["plugin-host"])
         harnesses = {entry["name"] for entry in payload["tests"]}
+        # crewing_theme_default is intentionally absent: its harness file is
+        # not on crewing main, so plugin-host (the default task, reached by any
+        # main-based diff) must not execute it (defect Д1). It runs in the
+        # theme-default and settings-adopt tasks, whose diffs carry the file.
         self.assertEqual(
             harnesses,
             {
                 "crewing_plugin_isolation",
                 "shared_host_runtime_isolation",
                 "crewing_presence_contract",
-                "crewing_theme_default",
                 "crewing_crew_flow_demo",
             },
         )

@@ -267,7 +267,12 @@ class ManagementSettingsReleaseRoutesTests(unittest.TestCase):
         allowed = config["allowed_file_patterns"]["settings-adopt"]
         self.assertEqual(sorted(allowed), sorted(SETTINGS_ADOPT_SET))
 
-    def test_settings_adopt_runs_the_full_plugin_host_harness_set(self) -> None:
+    def test_settings_adopt_runs_plugin_host_harnesses_plus_theme_default(self) -> None:
+        """settings-adopt is fail-closed with the plugin-host harness set plus
+        the theme-default harness: the settings-adopt candidate diff carries
+        tests/management_theme_default_harness.mjs, while plugin-host (default
+        task, reached by any main-based diff) must not reference a file absent
+        from management main (defect Д1)."""
         with CONFIG_PATH.open("r", encoding="utf-8") as handle:
             config = json.load(handle)
         plugin_host = {
@@ -278,7 +283,84 @@ class ManagementSettingsReleaseRoutesTests(unittest.TestCase):
             (entry["name"], entry["command"])
             for entry in config["harness_commands"]["settings-adopt"]
         }
-        self.assertEqual(settings_adopt, plugin_host)
+        theme_harness = (
+            "management_theme_default",
+            "node tests/management_theme_default_harness.mjs",
+        )
+        self.assertNotIn(theme_harness, plugin_host)
+        self.assertEqual(settings_adopt, plugin_host | {theme_harness})
+
+    def test_plugin_host_and_release_do_not_reference_absent_theme_harness(self) -> None:
+        """Defect Д1: tests/management_theme_default_harness.mjs exists only in
+        the theme branch (theme-shipmgmt-20260721 @ 5b6f6fdf), not on
+        management main. Tasks reachable by a main-based diff (plugin-host as
+        default; release, which also inherits plugin-host harnesses) must not
+        execute it, otherwise every main-based push fails MODULE_NOT_FOUND."""
+        with CONFIG_PATH.open("r", encoding="utf-8") as handle:
+            config = json.load(handle)
+        for task in ("plugin-host", "release", "provenance"):
+            names = {entry["name"] for entry in config["harness_commands"][task]}
+            self.assertNotIn("management_theme_default", names, task)
+
+    # --- theme-default route ------------------------------------------------
+
+    def theme_default_change(self) -> dict[str, str]:
+        # Literal file set of the management light-theme candidate
+        # (theme-shipmgmt-20260721 @ 5b6f6fdf, diff vs management main af0f0c8e).
+        return {
+            "dist/index.html": 'version:"0.1.0"; managementCurrentTheme /* light default */\n',
+            "tests/management_theme_default_harness.mjs": "// light theme default harness\n",
+        }
+
+    def test_auto_routes_exact_theme_default_set(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-management-theme-route-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.commit_files(repo, "light theme by default", self.theme_default_change())
+
+            proc, payload = self.run_guard(repo, root / "result.json", auto_task=True)
+
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertEqual(payload["task"], "theme-default")
+        self.assertEqual(payload["task_rule"], "theme-default routing")
+        self.assertEqual(payload["scope_violations"], [])
+        self.assertFalse(payload["release_changes"])
+        harnesses = {entry["name"]: entry["command"] for entry in payload["tests"]}
+        self.assertEqual(
+            harnesses["management_theme_default"],
+            "node tests/management_theme_default_harness.mjs",
+        )
+        self.assertIn("management_plugin_isolation", harnesses)
+        self.assertIn("management_presence_contract", harnesses)
+
+    def test_theme_default_set_plus_unrelated_source_stays_blocked(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-management-theme-scope-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            updates = self.theme_default_change()
+            updates["src/unreviewed.js"] = "console.log('must stay blocked');\n"
+            self.commit_files(repo, "theme plus unrelated source", updates)
+
+            proc, payload = self.run_guard(repo, root / "result.json", auto_task=True)
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertEqual(payload["task"], "plugin-host")
+        self.assertIn("src/unreviewed.js", payload["scope_violations"])
+        self.assertIn("changes outside allowed patterns for task 'plugin-host'", payload["errors"])
+
+    def test_theme_default_allowlist_is_exactly_the_candidate_file_set(self) -> None:
+        with CONFIG_PATH.open("r", encoding="utf-8") as handle:
+            config = json.load(handle)
+        self.assertEqual(
+            config["allowed_file_patterns"]["theme-default"],
+            ["dist/index.html", "tests/management_theme_default_harness.mjs"],
+        )
 
     def test_release_allowlist_is_exactly_the_version_banner(self) -> None:
         with CONFIG_PATH.open("r", encoding="utf-8") as handle:

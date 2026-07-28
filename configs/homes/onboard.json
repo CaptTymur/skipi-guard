@@ -87,10 +87,6 @@
       {
         "name": "onboard_presence_contract",
         "command": "node tests/onboard_presence_contract_harness.mjs"
-      },
-      {
-        "name": "onboard_theme_default",
-        "command": "node tests/onboard_theme_default_harness.mjs"
       }
     ],
     "provenance": [
@@ -113,10 +109,6 @@
         "command": "node tests/onboard_presence_contract_harness.mjs"
       },
       {
-        "name": "onboard_theme_default",
-        "command": "node tests/onboard_theme_default_harness.mjs"
-      },
-      {
         "name": "onboard_settings_standard",
         "command": "node tests/settings_standard_harness.mjs"
       }
@@ -133,10 +125,6 @@
       {
         "name": "onboard_presence_contract",
         "command": "node tests/onboard_presence_contract_harness.mjs"
-      },
-      {
-        "name": "onboard_theme_default",
-        "command": "node tests/onboard_theme_default_harness.mjs"
       },
       {
         "name": "onboard_build_provenance",
