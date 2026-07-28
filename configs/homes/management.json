@@ -22,6 +22,33 @@
       "task": "provenance",
       "when_all_files_in": ["dist/index.html", "src-tauri/build.rs", "src-tauri/src/lib.rs", "tests/build_provenance_harness.mjs"],
       "require_any_of": ["src-tauri/build.rs", "src-tauri/src/lib.rs", "tests/build_provenance_harness.mjs"]
+    },
+    {
+      "name": "canonical version-bump routing",
+      "task": "release",
+      "when_all_files_in": ["dist/index.html", "src-tauri/Cargo.toml", "src-tauri/tauri.conf.json"],
+      "require_any_of": ["src-tauri/Cargo.toml", "src-tauri/tauri.conf.json"]
+    },
+    {
+      "name": "settings-adopt routing",
+      "task": "settings-adopt",
+      "when_all_files_in": [
+        "dist/SETTINGS_VERSION",
+        "dist/index.html",
+        "dist/settings-adapter.js",
+        "dist/skipi-settings.css",
+        "dist/skipi-settings.js",
+        "docs/settings-adoption-2026-07-19/CONFLICT-presence-contract.md",
+        "docs/settings-adoption-2026-07-19/README.md",
+        "docs/settings-adoption-2026-07-19/desktop-launched.png",
+        "docs/settings-adoption-2026-07-19/mobile-launched.png",
+        "docs/settings-adoption-2026-07-19/settings-connection-saved.png",
+        "docs/settings-adoption-2026-07-19/settings-general-company.png",
+        "presence-manifest.json",
+        "tests/management_presence_contract_harness.mjs",
+        "tests/management_theme_default_harness.mjs"
+      ],
+      "require_any_of": ["dist/SETTINGS_VERSION", "dist/settings-adapter.js", "dist/skipi-settings.css", "dist/skipi-settings.js"]
     }
   ],
   "protected_paths": [
@@ -80,11 +107,60 @@
         "name": "management_build_provenance",
         "command": "node tests/build_provenance_harness.mjs"
       }
+    ],
+    "settings-adopt": [
+      {
+        "name": "management_plugin_isolation",
+        "command": "node tests/management_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "management_presence_contract",
+        "command": "node tests/management_presence_contract_harness.mjs"
+      },
+      {
+        "name": "management_theme_default",
+        "command": "node tests/management_theme_default_harness.mjs"
+      }
+    ],
+    "release": [
+      {
+        "name": "management_plugin_isolation",
+        "command": "node tests/management_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "management_presence_contract",
+        "command": "node tests/management_presence_contract_harness.mjs"
+      },
+      {
+        "name": "management_theme_default",
+        "command": "node tests/management_theme_default_harness.mjs"
+      },
+      {
+        "name": "management_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      }
     ]
   },
   "allowed_file_patterns": {
     "repo-meta": ["AGENTS.md", "CLAUDE.md"],
     "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/management_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/management_presence_contract_harness.mjs", "tests/management_theme_default_harness.mjs"],
-    "provenance": ["dist/index.html", "src-tauri/build.rs", "src-tauri/src/lib.rs", "tests/build_provenance_harness.mjs"]
+    "provenance": ["dist/index.html", "src-tauri/build.rs", "src-tauri/src/lib.rs", "tests/build_provenance_harness.mjs"],
+    "settings-adopt": [
+      "dist/SETTINGS_VERSION",
+      "dist/index.html",
+      "dist/settings-adapter.js",
+      "dist/skipi-settings.css",
+      "dist/skipi-settings.js",
+      "docs/settings-adoption-2026-07-19/CONFLICT-presence-contract.md",
+      "docs/settings-adoption-2026-07-19/README.md",
+      "docs/settings-adoption-2026-07-19/desktop-launched.png",
+      "docs/settings-adoption-2026-07-19/mobile-launched.png",
+      "docs/settings-adoption-2026-07-19/settings-connection-saved.png",
+      "docs/settings-adoption-2026-07-19/settings-general-company.png",
+      "presence-manifest.json",
+      "tests/management_presence_contract_harness.mjs",
+      "tests/management_theme_default_harness.mjs"
+    ],
+    "release": ["dist/index.html"]
   }
 }

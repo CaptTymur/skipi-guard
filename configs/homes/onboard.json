@@ -16,6 +16,26 @@
       "name": "repo-meta routing",
       "task": "repo-meta",
       "when_all_files_in": ["AGENTS.md", "CLAUDE.md"]
+    },
+    {
+      "name": "canonical version-bump routing",
+      "task": "release",
+      "when_all_files_in": ["dist/index.html", "src-tauri/Cargo.toml", "src-tauri/Cargo.lock", "src-tauri/tauri.conf.json"],
+      "require_any_of": ["src-tauri/Cargo.toml", "src-tauri/Cargo.lock", "src-tauri/tauri.conf.json"]
+    },
+    {
+      "name": "settings-adopt routing",
+      "task": "settings-adopt",
+      "when_all_files_in": [
+        "UNIFIED_SETTINGS_DEFECTS.md",
+        "dist/SETTINGS_VERSION",
+        "dist/index.html",
+        "dist/skipi-onboard-settings-host.js",
+        "dist/skipi-settings.css",
+        "dist/skipi-settings.js",
+        "tests/settings_standard_harness.mjs"
+      ],
+      "require_any_of": ["dist/SETTINGS_VERSION", "dist/skipi-onboard-settings-host.js", "dist/skipi-settings.css", "dist/skipi-settings.js"]
     }
   ],
   "protected_paths": [
@@ -78,10 +98,64 @@
         "name": "onboard_build_provenance",
         "command": "node tests/build_provenance_harness.mjs"
       }
+    ],
+    "settings-adopt": [
+      {
+        "name": "onboard_plugin_isolation",
+        "command": "node tests/plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "onboard_apps_launcher",
+        "command": "node tests/apps_launcher_harness.mjs"
+      },
+      {
+        "name": "onboard_presence_contract",
+        "command": "node tests/onboard_presence_contract_harness.mjs"
+      },
+      {
+        "name": "onboard_theme_default",
+        "command": "node tests/onboard_theme_default_harness.mjs"
+      },
+      {
+        "name": "onboard_settings_standard",
+        "command": "node tests/settings_standard_harness.mjs"
+      }
+    ],
+    "release": [
+      {
+        "name": "onboard_plugin_isolation",
+        "command": "node tests/plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "onboard_apps_launcher",
+        "command": "node tests/apps_launcher_harness.mjs"
+      },
+      {
+        "name": "onboard_presence_contract",
+        "command": "node tests/onboard_presence_contract_harness.mjs"
+      },
+      {
+        "name": "onboard_theme_default",
+        "command": "node tests/onboard_theme_default_harness.mjs"
+      },
+      {
+        "name": "onboard_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      }
     ]
   },
   "allowed_file_patterns": {
     "repo-meta": ["AGENTS.md", "CLAUDE.md"],
-    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/plugin_isolation_harness.mjs", "tests/apps_launcher_harness.mjs", "presence-manifest.json", "tests/onboard_presence_contract_harness.mjs", "tests/onboard_theme_default_harness.mjs"]
+    "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/plugin_isolation_harness.mjs", "tests/apps_launcher_harness.mjs", "presence-manifest.json", "tests/onboard_presence_contract_harness.mjs", "tests/onboard_theme_default_harness.mjs"],
+    "settings-adopt": [
+      "UNIFIED_SETTINGS_DEFECTS.md",
+      "dist/SETTINGS_VERSION",
+      "dist/index.html",
+      "dist/skipi-onboard-settings-host.js",
+      "dist/skipi-settings.css",
+      "dist/skipi-settings.js",
+      "tests/settings_standard_harness.mjs"
+    ],
+    "release": ["dist/index.html"]
   }
 }
