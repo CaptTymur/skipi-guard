@@ -72,6 +72,18 @@
         "type": "string"
       }
     },
+    "exact_file_set_missing": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "exact_file_set_unexpected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "scope_violations": {
       "type": "array",
       "items": {
