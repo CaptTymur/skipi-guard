@@ -163,6 +163,12 @@ def resolve_task(config: dict[str, Any], changed_files: list[str]) -> dict[str, 
                 for file_path in changed_files
             ):
                 continue
+            require_all = [str(pattern) for pattern in rule.get("require_all_of", [])]
+            if require_all and not all(
+                any(pattern_matches(file_path, pattern) for file_path in changed_files)
+                for pattern in require_all
+            ):
+                continue
             return {"task": task, "rule": str(rule.get("name", task))}
     return {"task": default_task, "rule": None}
 
@@ -238,13 +244,39 @@ def rule_patterns(rules: list[dict[str, Any]]) -> list[str]:
     return patterns
 
 
+def exact_file_set_check(config: dict[str, Any], task: str, files: list[str]) -> dict[str, Any] | None:
+    expected_patterns = [
+        str(pattern)
+        for pattern in config.get("exact_task_file_sets", {}).get(task, [])
+    ]
+    if not expected_patterns:
+        return None
+    missing = [
+        pattern
+        for pattern in expected_patterns
+        if not any(pattern_matches(file_path, pattern) for file_path in files)
+    ]
+    unexpected = [
+        file_path
+        for file_path in files
+        if not any(pattern_matches(file_path, pattern) for pattern in expected_patterns)
+    ]
+    return {
+        "task": task,
+        "expected_patterns": expected_patterns,
+        "missing": missing,
+        "unexpected": unexpected,
+    }
+
+
 def effective_allowed_patterns(
     config: dict[str, Any],
     task: str,
     additive_checks: list[dict[str, Any]],
 ) -> list[str]:
     patterns = list(config.get("allowed_file_patterns", {}).get(task, []))
-    if is_release_task(config, task):
+    exact_task = task in config.get("exact_task_file_sets", {})
+    if is_release_task(config, task) and not exact_task:
         patterns.extend(rule_patterns(config.get("release_sensitive_paths", [])))
         for check in additive_checks:
             patterns.extend(config.get("allowed_file_patterns", {}).get(check["task"], []))
@@ -453,6 +485,15 @@ def verify(args: argparse.Namespace) -> int:
     if not task_known:
         errors.append(f"unknown or unconfigured task '{task}'")
 
+    exact_file_set = exact_file_set_check(config, task, changed_files)
+    exact_file_set_missing: list[str] = []
+    exact_file_set_unexpected: list[str] = []
+    if exact_file_set:
+        exact_file_set_missing = exact_file_set["missing"]
+        exact_file_set_unexpected = exact_file_set["unexpected"]
+        if exact_file_set_missing or exact_file_set_unexpected:
+            errors.append(f"exact file set required for task '{task}'")
+
     protected_touches = classify_paths(changed_files, config.get("protected_paths", []), "protected")
     release_touches = classify_paths(changed_files, config.get("release_sensitive_paths", []), "release-sensitive")
     protected_paths_touched = protected_touches + release_touches
@@ -512,6 +553,8 @@ def verify(args: argparse.Namespace) -> int:
         "release_paths_touched": release_touches,
         "release_changes": release_changes,
         "allowed_file_patterns": allowed_patterns,
+        "exact_file_set_missing": exact_file_set_missing,
+        "exact_file_set_unexpected": exact_file_set_unexpected,
         "scope_violations": scope_violations,
         "scope_checks": scope_checks,
         "additive_task_checks": additive_checks,

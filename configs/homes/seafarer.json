@@ -9,13 +9,22 @@
     "no pairing/QR/camera bridge changes",
     "no Play/TestFlight/upload/deploy"
   ],
-  "release_tasks": ["release", "release-infra", "build-release"],
+  "release_tasks": ["release", "release-infra", "build-release", "stack-metadata"],
   "default_task": "plugin-host",
+  "exact_task_file_sets": {
+    "stack-metadata": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/vault.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"]
+  },
   "task_routing": [
     {
       "name": "repo-meta routing",
       "task": "repo-meta",
       "when_all_files_in": ["AGENTS.md", "CLAUDE.md"]
+    },
+    {
+      "name": "seafarer Stage 4 stack-metadata routing",
+      "task": "stack-metadata",
+      "when_all_files_in": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/vault.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"],
+      "require_all_of": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/vault.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"]
     },
     {
       "name": "canonical version-bump routing",
@@ -190,6 +199,16 @@
         "name": "seafarer_unified_settings_fallback",
         "command": "node tests/unified_settings_fallback_harness.mjs"
       }
+    ],
+    "stack-metadata": [
+      {
+        "name": "seafarer_stack_build_metadata",
+        "command": "node tests/stack_build_metadata_harness.mjs"
+      },
+      {
+        "name": "seafarer_stack_verification_negative_control",
+        "command": "node tests/stack_verification_negative_control_harness.mjs"
+      }
     ]
   },
   "allowed_file_patterns": {
@@ -199,6 +218,7 @@
     "contract-sync": ["dist/index.html", "dist/plugin-host-ui.js", "src-tauri/resources/demo-vault.zip", "src-tauri/src/db.rs", "tests/demo_vault_contract_harness.mjs", "tests/plugin_remote_over_bundled_harness.mjs"],
     "publication-infra": [".github/workflows/skipi-guard.yml", "scripts/publish-rf-mirror.sh", "scripts/prepare-rf-mirror.sh", "scripts/RF_MIRROR_PUBLISH.md", "tests/rf_mirror_publish_contract_harness.mjs"],
     "settings-adopt": ["dist/index.html", "dist/skipi-settings*", "dist/SETTINGS_VERSION", "tests/unified_settings_fallback_harness.mjs"],
+    "stack-metadata": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/vault.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"],
     "release": ["dist/index.html"]
   }
 }
