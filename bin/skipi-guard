@@ -182,7 +182,12 @@ def is_release_task(config: dict[str, Any], task: str) -> bool:
 def configured_harnesses(config: dict[str, Any], task: str) -> list[dict[str, Any]]:
     commands_by_task = config.get("harness_commands", {})
     harnesses = list(commands_by_task.get(task, []))
-    if is_release_task(config, task):
+    # Exact-set release tasks list harnesses explicitly so homes with absolute
+    # inherited commands (e.g. crewing shared_host_runtime_isolation) do not
+    # force CI-unusable paths into stack-metadata. Non-exact release tasks keep
+    # the historic plugin-host/provenance inheritance.
+    exact_tasks = set(config.get("exact_task_file_sets", {}))
+    if is_release_task(config, task) and task not in exact_tasks:
         for inherited_task in ("plugin-host", "provenance", "backend", "landing"):
             harnesses.extend(commands_by_task.get(inherited_task, []))
     return harnesses

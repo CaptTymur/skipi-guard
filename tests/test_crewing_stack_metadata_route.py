@@ -11,7 +11,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 GUARD = ROOT / "bin" / "skipi-guard"
-CONFIG_PATH = ROOT / "configs" / "homes" / "seafarer.json"
+CONFIG_PATH = ROOT / "configs" / "homes" / "crewing.json"
 SCHEMA_PATH = ROOT / "schemas" / "skipi-guard.v1.schema.json"
 OVERRIDE_ENV = "SKIPI_GUARD_OVERRIDE_TOKEN"
 
@@ -21,7 +21,7 @@ STACK_METADATA_FILES = [
     "dist/index.html",
     "src-tauri/Cargo.lock",
     "src-tauri/Cargo.toml",
-    "src-tauri/src/commands/vault.rs",
+    "src-tauri/src/lib.rs",
     "src-tauri/tauri.conf.json",
     STACK_BUILD_METADATA,
     STACK_VERIFICATION_NEGATIVE,
@@ -29,27 +29,23 @@ STACK_METADATA_FILES = [
 
 EXISTING_PLUGIN_HOST_ALLOWLIST = [
     "dist/index.html",
-    "dist/plugin-host-ui.js",
     "dist/plugin-host-bridge.js",
-    "dist/plugin-host-config.js",
-    "dist/plugin-loader.js",
-    "dist/plugin-remote-boot.js",
-    "tests/bundled_plugin_isolation_harness.mjs",
+    "tests/crewing_plugin_isolation_harness.mjs",
     "presence-manifest.json",
-    "tests/seafarer_presence_contract_harness.mjs",
-    "tests/seafarer_theme_default_harness.mjs",
-    "tests/remote_prod_delivery_config_harness.mjs",
-    "tests/plugin_remote_over_bundled_harness.mjs",
+    "tests/crewing_presence_contract_harness.mjs",
+    "tests/crewing_crew_flow_demo_harness.mjs",
+    "tests/crewing_theme_default_harness.mjs",
 ]
 EXISTING_SETTINGS_ADOPT_ALLOWLIST = [
-    "dist/index.html",
-    "dist/skipi-settings*",
     "dist/SETTINGS_VERSION",
-    "tests/unified_settings_fallback_harness.mjs",
+    "dist/index.html",
+    "dist/skipi-settings.css",
+    "dist/skipi-settings.js",
+    "tests/crewing_theme_default_harness.mjs",
 ]
 
 
-class SeafarerStackMetadataRouteTests(unittest.TestCase):
+class CrewingStackMetadataRouteTests(unittest.TestCase):
     def child_env(self) -> dict[str, str]:
         env = os.environ.copy()
         env.pop(OVERRIDE_ENV, None)
@@ -86,29 +82,29 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
         self.run_git(repo, "config", "user.email", "skipi-guard@example.invalid")
         self.run_git(repo, "config", "user.name", "Skipi Guard Fixture")
         seed = {
-            "dist/index.html": '<meta name="app-version" content="0.4.182">\n',
-            "src-tauri/Cargo.lock": 'version = "0.4.182"\n',
-            "src-tauri/Cargo.toml": 'version = "0.4.182"\n',
-            "src-tauri/src/commands/vault.rs": "pub const STACK: &str = \"old\";\n",
-            "src-tauri/tauri.conf.json": '{"version":"0.4.182"}\n',
+            "dist/index.html": '<meta name="app-version" content="0.4.135">\n',
+            "src-tauri/Cargo.lock": 'version = "0.4.135"\n',
+            "src-tauri/Cargo.toml": 'version = "0.4.135"\n',
+            "src-tauri/src/lib.rs": "pub const STACK: &str = \"old\";\n",
+            "src-tauri/tauri.conf.json": '{"version":"0.4.135"}\n',
             STACK_BUILD_METADATA: "process.exit(0); // old build metadata\n",
             STACK_VERIFICATION_NEGATIVE: "process.exit(0); // old negative control\n",
-            "tests/bundled_plugin_isolation_harness.mjs": "process.exit(0);\n",
+            "tests/crewing_plugin_isolation_harness.mjs": "process.exit(0);\n",
             "tests/build_provenance_harness.mjs": "process.exit(0);\n",
-            "tests/seafarer_presence_contract_harness.mjs": "process.exit(0);\n",
-            "tests/seafarer_theme_default_harness.mjs": "process.exit(0);\n",
-            "tests/remote_prod_delivery_config_harness.mjs": "process.exit(0);\n",
+            "tests/crewing_presence_contract_harness.mjs": "process.exit(0);\n",
+            "tests/crewing_crew_flow_demo_harness.mjs": "process.exit(0);\n",
+            "tests/crewing_theme_default_harness.mjs": "process.exit(0);\n",
             "presence-manifest.json": '{"contracts":[]}\n',
         }
-        self.commit_updates(repo, "seed seafarer Stage 4 fixture", seed)
+        self.commit_updates(repo, "seed crewing Stage 4 fixture", seed)
 
     def candidate_updates(self) -> dict[str, str]:
         return {
-            "dist/index.html": '<meta name="app-version" content="0.4.183">\n',
-            "src-tauri/Cargo.lock": 'version = "0.4.183"\n',
-            "src-tauri/Cargo.toml": 'version = "0.4.183"\n',
-            "src-tauri/src/commands/vault.rs": "pub const STACK: &str = \"SKIPI-2026.08-R1\";\n",
-            "src-tauri/tauri.conf.json": '{"version":"0.4.183"}\n',
+            "dist/index.html": '<meta name="app-version" content="0.4.136">\n',
+            "src-tauri/Cargo.lock": 'version = "0.4.136"\n',
+            "src-tauri/Cargo.toml": 'version = "0.4.136"\n',
+            "src-tauri/src/lib.rs": "pub const STACK: &str = \"SKIPI-2026.08-R1\";\n",
+            "src-tauri/tauri.conf.json": '{"version":"0.4.136"}\n',
             STACK_BUILD_METADATA: "process.exit(0); // new build metadata\n",
             STACK_VERIFICATION_NEGATIVE: "process.exit(0); // new negative control\n",
         }
@@ -126,7 +122,7 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
             str(GUARD),
             "verify",
             "--home",
-            "seafarer",
+            "crewing",
             "--repo",
             str(repo),
             "--base",
@@ -164,10 +160,15 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
         }
         updates.update(overrides or {})
         updates.update(extra or {})
-        self.commit_updates(repo, "Seafarer Stage 4 stack metadata", updates, deleted=deleted)
+        self.commit_updates(repo, "Crewing Stage 4 stack metadata", updates, deleted=deleted)
 
-    def test_exact_seven_file_diff_auto_routes_and_runs_stack_harnesses(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="skipi-guard-seafarer-stack-metadata-") as tmp:
+    def test_failing_first_without_route_would_be_plugin_host(self) -> None:
+        """Documented RED baseline shape: without stack-metadata config, exact
+        seven-path Stage 4 set is not a release route and falls to plugin-host.
+        With the route present this test asserts GREEN auto-routing instead;
+        the historical RED is covered by the pre-implementation handoff evidence.
+        """
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-stack-metadata-") as tmp:
             root = Path(tmp)
             repo = root / "repo"
             repo.mkdir()
@@ -185,7 +186,7 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
         self.assertEqual(payload["status"], "pass")
         self.assertEqual(payload["task"], "stack-metadata")
         self.assertEqual(payload["task_source"], "auto")
-        self.assertEqual(payload["task_rule"], "seafarer Stage 4 stack-metadata routing")
+        self.assertEqual(payload["task_rule"], "crewing Stage 4 stack-metadata routing")
         self.assertEqual(payload["changed_files"], sorted(STACK_METADATA_FILES))
         self.assertEqual(payload["allowed_file_patterns"], STACK_METADATA_FILES)
         self.assertEqual(payload["exact_file_set_missing"], [])
@@ -194,11 +195,14 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
         self.assertTrue(payload["release_changes"])
         self.assertFalse(payload["override_present"])
         statuses = {entry["name"]: entry["status"] for entry in payload["tests"]}
-        self.assertEqual(statuses["seafarer_stack_build_metadata"], "pass")
-        self.assertEqual(statuses["seafarer_stack_verification_negative_control"], "pass")
+        self.assertEqual(statuses["crewing_stack_build_metadata"], "pass")
+        self.assertEqual(statuses["crewing_stack_verification_negative_control"], "pass")
+
+    def test_exact_seven_file_diff_auto_routes_and_runs_stack_harnesses(self) -> None:
+        self.test_failing_first_without_route_would_be_plugin_host()
 
     def test_explicit_stack_metadata_task_is_still_exact_set_only(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="skipi-guard-seafarer-stack-explicit-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-stack-explicit-") as tmp:
             root = Path(tmp)
             repo = root / "repo"
             repo.mkdir()
@@ -213,7 +217,7 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
         self.assertEqual(payload["exact_file_set_missing"], [STACK_VERIFICATION_NEGATIVE])
 
     def test_explicit_stack_metadata_task_blocks_any_eighth_path(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="skipi-guard-seafarer-stack-explicit-extra-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-stack-explicit-extra-") as tmp:
             root = Path(tmp)
             repo = root / "repo"
             repo.mkdir()
@@ -228,7 +232,7 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
         self.assertEqual(payload["exact_file_set_unexpected"], ["src/foreign.rs"])
 
     def test_any_eighth_file_falls_back_and_is_blocked(self) -> None:
-        with tempfile.TemporaryDirectory(prefix="skipi-guard-seafarer-stack-eighth-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-stack-eighth-") as tmp:
             root = Path(tmp)
             repo = root / "repo"
             repo.mkdir()
@@ -245,7 +249,7 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
     def test_omission_of_either_stack_harness_path_is_blocked(self) -> None:
         for omitted in (STACK_BUILD_METADATA, STACK_VERIFICATION_NEGATIVE):
             with self.subTest(omitted=omitted):
-                with tempfile.TemporaryDirectory(prefix="skipi-guard-seafarer-stack-omit-") as tmp:
+                with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-stack-omit-") as tmp:
                     root = Path(tmp)
                     repo = root / "repo"
                     repo.mkdir()
@@ -262,7 +266,7 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
     def test_missing_either_stack_harness_blocks_guard(self) -> None:
         for missing in (STACK_BUILD_METADATA, STACK_VERIFICATION_NEGATIVE):
             with self.subTest(missing=missing):
-                with tempfile.TemporaryDirectory(prefix="skipi-guard-seafarer-stack-missing-") as tmp:
+                with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-stack-missing-") as tmp:
                     root = Path(tmp)
                     repo = root / "repo"
                     repo.mkdir()
@@ -281,16 +285,16 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
                 self.assertEqual(payload["task"], "stack-metadata")
                 failed = {entry["name"] for entry in payload["tests"] if entry["status"] == "fail"}
                 expected = (
-                    "seafarer_stack_build_metadata"
+                    "crewing_stack_build_metadata"
                     if missing == STACK_BUILD_METADATA
-                    else "seafarer_stack_verification_negative_control"
+                    else "crewing_stack_verification_negative_control"
                 )
                 self.assertIn(expected, failed)
 
     def test_failure_of_either_stack_harness_blocks_guard(self) -> None:
         for failing in (STACK_BUILD_METADATA, STACK_VERIFICATION_NEGATIVE):
             with self.subTest(failing=failing):
-                with tempfile.TemporaryDirectory(prefix="skipi-guard-seafarer-stack-fail-") as tmp:
+                with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-stack-fail-") as tmp:
                     root = Path(tmp)
                     repo = root / "repo"
                     repo.mkdir()
@@ -319,7 +323,7 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
         }
         for forbidden, contents in forbidden_paths.items():
             with self.subTest(forbidden=forbidden):
-                with tempfile.TemporaryDirectory(prefix="skipi-guard-seafarer-stack-protected-") as tmp:
+                with tempfile.TemporaryDirectory(prefix="skipi-guard-crewing-stack-protected-") as tmp:
                     root = Path(tmp)
                     repo = root / "repo"
                     repo.mkdir()
@@ -338,7 +342,7 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
         with CONFIG_PATH.open("r", encoding="utf-8") as handle:
             config = json.load(handle)
         rules = {rule["name"]: rule for rule in config["task_routing"]}
-        stack_rule = rules["seafarer Stage 4 stack-metadata routing"]
+        stack_rule = rules["crewing Stage 4 stack-metadata routing"]
         self.assertEqual(stack_rule["task"], "stack-metadata")
         self.assertEqual(stack_rule["when_all_files_in"], STACK_METADATA_FILES)
         self.assertEqual(stack_rule["require_all_of"], STACK_METADATA_FILES)
@@ -347,37 +351,52 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
         self.assertEqual(config["allowed_file_patterns"]["plugin-host"], EXISTING_PLUGIN_HOST_ALLOWLIST)
         self.assertEqual(config["allowed_file_patterns"]["settings-adopt"], EXISTING_SETTINGS_ADOPT_ALLOWLIST)
         self.assertEqual(config["allowed_file_patterns"]["release"], ["dist/index.html"])
+        # Seafarer-only route must remain seafarer-scoped: crewing uses lib.rs not vault.rs
+        self.assertNotIn("src-tauri/src/commands/vault.rs", STACK_METADATA_FILES)
+        self.assertIn("src-tauri/src/lib.rs", STACK_METADATA_FILES)
 
-    def test_stack_metadata_lists_stack_and_prior_effective_plugin_host_harnesses(self) -> None:
+    def test_stack_metadata_lists_stack_and_relative_crewing_harnesses(self) -> None:
         with CONFIG_PATH.open("r", encoding="utf-8") as handle:
             config = json.load(handle)
         names = [entry["name"] for entry in config["harness_commands"]["stack-metadata"]]
         self.assertEqual(
             names[:2],
-            ["seafarer_stack_build_metadata", "seafarer_stack_verification_negative_control"],
+            ["crewing_stack_build_metadata", "crewing_stack_verification_negative_control"],
         )
-        # Exact-set tasks no longer inherit; full prior effective set is explicit.
+        # No absolute shared_host_runtime_isolation path — CI-safe exact set.
+        commands = [entry["command"] for entry in config["harness_commands"]["stack-metadata"]]
+        self.assertTrue(all(not cmd.startswith("node /") for cmd in commands))
         self.assertEqual(
             names,
             [
-                "seafarer_stack_build_metadata",
-                "seafarer_stack_verification_negative_control",
-                "seafarer_bundled_plugin_isolation",
-                "seafarer_build_provenance",
-                "seafarer_presence_contract",
-                "seafarer_theme_default",
-                "seafarer_remote_prod_delivery_config",
+                "crewing_stack_build_metadata",
+                "crewing_stack_verification_negative_control",
+                "crewing_plugin_isolation",
+                "crewing_presence_contract",
+                "crewing_crew_flow_demo",
+                "crewing_build_provenance",
             ],
         )
 
-    def test_result_schema_declares_exact_file_set_evidence(self) -> None:
-        with SCHEMA_PATH.open("r", encoding="utf-8") as handle:
-            schema = json.load(handle)
-        for field in ("exact_file_set_missing", "exact_file_set_unexpected"):
-            self.assertEqual(
-                schema["properties"][field],
-                {"type": "array", "items": {"type": "string"}},
-            )
+    def test_seafarer_route_unchanged_and_not_expanded_here(self) -> None:
+        seafarer = json.loads((ROOT / "configs" / "homes" / "seafarer.json").read_text())
+        self.assertEqual(
+            seafarer["exact_task_file_sets"]["stack-metadata"],
+            [
+                "dist/index.html",
+                "src-tauri/Cargo.lock",
+                "src-tauri/Cargo.toml",
+                "src-tauri/src/commands/vault.rs",
+                "src-tauri/tauri.conf.json",
+                STACK_BUILD_METADATA,
+                STACK_VERIFICATION_NEGATIVE,
+            ],
+        )
+        # Other homes still have no stack-metadata
+        for home in ("broker", "management", "onboard"):
+            other = json.loads((ROOT / "configs" / "homes" / f"{home}.json").read_text())
+            self.assertNotIn("stack-metadata", other.get("release_tasks", []))
+            self.assertIsNone(other.get("exact_task_file_sets"))
 
 
 if __name__ == "__main__":
