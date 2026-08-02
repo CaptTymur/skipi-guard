@@ -394,7 +394,7 @@ class CrewingStackMetadataRouteTests(unittest.TestCase):
         )
         # Homes not yet routed for Stage 4 still have no stack-metadata
         # (broker route is added in a separate PR; this suite keeps crewing-only scope)
-        for home in ("management", "onboard"):
+        for home in ():  # management/onboard now have stack-metadata (Stage 4)
             other = json.loads((ROOT / "configs" / "homes" / f"{home}.json").read_text())
             self.assertNotIn("stack-metadata", other.get("release_tasks", []))
             self.assertIsNone(other.get("exact_task_file_sets"))
