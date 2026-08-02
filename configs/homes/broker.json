@@ -282,7 +282,9 @@
       "dist/skipi-settings*"
     ],
     "release": [
-      "dist/index.html"
+      "dist/index.html",
+      "src-tauri/gen/android/app/proguard-rules.pro",
+      ".github/workflows/skipi-guard.yml"
     ],
     "stack-metadata": [
       "dist/index.html",
