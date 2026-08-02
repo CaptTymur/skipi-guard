@@ -9,13 +9,22 @@
     "no pairing/QR/camera bridge changes",
     "no Play/TestFlight/upload/deploy"
   ],
-  "release_tasks": ["release", "release-infra", "build-release"],
+  "release_tasks": ["release", "release-infra", "build-release", "stack-metadata"],
   "default_task": "plugin-host",
+  "exact_task_file_sets": {
+    "stack-metadata": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/lib.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"]
+  },
   "task_routing": [
     {
       "name": "repo-meta routing",
       "task": "repo-meta",
       "when_all_files_in": ["AGENTS.md", "CLAUDE.md"]
+    },
+    {
+      "name": "crewing Stage 4 stack-metadata routing",
+      "task": "stack-metadata",
+      "when_all_files_in": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/lib.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"],
+      "require_all_of": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/lib.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"]
     },
     {
       "name": "provenance routing",
@@ -163,6 +172,16 @@
         "name": "crewing_crew_flow_demo",
         "command": "node tests/crewing_crew_flow_demo_harness.mjs"
       }
+    ],
+    "stack-metadata": [
+      {
+        "name": "crewing_stack_build_metadata",
+        "command": "node tests/stack_build_metadata_harness.mjs"
+      },
+      {
+        "name": "crewing_stack_verification_negative_control",
+        "command": "node tests/stack_verification_negative_control_harness.mjs"
+      }
     ]
   },
   "additive_task_checks": [
@@ -178,6 +197,7 @@
     "plugin-host": ["dist/index.html", "dist/plugin-host-bridge.js", "tests/crewing_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/crewing_presence_contract_harness.mjs", "tests/crewing_crew_flow_demo_harness.mjs", "tests/crewing_theme_default_harness.mjs"],
     "settings-adopt": ["dist/SETTINGS_VERSION", "dist/index.html", "dist/skipi-settings.css", "dist/skipi-settings.js", "tests/crewing_theme_default_harness.mjs"],
     "theme-default": ["dist/index.html", "tests/crewing_theme_default_harness.mjs"],
-    "release": ["dist/index.html"]
+    "release": ["dist/index.html"],
+    "stack-metadata": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/lib.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"]
   }
 }
