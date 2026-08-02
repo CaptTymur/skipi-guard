@@ -9,61 +9,177 @@
     "no pairing/QR/camera bridge changes",
     "no Play/TestFlight/upload/deploy"
   ],
-  "release_tasks": ["release", "release-infra", "build-release"],
+  "release_tasks": [
+    "release",
+    "release-infra",
+    "build-release",
+    "stack-metadata"
+  ],
   "default_task": "plugin-host",
   "task_routing": [
     {
       "name": "repo-meta routing",
       "task": "repo-meta",
-      "when_all_files_in": ["AGENTS.md", "CLAUDE.md"]
+      "when_all_files_in": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ]
+    },
+    {
+      "name": "broker Stage 4 stack-metadata routing",
+      "task": "stack-metadata",
+      "when_all_files_in": [
+        "dist/index.html",
+        "src-tauri/Cargo.lock",
+        "src-tauri/Cargo.toml",
+        "src-tauri/src/lib.rs",
+        "src-tauri/tauri.conf.json",
+        "tests/stack_build_metadata_harness.mjs",
+        "tests/stack_verification_negative_control_harness.mjs"
+      ],
+      "require_all_of": [
+        "dist/index.html",
+        "src-tauri/Cargo.lock",
+        "src-tauri/Cargo.toml",
+        "src-tauri/src/lib.rs",
+        "src-tauri/tauri.conf.json",
+        "tests/stack_build_metadata_harness.mjs",
+        "tests/stack_verification_negative_control_harness.mjs"
+      ]
     },
     {
       "name": "canonical version-bump routing",
       "task": "release",
-      "when_all_files_in": ["dist/index.html", "src-tauri/Cargo.toml", "src-tauri/Cargo.lock", "src-tauri/tauri.conf.json"],
-      "require_any_of": ["src-tauri/Cargo.toml", "src-tauri/Cargo.lock", "src-tauri/tauri.conf.json"]
+      "when_all_files_in": [
+        "dist/index.html",
+        "src-tauri/Cargo.toml",
+        "src-tauri/Cargo.lock",
+        "src-tauri/tauri.conf.json"
+      ],
+      "require_any_of": [
+        "src-tauri/Cargo.toml",
+        "src-tauri/Cargo.lock",
+        "src-tauri/tauri.conf.json"
+      ]
     },
     {
       "name": "settings-adopt routing",
       "task": "settings-adopt",
-      "when_all_files_in": ["dist/index.html", "dist/skipi-settings*"],
-      "require_any_of": ["dist/skipi-settings*"]
+      "when_all_files_in": [
+        "dist/index.html",
+        "dist/skipi-settings*"
+      ],
+      "require_any_of": [
+        "dist/skipi-settings*"
+      ]
     }
   ],
   "protected_paths": [
     {
       "name": "backend/server/prod data",
-      "patterns": ["backend/**", "server/**", "api/**", "data/prod/**", "prod/**", "production/**", "media/**", "uploads/**"]
+      "patterns": [
+        "backend/**",
+        "server/**",
+        "api/**",
+        "data/prod/**",
+        "prod/**",
+        "production/**",
+        "media/**",
+        "uploads/**"
+      ]
     },
     {
       "name": "secrets/signing keys",
-      "patterns": [".env", ".env.*", "**/.env", "**/.env.*", "keys/**", "signing/**", "**/*.pem", "**/*.p12", "**/*.keystore", "**/*secret*", "**/*token*"]
+      "patterns": [
+        ".env",
+        ".env.*",
+        "**/.env",
+        "**/.env.*",
+        "keys/**",
+        "signing/**",
+        "**/*.pem",
+        "**/*.p12",
+        "**/*.keystore",
+        "**/*secret*",
+        "**/*token*"
+      ]
     },
     {
       "name": "pairing/QR/camera bridge",
-      "patterns": ["**/*pair*", "**/*Pair*", "**/*qr*", "**/*QR*", "**/*camera*", "**/*Camera*", "**/*barcode*", "**/*Barcode*"]
+      "patterns": [
+        "**/*pair*",
+        "**/*Pair*",
+        "**/*qr*",
+        "**/*QR*",
+        "**/*camera*",
+        "**/*Camera*",
+        "**/*barcode*",
+        "**/*Barcode*"
+      ]
     },
     {
       "name": "presence contracts",
-      "patterns": ["presence-manifest.json"]
+      "patterns": [
+        "presence-manifest.json"
+      ]
     }
   ],
   "release_sensitive_paths": [
     {
       "name": "catalog/latest/release manifests",
-      "patterns": ["latest.json", "**/latest.json", "catalog/**", "**/catalog/**", "release/**", "releases/**", "downloads/**", "manifest*.json", "**/manifest*.json"]
+      "patterns": [
+        "latest.json",
+        "**/latest.json",
+        "catalog/**",
+        "**/catalog/**",
+        "release/**",
+        "releases/**",
+        "downloads/**",
+        "manifest*.json",
+        "**/manifest*.json"
+      ]
     },
     {
       "name": "versions/tags",
-      "patterns": ["VERSION", "version.txt", "package.json", "package-lock.json", "pnpm-lock.yaml", "src-tauri/tauri.conf.json", "Cargo.toml", "Cargo.lock"]
+      "patterns": [
+        "VERSION",
+        "version.txt",
+        "package.json",
+        "package-lock.json",
+        "pnpm-lock.yaml",
+        "src-tauri/tauri.conf.json",
+        "Cargo.toml",
+        "Cargo.lock"
+      ]
     },
     {
       "name": "Tauri/Cargo/mobile generated files",
-      "patterns": ["src-tauri/gen/**", "src-tauri/target/**", "src-tauri/Cargo.lock", "android/**", "ios/**", "build/**", "*.apk", "*.aab", "*.ipa", "dist/**/*.apk"]
+      "patterns": [
+        "src-tauri/gen/**",
+        "src-tauri/target/**",
+        "src-tauri/Cargo.lock",
+        "android/**",
+        "ios/**",
+        "build/**",
+        "*.apk",
+        "*.aab",
+        "*.ipa",
+        "dist/**/*.apk"
+      ]
     },
     {
       "name": "Play/TestFlight/upload/deploy",
-      "patterns": ["fastlane/**", "play/**", "testflight/**", "scripts/deploy*", "scripts/upload*", "scripts/*testflight*", "scripts/*play*", ".github/workflows/*release*", ".github/workflows/*deploy*"]
+      "patterns": [
+        "fastlane/**",
+        "play/**",
+        "testflight/**",
+        "scripts/deploy*",
+        "scripts/upload*",
+        "scripts/*testflight*",
+        "scripts/*play*",
+        ".github/workflows/*release*",
+        ".github/workflows/*deploy*"
+      ]
     }
   ],
   "harness_commands": {
@@ -114,10 +230,35 @@
         "name": "broker_presence_contract",
         "command": "node tests/broker_presence_contract_harness.mjs"
       }
+    ],
+    "stack-metadata": [
+      {
+        "name": "broker_stack_build_metadata",
+        "command": "node tests/stack_build_metadata_harness.mjs"
+      },
+      {
+        "name": "broker_stack_verification_negative_control",
+        "command": "node tests/stack_verification_negative_control_harness.mjs"
+      },
+      {
+        "name": "broker_plugin_isolation",
+        "command": "node tests/broker_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "broker_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "broker_presence_contract",
+        "command": "node tests/broker_presence_contract_harness.mjs"
+      }
     ]
   },
   "allowed_file_patterns": {
-    "repo-meta": ["AGENTS.md", "CLAUDE.md"],
+    "repo-meta": [
+      "AGENTS.md",
+      "CLAUDE.md"
+    ],
     "plugin-host": [
       "dist/index.html",
       "dist/plugin-host-bridge.js",
@@ -129,6 +270,28 @@
       "dist/index.html",
       "dist/skipi-settings*"
     ],
-    "release": ["dist/index.html"]
+    "release": [
+      "dist/index.html"
+    ],
+    "stack-metadata": [
+      "dist/index.html",
+      "src-tauri/Cargo.lock",
+      "src-tauri/Cargo.toml",
+      "src-tauri/src/lib.rs",
+      "src-tauri/tauri.conf.json",
+      "tests/stack_build_metadata_harness.mjs",
+      "tests/stack_verification_negative_control_harness.mjs"
+    ]
+  },
+  "exact_task_file_sets": {
+    "stack-metadata": [
+      "dist/index.html",
+      "src-tauri/Cargo.lock",
+      "src-tauri/Cargo.toml",
+      "src-tauri/src/lib.rs",
+      "src-tauri/tauri.conf.json",
+      "tests/stack_build_metadata_harness.mjs",
+      "tests/stack_verification_negative_control_harness.mjs"
+    ]
   }
 }
