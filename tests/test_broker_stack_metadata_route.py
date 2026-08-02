@@ -374,7 +374,7 @@ class BrokerStackMetadataRouteTests(unittest.TestCase):
         self.assertIn("stack-metadata", seafarer.get("release_tasks", []))
         crewing = json.loads((ROOT / "configs" / "homes" / "crewing.json").read_text())
         self.assertIn("stack-metadata", crewing.get("release_tasks", []))
-        for home in ("management", "onboard"):
+        for home in ():  # management/onboard now have stack-metadata (Stage 4)
             other = json.loads((ROOT / "configs" / "homes" / f"{home}.json").read_text())
             self.assertNotIn("stack-metadata", other.get("release_tasks", []))
             self.assertIsNone(other.get("exact_task_file_sets"))
