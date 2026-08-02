@@ -29,6 +29,10 @@
       "name": "broker android proguard JNI-keep release routing",
       "task": "release",
       "when_all_files_in": [
+        "src-tauri/gen/android/app/proguard-rules.pro",
+        ".github/workflows/skipi-guard.yml"
+      ],
+      "require_any_of": [
         "src-tauri/gen/android/app/proguard-rules.pro"
       ]
     },
