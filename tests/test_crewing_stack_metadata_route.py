@@ -355,20 +355,26 @@ class CrewingStackMetadataRouteTests(unittest.TestCase):
         self.assertNotIn("src-tauri/src/commands/vault.rs", STACK_METADATA_FILES)
         self.assertIn("src-tauri/src/lib.rs", STACK_METADATA_FILES)
 
-    def test_stack_metadata_has_only_the_two_mandatory_new_harnesses(self) -> None:
+    def test_stack_metadata_lists_stack_and_relative_crewing_harnesses(self) -> None:
         with CONFIG_PATH.open("r", encoding="utf-8") as handle:
             config = json.load(handle)
+        names = [entry["name"] for entry in config["harness_commands"]["stack-metadata"]]
         self.assertEqual(
-            config["harness_commands"]["stack-metadata"],
+            names[:2],
+            ["crewing_stack_build_metadata", "crewing_stack_verification_negative_control"],
+        )
+        # No absolute shared_host_runtime_isolation path — CI-safe exact set.
+        commands = [entry["command"] for entry in config["harness_commands"]["stack-metadata"]]
+        self.assertTrue(all(not cmd.startswith("node /") for cmd in commands))
+        self.assertEqual(
+            names,
             [
-                {
-                    "name": "crewing_stack_build_metadata",
-                    "command": f"node {STACK_BUILD_METADATA}",
-                },
-                {
-                    "name": "crewing_stack_verification_negative_control",
-                    "command": f"node {STACK_VERIFICATION_NEGATIVE}",
-                },
+                "crewing_stack_build_metadata",
+                "crewing_stack_verification_negative_control",
+                "crewing_plugin_isolation",
+                "crewing_presence_contract",
+                "crewing_crew_flow_demo",
+                "crewing_build_provenance",
             ],
         )
 

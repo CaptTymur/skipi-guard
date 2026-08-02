@@ -348,20 +348,25 @@ class SeafarerStackMetadataRouteTests(unittest.TestCase):
         self.assertEqual(config["allowed_file_patterns"]["settings-adopt"], EXISTING_SETTINGS_ADOPT_ALLOWLIST)
         self.assertEqual(config["allowed_file_patterns"]["release"], ["dist/index.html"])
 
-    def test_stack_metadata_has_only_the_two_mandatory_new_harnesses(self) -> None:
+    def test_stack_metadata_lists_stack_and_prior_effective_plugin_host_harnesses(self) -> None:
         with CONFIG_PATH.open("r", encoding="utf-8") as handle:
             config = json.load(handle)
+        names = [entry["name"] for entry in config["harness_commands"]["stack-metadata"]]
         self.assertEqual(
-            config["harness_commands"]["stack-metadata"],
+            names[:2],
+            ["seafarer_stack_build_metadata", "seafarer_stack_verification_negative_control"],
+        )
+        # Exact-set tasks no longer inherit; full prior effective set is explicit.
+        self.assertEqual(
+            names,
             [
-                {
-                    "name": "seafarer_stack_build_metadata",
-                    "command": f"node {STACK_BUILD_METADATA}",
-                },
-                {
-                    "name": "seafarer_stack_verification_negative_control",
-                    "command": f"node {STACK_VERIFICATION_NEGATIVE}",
-                },
+                "seafarer_stack_build_metadata",
+                "seafarer_stack_verification_negative_control",
+                "seafarer_bundled_plugin_isolation",
+                "seafarer_build_provenance",
+                "seafarer_presence_contract",
+                "seafarer_theme_default",
+                "seafarer_remote_prod_delivery_config",
             ],
         )
 

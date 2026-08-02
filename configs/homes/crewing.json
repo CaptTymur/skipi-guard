@@ -181,6 +181,22 @@
       {
         "name": "crewing_stack_verification_negative_control",
         "command": "node tests/stack_verification_negative_control_harness.mjs"
+      },
+      {
+        "name": "crewing_plugin_isolation",
+        "command": "node tests/crewing_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "crewing_presence_contract",
+        "command": "node tests/crewing_presence_contract_harness.mjs"
+      },
+      {
+        "name": "crewing_crew_flow_demo",
+        "command": "node tests/crewing_crew_flow_demo_harness.mjs"
+      },
+      {
+        "name": "crewing_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
       }
     ]
   },
