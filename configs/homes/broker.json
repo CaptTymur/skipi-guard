@@ -26,6 +26,13 @@
       ]
     },
     {
+      "name": "broker android proguard JNI-keep release routing",
+      "task": "release",
+      "when_all_files_in": [
+        "src-tauri/gen/android/app/proguard-rules.pro"
+      ]
+    },
+    {
       "name": "broker Stage 4 stack-metadata routing",
       "task": "stack-metadata",
       "when_all_files_in": [
