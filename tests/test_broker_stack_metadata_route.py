@@ -30,9 +30,17 @@ STACK_METADATA_FILES = [
 EXISTING_PLUGIN_HOST_ALLOWLIST = [
     "dist/index.html",
     "dist/plugin-host-bridge.js",
+    # MSI map-module pin — owner-authorized exact route (skipi-ops №97).
+    "dist/map-module/map.js",
+    "dist/map-module/map.css",
+    "dist/map-module/VENDOR-PIN.json",
+    "dist/leaflet/world-land.geojson",
+    "dist/leaflet/world-coastline.geojson",
+    "dist/msi/warnings.geojson",
     "presence-manifest.json",
     "tests/broker_plugin_isolation_harness.mjs",
     "tests/broker_presence_contract_harness.mjs",
+    "tests/map_msi_module_pin_harness.mjs",
 ]
 EXISTING_SETTINGS_ADOPT_ALLOWLIST = [
     "dist/index.html",
