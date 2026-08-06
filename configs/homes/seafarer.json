@@ -233,7 +233,7 @@
   },
   "allowed_file_patterns": {
     "repo-meta": ["AGENTS.md", "CLAUDE.md"],
-    "plugin-host": ["dist/index.html", "dist/plugin-host-ui.js", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "tests/bundled_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/seafarer_presence_contract_harness.mjs", "tests/seafarer_theme_default_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs", "tests/plugin_remote_over_bundled_harness.mjs"],
+    "plugin-host": ["dist/index.html", "dist/plugin-host-ui.js", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "src-tauri/src/commands/account_sync.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/commands/profile.rs", "src-tauri/src/lib.rs", "tests/bundled_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/seafarer_presence_contract_harness.mjs", "tests/seafarer_theme_default_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs", "tests/plugin_remote_over_bundled_harness.mjs", "tests/account_profile_sync_harness.mjs"],
     "demo-vault": ["dist/index.html", "src-tauri/resources/demo-vault.zip", "src-tauri/src/db.rs", "tests/demo_vault_contract_harness.mjs"],
     "contract-sync": ["dist/index.html", "dist/plugin-host-ui.js", "src-tauri/resources/demo-vault.zip", "src-tauri/src/db.rs", "tests/demo_vault_contract_harness.mjs", "tests/plugin_remote_over_bundled_harness.mjs"],
     "publication-infra": [".github/workflows/skipi-guard.yml", "scripts/publish-rf-mirror.sh", "scripts/prepare-rf-mirror.sh", "scripts/RF_MIRROR_PUBLISH.md", "tests/rf_mirror_publish_contract_harness.mjs"],
