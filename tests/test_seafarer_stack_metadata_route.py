@@ -34,12 +34,19 @@ EXISTING_PLUGIN_HOST_ALLOWLIST = [
     "dist/plugin-host-config.js",
     "dist/plugin-loader.js",
     "dist/plugin-remote-boot.js",
+    # Account sync / profile import-export pin — owner-authorized exact route
+    # (skipi-ops DECISIONS 2026-08-06 (26), №96(б) Фаза 2).
+    "src-tauri/src/commands/account_sync.rs",
+    "src-tauri/src/commands/mod.rs",
+    "src-tauri/src/commands/profile.rs",
+    "src-tauri/src/lib.rs",
     "tests/bundled_plugin_isolation_harness.mjs",
     "presence-manifest.json",
     "tests/seafarer_presence_contract_harness.mjs",
     "tests/seafarer_theme_default_harness.mjs",
     "tests/remote_prod_delivery_config_harness.mjs",
     "tests/plugin_remote_over_bundled_harness.mjs",
+    "tests/account_profile_sync_harness.mjs",
 ]
 EXISTING_SETTINGS_ADOPT_ALLOWLIST = [
     "dist/index.html",
