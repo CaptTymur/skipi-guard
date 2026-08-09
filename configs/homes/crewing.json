@@ -110,6 +110,17 @@
       ]
     },
     {
+      "name": "trial-fix routing (BACKLOG №105, owner-authorized 2026-08-09)",
+      "task": "trial-fix",
+      "when_all_files_in": [
+        "dist/index.html",
+        "tests/trial_activate_unconnected_harness.mjs"
+      ],
+      "require_any_of": [
+        "tests/trial_activate_unconnected_harness.mjs"
+      ]
+    },
+    {
       "name": "theme-default routing",
       "task": "theme-default",
       "when_all_files_in": [
@@ -316,6 +327,24 @@
         "command": "node tests/crewing_crew_flow_demo_harness.mjs"
       }
     ],
+    "trial-fix": [
+      {
+        "name": "crewing_trial_gate_wired",
+        "command": "node tests/trial_gate_wired_harness.mjs"
+      },
+      {
+        "name": "crewing_trial_activate_unconnected",
+        "command": "node tests/trial_activate_unconnected_harness.mjs"
+      },
+      {
+        "name": "crewing_plugin_isolation",
+        "command": "node tests/crewing_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "crewing_presence_contract",
+        "command": "node tests/crewing_presence_contract_harness.mjs"
+      }
+    ],
     "stack-metadata": [
       {
         "name": "crewing_stack_build_metadata",
@@ -382,6 +411,10 @@
     "theme-default": [
       "dist/index.html",
       "tests/crewing_theme_default_harness.mjs"
+    ],
+    "trial-fix": [
+      "dist/index.html",
+      "tests/trial_activate_unconnected_harness.mjs"
     ],
     "release": [
       "dist/index.html"
