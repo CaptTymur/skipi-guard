@@ -43,6 +43,12 @@
       "task": "publication-infra",
       "when_all_files_in": [".github/workflows/skipi-guard.yml", "scripts/publish-rf-mirror.sh", "scripts/prepare-rf-mirror.sh", "scripts/RF_MIRROR_PUBLISH.md", "tests/rf_mirror_publish_contract_harness.mjs"],
       "require_any_of": ["scripts/publish-rf-mirror.sh"]
+    },
+    {
+      "name": "assistant-module routing",
+      "task": "assistant-module",
+      "when_all_files_in": ["dist/index.html", "dist/skipi-assistant*", "dist/ASSISTANT_VERSION", "src-tauri/src/commands/app_login.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/lib.rs"],
+      "require_any_of": ["dist/skipi-assistant*", "src-tauri/src/commands/app_login.rs"]
     }
   ],
   "protected_paths": [
@@ -83,6 +89,28 @@
   ],
   "harness_commands": {
     "plugin-host": [
+      {
+        "name": "seafarer_bundled_plugin_isolation",
+        "command": "node tests/bundled_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "seafarer_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "seafarer_presence_contract",
+        "command": "node tests/seafarer_presence_contract_harness.mjs"
+      },
+      {
+        "name": "seafarer_theme_default",
+        "command": "node tests/seafarer_theme_default_harness.mjs"
+      },
+      {
+        "name": "seafarer_remote_prod_delivery_config",
+        "command": "node tests/remote_prod_delivery_config_harness.mjs"
+      }
+    ],
+    "assistant-module": [
       {
         "name": "seafarer_bundled_plugin_isolation",
         "command": "node tests/bundled_plugin_isolation_harness.mjs"
@@ -239,6 +267,7 @@
     "publication-infra": [".github/workflows/skipi-guard.yml", "scripts/publish-rf-mirror.sh", "scripts/prepare-rf-mirror.sh", "scripts/RF_MIRROR_PUBLISH.md", "tests/rf_mirror_publish_contract_harness.mjs"],
     "settings-adopt": ["dist/index.html", "dist/skipi-settings*", "dist/SETTINGS_VERSION", "tests/unified_settings_fallback_harness.mjs"],
     "stack-metadata": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/vault.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"],
+    "assistant-module": ["dist/index.html", "dist/skipi-assistant*", "dist/ASSISTANT_VERSION", "src-tauri/src/commands/app_login.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/lib.rs"],
     "release": ["dist/index.html"]
   }
 }
