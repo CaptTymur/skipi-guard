@@ -18,6 +18,36 @@
   "default_task": "plugin-host",
   "task_routing": [
     {
+      "name": "onboard-plugins routing (BACKLOG №1, owner-authorized 2026-08-20)",
+      "task": "onboard-plugins",
+      "when_all_files_in": [
+        "dist/index.html",
+        "dist/plugins/bnwas-time-anchor/CHANGELOG.md",
+        "dist/plugins/bnwas-time-anchor/REPORT.md",
+        "dist/plugins/bnwas-time-anchor/assets/.gitkeep",
+        "dist/plugins/bnwas-time-anchor/checksums.json",
+        "dist/plugins/bnwas-time-anchor/index.css",
+        "dist/plugins/bnwas-time-anchor/index.js",
+        "dist/plugins/bnwas-time-anchor/plugin.json",
+        "dist/plugins/ecdis-position-reminder/checksums.json",
+        "dist/plugins/ecdis-position-reminder/index.css",
+        "dist/plugins/ecdis-position-reminder/index.js",
+        "dist/plugins/ecdis-position-reminder/plugin.json",
+        "dist/plugins/navigation-calculators/CHANGELOG.md",
+        "dist/plugins/navigation-calculators/REPORT.md",
+        "dist/plugins/navigation-calculators/assets/.gitkeep",
+        "dist/plugins/navigation-calculators/checksums.json",
+        "dist/plugins/navigation-calculators/index.css",
+        "dist/plugins/navigation-calculators/index.js",
+        "dist/plugins/navigation-calculators/plugin.json"
+      ],
+      "require_any_of": [
+        "dist/plugins/bnwas-time-anchor/plugin.json",
+        "dist/plugins/ecdis-position-reminder/plugin.json",
+        "dist/plugins/navigation-calculators/plugin.json"
+      ]
+    },
+    {
       "name": "repo-meta routing",
       "task": "repo-meta",
       "when_all_files_in": [
@@ -191,6 +221,20 @@
     }
   ],
   "harness_commands": {
+    "onboard-plugins": [
+      {
+        "name": "onboard_plugin_isolation",
+        "command": "node tests/plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "onboard_apps_launcher",
+        "command": "node tests/apps_launcher_harness.mjs"
+      },
+      {
+        "name": "onboard_presence_contract",
+        "command": "node tests/onboard_presence_contract_harness.mjs"
+      }
+    ],
     "plugin-host": [
       {
         "name": "onboard_plugin_isolation",
@@ -271,6 +315,27 @@
     ]
   },
   "allowed_file_patterns": {
+    "onboard-plugins": [
+      "dist/index.html",
+      "dist/plugins/bnwas-time-anchor/CHANGELOG.md",
+      "dist/plugins/bnwas-time-anchor/REPORT.md",
+      "dist/plugins/bnwas-time-anchor/assets/.gitkeep",
+      "dist/plugins/bnwas-time-anchor/checksums.json",
+      "dist/plugins/bnwas-time-anchor/index.css",
+      "dist/plugins/bnwas-time-anchor/index.js",
+      "dist/plugins/bnwas-time-anchor/plugin.json",
+      "dist/plugins/ecdis-position-reminder/checksums.json",
+      "dist/plugins/ecdis-position-reminder/index.css",
+      "dist/plugins/ecdis-position-reminder/index.js",
+      "dist/plugins/ecdis-position-reminder/plugin.json",
+      "dist/plugins/navigation-calculators/CHANGELOG.md",
+      "dist/plugins/navigation-calculators/REPORT.md",
+      "dist/plugins/navigation-calculators/assets/.gitkeep",
+      "dist/plugins/navigation-calculators/checksums.json",
+      "dist/plugins/navigation-calculators/index.css",
+      "dist/plugins/navigation-calculators/index.js",
+      "dist/plugins/navigation-calculators/plugin.json"
+    ],
     "repo-meta": [
       "AGENTS.md",
       "CLAUDE.md"
