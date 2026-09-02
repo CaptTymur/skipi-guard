@@ -9,7 +9,7 @@
     "no pairing/QR/camera bridge changes",
     "no Play/TestFlight/upload/deploy"
   ],
-  "release_tasks": ["release", "release-infra", "build-release", "stack-metadata", "mobile-external-url"],
+  "release_tasks": ["release", "release-infra", "build-release", "stack-metadata", "mobile-external-url", "login-gate-first-162b"],
   "default_task": "plugin-host",
   "exact_task_file_sets": {
     "stack-metadata": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/vault.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"]
@@ -26,6 +26,12 @@
       "task": "assistant-nonblocking",
       "when_all_files_in": ["src-tauri/src/commands/assistant.rs", "tests/no_dead_tauri_invoke_harness.mjs"],
       "require_all_of": ["src-tauri/src/commands/assistant.rs", "tests/no_dead_tauri_invoke_harness.mjs"]
+    },
+    {
+      "name": "login gate first screen + 0.4.186 bump routing (162b)",
+      "task": "login-gate-first-162b",
+      "when_all_files_in": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/app_login.rs", "src-tauri/src/lib.rs", "src-tauri/tauri.conf.json", "tests/login_gate_first_screen_harness.mjs", "tests/no_dead_tauri_invoke_harness.mjs", "tests/stack_build_metadata_harness.mjs"],
+      "require_all_of": ["src-tauri/src/commands/app_login.rs", "dist/index.html", "tests/login_gate_first_screen_harness.mjs"]
     },
     {
       "name": "repo-meta routing",
@@ -114,6 +120,17 @@
       { "name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs" },
       { "name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs" },
       { "name": "seafarer_no_dead_tauri_invoke", "command": "node tests/no_dead_tauri_invoke_harness.mjs" }
+    ],
+    "login-gate-first-162b": [
+      { "name": "seafarer_bundled_plugin_isolation", "command": "node tests/bundled_plugin_isolation_harness.mjs" },
+      { "name": "seafarer_build_provenance", "command": "node tests/build_provenance_harness.mjs" },
+      { "name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs" },
+      { "name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs" },
+      { "name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs" },
+      { "name": "seafarer_no_dead_tauri_invoke", "command": "node tests/no_dead_tauri_invoke_harness.mjs" },
+      { "name": "seafarer_stack_build_metadata", "command": "node tests/stack_build_metadata_harness.mjs" },
+      { "name": "seafarer_stack_verification_negative_control", "command": "node tests/stack_verification_negative_control_harness.mjs" },
+      { "name": "seafarer_login_gate_first_screen", "command": "node tests/login_gate_first_screen_harness.mjs" }
     ],
     "plugin-host": [
       {
@@ -289,6 +306,7 @@
   "allowed_file_patterns": {
     "mobile-external-url": ["src-tauri/src/commands/vault.rs", "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt"],
     "assistant-nonblocking": ["src-tauri/src/commands/assistant.rs", "tests/no_dead_tauri_invoke_harness.mjs"],
+    "login-gate-first-162b": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/app_login.rs", "src-tauri/src/lib.rs", "src-tauri/tauri.conf.json", "tests/login_gate_first_screen_harness.mjs", "tests/no_dead_tauri_invoke_harness.mjs", "tests/stack_build_metadata_harness.mjs"],
     "repo-meta": ["AGENTS.md", "CLAUDE.md"],
     "plugin-host": ["dist/index.html", "dist/plugin-host-ui.js", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "src-tauri/src/commands/account_sync.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/commands/profile.rs", "src-tauri/src/lib.rs", "tests/bundled_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/seafarer_presence_contract_harness.mjs", "tests/seafarer_theme_default_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs", "tests/plugin_remote_over_bundled_harness.mjs", "tests/account_profile_sync_harness.mjs"],
     "demo-vault": ["dist/index.html", "src-tauri/resources/demo-vault.zip", "src-tauri/src/db.rs", "tests/demo_vault_contract_harness.mjs"],
