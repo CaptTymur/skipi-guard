@@ -1,0 +1,413 @@
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+import tempfile
+import unittest
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+GUARD = ROOT / "bin" / "skipi-guard"
+CONFIG = ROOT / "configs" / "homes" / "seafarer.json"
+OVERRIDE_ENV = "SKIPI_GUARD_OVERRIDE_TOKEN"
+
+ROUTE_TASK = "login-gate-first-162b"
+ROUTE_RULE = "login gate first screen + 0.4.186 bump routing (162b)"
+# Push set of fix/ios-login-visibility-162 (b5cd14a8) as the pre-push hook saw
+# it on 2026-09-02: range 7c3e0b5 -> b5cd14a8 (stale origin/main in the home
+# checkout) = 9 files. Against the live main 8ce7023a the union is 8 files
+# (tests/no_dead_tauri_invoke_harness.mjs is unchanged by the two new
+# commits). The route must open for BOTH unions.
+ROUTE_FILES = [
+    "dist/index.html",
+    "src-tauri/Cargo.lock",
+    "src-tauri/Cargo.toml",
+    "src-tauri/src/commands/app_login.rs",
+    "src-tauri/src/lib.rs",
+    "src-tauri/tauri.conf.json",
+    "tests/login_gate_first_screen_harness.mjs",
+    "tests/no_dead_tauri_invoke_harness.mjs",
+    "tests/stack_build_metadata_harness.mjs",
+]
+LIVE_MAIN_UNION_FILES = [path for path in ROUTE_FILES if path != "tests/no_dead_tauri_invoke_harness.mjs"]
+ROUTE_CORE_FILES = [
+    "src-tauri/src/commands/app_login.rs",
+    "dist/index.html",
+    "tests/login_gate_first_screen_harness.mjs",
+]
+ROUTE_HARNESSES = [
+    {"name": "seafarer_bundled_plugin_isolation", "command": "node tests/bundled_plugin_isolation_harness.mjs"},
+    {"name": "seafarer_build_provenance", "command": "node tests/build_provenance_harness.mjs"},
+    {"name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs"},
+    {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
+    {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"},
+    {"name": "seafarer_no_dead_tauri_invoke", "command": "node tests/no_dead_tauri_invoke_harness.mjs"},
+    {"name": "seafarer_stack_build_metadata", "command": "node tests/stack_build_metadata_harness.mjs"},
+    {"name": "seafarer_stack_verification_negative_control", "command": "node tests/stack_verification_negative_control_harness.mjs"},
+    {"name": "seafarer_login_gate_first_screen", "command": "node tests/login_gate_first_screen_harness.mjs"},
+]
+
+# Seafarer config surface on main a059e6d (before this route). The route must
+# be purely additive: every entry below stays, nothing else is added.
+PRE_ROUTE_RELEASE_TASKS = ["release", "release-infra", "build-release", "stack-metadata", "mobile-external-url"]
+PRE_ROUTE_ROUTING_TASKS = [
+    "mobile-external-url",
+    "assistant-nonblocking",
+    "repo-meta",
+    "stack-metadata",
+    "release",
+    "settings-adopt",
+    "publication-infra",
+    "assistant-module",
+]
+PRE_ROUTE_HARNESS_TASKS = {
+    "mobile-external-url",
+    "assistant-nonblocking",
+    "plugin-host",
+    "assistant-module",
+    "demo-vault",
+    "contract-sync",
+    "release",
+    "provenance",
+    "publication-infra",
+    "settings-adopt",
+    "stack-metadata",
+}
+PRE_ROUTE_ALLOWED_TASKS = {
+    "mobile-external-url",
+    "assistant-nonblocking",
+    "repo-meta",
+    "plugin-host",
+    "demo-vault",
+    "contract-sync",
+    "publication-infra",
+    "settings-adopt",
+    "stack-metadata",
+    "assistant-module",
+    "release",
+}
+
+
+class SeafarerLoginGateRouteTests(unittest.TestCase):
+    def child_env(self) -> dict[str, str]:
+        env = os.environ.copy()
+        env.pop(OVERRIDE_ENV, None)
+        return env
+
+    def run_git(self, repo: Path, *args: str) -> None:
+        subprocess.run(
+            ["git", "-C", str(repo), *args],
+            text=True,
+            capture_output=True,
+            check=True,
+            env=self.child_env(),
+        )
+
+    def commit_files(self, repo: Path, message: str, updates: dict[str, str]) -> None:
+        for relative, contents in updates.items():
+            path = repo / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(contents, encoding="utf-8")
+        self.run_git(repo, "add", "-A")
+        self.run_git(repo, "commit", "-q", "-m", message)
+
+    def init_repo(self, repo: Path) -> None:
+        self.run_git(repo, "init", "-q")
+        self.run_git(repo, "config", "user.email", "skipi-guard@example.invalid")
+        self.run_git(repo, "config", "user.name", "Skipi Guard Fixture")
+        self.commit_files(repo, "seed fixture", {"fixture.txt": "seed\n"})
+
+    def run_guard(
+        self,
+        repo: Path,
+        result_json: Path,
+    ) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
+        proc = subprocess.run(
+            [
+                str(GUARD),
+                "verify",
+                "--home",
+                "seafarer",
+                "--auto-task",
+                "--repo",
+                str(repo),
+                "--base",
+                "HEAD~1",
+                "--head",
+                "HEAD",
+                "--json",
+                str(result_json),
+            ],
+            text=True,
+            capture_output=True,
+            env=self.child_env(),
+        )
+        with result_json.open("r", encoding="utf-8") as handle:
+            return proc, json.load(handle)
+
+    def verify_updates(
+        self,
+        updates: dict[str, str],
+        *,
+        prefix: str,
+    ) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
+        with tempfile.TemporaryDirectory(prefix=prefix) as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.init_repo(repo)
+            self.commit_files(repo, "candidate change", updates)
+            return self.run_guard(repo, root / "result.json")
+
+    def candidate(self, files: list[str]) -> dict[str, str]:
+        return {path: f"fixture for {path}\n" for path in files}
+
+    def load_config(self) -> dict[str, Any]:
+        with CONFIG.open("r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+    def assert_routed_pass(self, payload: dict[str, Any], proc: subprocess.CompletedProcess[str], files: list[str]) -> None:
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "pass")
+        self.assertEqual(payload["changed_files"], sorted(files))
+        self.assertEqual(payload["task"], ROUTE_TASK)
+        self.assertEqual(payload["task_source"], "auto")
+        self.assertEqual(payload["task_rule"], ROUTE_RULE)
+        self.assertEqual(payload["effective_tasks"], [ROUTE_TASK])
+        self.assertEqual(payload["scope_violations"], [])
+        self.assertEqual(payload["exact_file_set_missing"], [])
+        self.assertEqual(payload["exact_file_set_unexpected"], [])
+        # Cargo.toml/Cargo.lock/tauri.conf.json are release-sensitive: the
+        # 0.4.186 bump is authorized because the task is a release task, not
+        # silenced.
+        self.assertTrue(payload["release_changes"])
+        # Effective harness list is exactly the declared one: the inherited
+        # plugin-host/provenance commands are identical (name, command) pairs
+        # and dedupe away, so nothing extra and nothing missing runs.
+        self.assertEqual(
+            [{"name": entry["name"], "command": entry["command"]} for entry in payload["tests"]],
+            ROUTE_HARNESSES,
+        )
+
+    def test_stale_origin_union_of_9_routes_to_login_gate(self) -> None:
+        # Hook base 7c3e0b5 (stale origin/main in the home checkout): 9 files.
+        proc, payload = self.verify_updates(
+            self.candidate(ROUTE_FILES),
+            prefix="skipi-guard-seafarer-login-gate-union9-",
+        )
+        self.assert_routed_pass(payload, proc, ROUTE_FILES)
+
+    def test_live_main_union_of_8_routes_to_login_gate(self) -> None:
+        # CI / fetched base 8ce7023a (live main): 8 files, no
+        # tests/no_dead_tauri_invoke_harness.mjs in the delta.
+        proc, payload = self.verify_updates(
+            self.candidate(LIVE_MAIN_UNION_FILES),
+            prefix="skipi-guard-seafarer-login-gate-union8-",
+        )
+        self.assert_routed_pass(payload, proc, LIVE_MAIN_UNION_FILES)
+
+    def test_route_is_literal_release_task_bounded_by_routing(self) -> None:
+        config = self.load_config()
+
+        routes = [rule for rule in config["task_routing"] if rule.get("task") == ROUTE_TASK]
+        self.assertEqual(len(routes), 1)
+        self.assertEqual(routes[0]["name"], ROUTE_RULE)
+        self.assertEqual(routes[0]["when_all_files_in"], ROUTE_FILES)
+        self.assertEqual(routes[0]["require_all_of"], ROUTE_CORE_FILES)
+        self.assertNotIn("require_any_of", routes[0])
+        self.assertEqual(config["allowed_file_patterns"][ROUTE_TASK], ROUTE_FILES)
+        self.assertEqual(config["harness_commands"][ROUTE_TASK], ROUTE_HARNESSES)
+        # The bump commit touches version files -> the task must be a release
+        # task. It deliberately has NO exact_task_file_sets entry: an exact set
+        # cannot accept both the 9-file (stale origin/main) and the 8-file
+        # (live main) union, so the diff is bounded by the routing rule
+        # (when_all_files_in) plus allowed_file_patterns instead (mirrors the
+        # mobile-external-url route).
+        self.assertIn(ROUTE_TASK, config["release_tasks"])
+        self.assertNotIn(ROUTE_TASK, config["exact_task_file_sets"])
+        harness_names = [entry["name"] for entry in config["harness_commands"][ROUTE_TASK]]
+        self.assertIn("seafarer_no_dead_tauri_invoke", harness_names)
+        self.assertIn("seafarer_stack_build_metadata", harness_names)
+        self.assertIn("seafarer_build_provenance", harness_names)
+        self.assertIn("seafarer_login_gate_first_screen", harness_names)
+        self.assertEqual(len(harness_names), len(set(harness_names)))
+        plugin_host_generic = {entry["name"] for entry in config["harness_commands"]["plugin-host"]}
+        self.assertTrue(plugin_host_generic <= set(harness_names))
+        for pattern in (
+            routes[0]["when_all_files_in"]
+            + routes[0]["require_all_of"]
+            + config["allowed_file_patterns"][ROUTE_TASK]
+        ):
+            self.assertNotIn("*", pattern)
+            self.assertNotIn("?", pattern)
+            self.assertNotIn("[", pattern)
+        for core in ROUTE_CORE_FILES:
+            self.assertIn(core, ROUTE_FILES)
+
+    def test_route_is_additive_to_pre_route_config(self) -> None:
+        config = self.load_config()
+
+        self.assertEqual(config["release_tasks"], PRE_ROUTE_RELEASE_TASKS + [ROUTE_TASK])
+        self.assertEqual(config["default_task"], "plugin-host")
+        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata"})
+        routing_tasks = [rule["task"] for rule in config["task_routing"]]
+        self.assertEqual([task for task in routing_tasks if task != ROUTE_TASK], PRE_ROUTE_ROUTING_TASKS)
+        self.assertEqual(routing_tasks.count(ROUTE_TASK), 1)
+        self.assertEqual(set(config["harness_commands"]), PRE_ROUTE_HARNESS_TASKS | {ROUTE_TASK})
+        self.assertEqual(set(config["allowed_file_patterns"]), PRE_ROUTE_ALLOWED_TASKS | {ROUTE_TASK})
+        # The superseded 31.08 proposal (login-nonblocking-162, 7 files, never
+        # merged; its file set already landed on the home main 8ce7023a) is not
+        # part of this route.
+        for stale_task in ("login-nonblocking-162", "login-gate-162b"):
+            self.assertNotIn(stale_task, config["release_tasks"])
+            self.assertNotIn(stale_task, config["allowed_file_patterns"])
+            self.assertNotIn(stale_task, config["harness_commands"])
+            self.assertNotIn(stale_task, routing_tasks)
+
+    def test_union_without_app_login_does_not_route_and_stays_red(self) -> None:
+        # require_all_of core: without app_login.rs the route stays closed ->
+        # default plugin-host -> release-sensitive + scope violation.
+        files = [path for path in ROUTE_FILES if path != "src-tauri/src/commands/app_login.rs"]
+        proc, payload = self.verify_updates(
+            self.candidate(files),
+            prefix="skipi-guard-seafarer-login-gate-no-app-login-",
+        )
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertNotEqual(payload["task"], ROUTE_TASK)
+        self.assertTrue(
+            any("changes outside allowed patterns" in error for error in payload["errors"]),
+            payload["errors"],
+        )
+
+    def test_union_without_other_core_files_does_not_route(self) -> None:
+        for core in ("dist/index.html", "tests/login_gate_first_screen_harness.mjs"):
+            with self.subTest(missing=core):
+                files = [path for path in ROUTE_FILES if path != core]
+                proc, payload = self.verify_updates(
+                    self.candidate(files),
+                    prefix="skipi-guard-seafarer-login-gate-no-core-",
+                )
+
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertEqual(payload["status"], "fail")
+                self.assertNotEqual(payload["task"], ROUTE_TASK)
+
+    def test_bump_only_does_not_route_and_stays_red(self) -> None:
+        # Only the bump commit b5cd14a8 (5 files) without the login-gate fix:
+        # no route may silently authorize the release-sensitive touch.
+        proc, payload = self.verify_updates(
+            self.candidate(
+                [
+                    "dist/index.html",
+                    "src-tauri/Cargo.lock",
+                    "src-tauri/Cargo.toml",
+                    "src-tauri/tauri.conf.json",
+                    "tests/stack_build_metadata_harness.mjs",
+                ]
+            ),
+            prefix="skipi-guard-seafarer-login-gate-bumponly-",
+        )
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertNotEqual(payload["task"], ROUTE_TASK)
+
+    def test_candidate_plus_unrelated_file_does_not_route_and_stays_red(self) -> None:
+        updates = self.candidate(ROUTE_FILES)
+        updates["src/unrelated.txt"] = "forbidden extra file\n"
+        proc, payload = self.verify_updates(
+            updates,
+            prefix="skipi-guard-seafarer-login-gate-mixed-",
+        )
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertNotEqual(payload["task"], ROUTE_TASK)
+        self.assertTrue(
+            any("changes outside allowed patterns" in error for error in payload["errors"]),
+            payload["errors"],
+        )
+
+    def test_candidate_plus_release_sensitive_file_cannot_reach_route(self) -> None:
+        # Without an exact set, a release task's allowed patterns are widened
+        # by release_sensitive_paths for EXPLICIT --task use only. Under
+        # auto-task (hook + CI default) the routing rule bounds the diff to the
+        # 9 files, so a generated/mobile file never reaches this task.
+        updates = self.candidate(ROUTE_FILES)
+        updates["src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt"] = "fixture activity\n"
+        proc, payload = self.verify_updates(
+            updates,
+            prefix="skipi-guard-seafarer-login-gate-release-sensitive-",
+        )
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertNotEqual(payload["task"], ROUTE_TASK)
+        self.assertTrue(
+            any("release-sensitive path touch is blocked" in error for error in payload["errors"]),
+            payload["errors"],
+        )
+
+    def test_existing_seafarer_routes_keep_their_classification(self) -> None:
+        existing_routes = {
+            "mobile-external-url": (
+                "mobile external-url fix routing",
+                {
+                    "src-tauri/src/commands/vault.rs": "fixture vault\n",
+                    "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt": "fixture activity\n",
+                },
+            ),
+            "assistant-nonblocking": (
+                "assistant non-blocking fix routing (140)",
+                {
+                    "src-tauri/src/commands/assistant.rs": "fixture assistant\n",
+                    "tests/no_dead_tauri_invoke_harness.mjs": "fixture harness\n",
+                },
+            ),
+            "stack-metadata": (
+                "seafarer Stage 4 stack-metadata routing",
+                {
+                    "dist/index.html": "fixture dist\n",
+                    "src-tauri/Cargo.lock": "fixture lock\n",
+                    "src-tauri/Cargo.toml": "fixture toml\n",
+                    "src-tauri/src/commands/vault.rs": "fixture vault\n",
+                    "src-tauri/tauri.conf.json": "fixture conf\n",
+                    "tests/stack_build_metadata_harness.mjs": "console.log('ok');\n",
+                    "tests/stack_verification_negative_control_harness.mjs": "console.log('ok');\n",
+                },
+            ),
+            "release": (
+                "canonical version-bump routing",
+                {
+                    "dist/index.html": "fixture dist\n",
+                    "src-tauri/Cargo.lock": "fixture lock\n",
+                    "src-tauri/Cargo.toml": "fixture toml\n",
+                    "src-tauri/tauri.conf.json": "fixture conf\n",
+                },
+            ),
+            "repo-meta": (
+                "repo-meta routing",
+                {"AGENTS.md": "fixture agents\n", "CLAUDE.md": "fixture claude\n"},
+            ),
+        }
+        for expected_task, (expected_rule, updates) in existing_routes.items():
+            with self.subTest(task=expected_task):
+                proc, payload = self.verify_updates(
+                    updates,
+                    prefix=f"skipi-guard-seafarer-existing-{expected_task}-",
+                )
+
+                self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+                self.assertEqual(payload["status"], "pass")
+                self.assertEqual(payload["task"], expected_task)
+                self.assertEqual(payload["task_rule"], expected_rule)
+                self.assertEqual(payload["scope_violations"], [])
+
+
+if __name__ == "__main__":
+    unittest.main()
