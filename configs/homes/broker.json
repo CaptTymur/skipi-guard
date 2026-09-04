@@ -18,6 +18,20 @@
   "default_task": "plugin-host",
   "task_routing": [
     {
+      "name": "broker dist escaping security routing (BACKLOG №191/№197, owner-authorized 2026-09-04)",
+      "task": "security-escaping-191",
+      "when_all_files_in": [
+        "dist/index.html",
+        "dist/map.js",
+        "src-tauri/src/lib.rs",
+        "tests/broker_escaping_negative_harness.mjs"
+      ],
+      "require_all_of": [
+        "dist/index.html",
+        "tests/broker_escaping_negative_harness.mjs"
+      ]
+    },
+    {
       "name": "repo-meta routing",
       "task": "repo-meta",
       "when_all_files_in": [
@@ -263,6 +277,36 @@
         "name": "broker_presence_contract",
         "command": "node tests/broker_presence_contract_harness.mjs"
       }
+    ],
+    "security-escaping-191": [
+      {
+        "name": "broker_plugin_isolation",
+        "command": "node tests/broker_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "broker_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "broker_presence_contract",
+        "command": "node tests/broker_presence_contract_harness.mjs"
+      },
+      {
+        "name": "broker_map_contract",
+        "command": "node tests/map_contract_harness.mjs"
+      },
+      {
+        "name": "broker_trial_gate_wired",
+        "command": "node tests/trial_gate_wired_harness.mjs"
+      },
+      {
+        "name": "broker_csp_inline_handlers",
+        "command": "node tests/csp_inline_handlers_harness.mjs"
+      },
+      {
+        "name": "broker_escaping_negative",
+        "command": "node tests/broker_escaping_negative_harness.mjs"
+      }
     ]
   },
   "allowed_file_patterns": {
@@ -299,6 +343,12 @@
       "src-tauri/tauri.conf.json",
       "tests/stack_build_metadata_harness.mjs",
       "tests/stack_verification_negative_control_harness.mjs"
+    ],
+    "security-escaping-191": [
+      "dist/index.html",
+      "dist/map.js",
+      "src-tauri/src/lib.rs",
+      "tests/broker_escaping_negative_harness.mjs"
     ]
   },
   "exact_task_file_sets": {

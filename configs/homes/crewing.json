@@ -29,6 +29,19 @@
   },
   "task_routing": [
     {
+      "name": "crewing dist escaping security routing (BACKLOG №179, owner-authorized 2026-09-04)",
+      "task": "security-escaping-191",
+      "when_all_files_in": [
+        "dist/index.html",
+        "src-tauri/src/messaging.rs",
+        "tests/crewing_escaping_negative_harness.mjs"
+      ],
+      "require_all_of": [
+        "dist/index.html",
+        "tests/crewing_escaping_negative_harness.mjs"
+      ]
+    },
+    {
       "name": "repo-meta routing",
       "task": "repo-meta",
       "when_all_files_in": [
@@ -341,6 +354,36 @@
         "name": "crewing_build_provenance",
         "command": "node tests/build_provenance_harness.mjs"
       }
+    ],
+    "security-escaping-191": [
+      {
+        "name": "crewing_plugin_isolation",
+        "command": "node tests/crewing_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "shared_host_runtime_isolation",
+        "command": "node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs"
+      },
+      {
+        "name": "crewing_presence_contract",
+        "command": "node tests/crewing_presence_contract_harness.mjs"
+      },
+      {
+        "name": "crewing_crew_flow_demo",
+        "command": "node tests/crewing_crew_flow_demo_harness.mjs"
+      },
+      {
+        "name": "crewing_csp_inline_handlers",
+        "command": "node tests/csp_inline_handlers_harness.mjs"
+      },
+      {
+        "name": "crewing_mailbox_contract",
+        "command": "node tests/crewing_mailbox_contract_harness.mjs"
+      },
+      {
+        "name": "crewing_escaping_negative",
+        "command": "node tests/crewing_escaping_negative_harness.mjs"
+      }
     ]
   },
   "additive_task_checks": [
@@ -394,6 +437,11 @@
       "src-tauri/tauri.conf.json",
       "tests/stack_build_metadata_harness.mjs",
       "tests/stack_verification_negative_control_harness.mjs"
+    ],
+    "security-escaping-191": [
+      "dist/index.html",
+      "src-tauri/src/messaging.rs",
+      "tests/crewing_escaping_negative_harness.mjs"
     ]
   }
 }
