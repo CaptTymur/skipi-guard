@@ -30,11 +30,14 @@ c88ff1cc9531708769e0335bfc29a3689c8a2844 (PR #49). Verify or regenerate with
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import tempfile
 import unittest
+from importlib.machinery import SourceFileLoader
 from pathlib import Path
 from typing import Any
 
@@ -45,6 +48,22 @@ OVERRIDE_ENV = "SKIPI_GUARD_OVERRIDE_TOKEN"
 
 ROUTE_TASK = "security-escaping-191"
 DEFAULT_TASK = "plugin-host"
+
+
+def _load_guard_module():
+    """Import bin/skipi-guard as a module so its own matcher can be exercised.
+
+    The module name is not __main__, so importing does not run the CLI.
+    """
+    spec = importlib.util.spec_from_loader(
+        "skipi_guard_under_test", SourceFileLoader("skipi_guard_under_test", str(GUARD))
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+GUARD_MODULE = _load_guard_module()
 
 # --- broker (BACKLOG No191 escaping debt + No197 trial gate) -----------------
 BROKER_RULE_NAME = (
@@ -69,6 +88,12 @@ BROKER_HARNESSES = [
     {"name": "broker_trial_gate_wired", "command": "node tests/trial_gate_wired_harness.mjs"},
     {"name": "broker_csp_inline_handlers", "command": "node tests/csp_inline_handlers_harness.mjs"},
     {"name": "broker_escaping_negative", "command": "node tests/broker_escaping_negative_harness.mjs"},
+    {"name": "broker_stack_build_metadata", "command": "node tests/stack_build_metadata_harness.mjs"},
+    {
+        "name": "broker_stack_verification_negative_control",
+        "command": "node tests/stack_verification_negative_control_harness.mjs",
+    },
+    {"name": "broker_map_msi_module_pin", "command": "node tests/map_msi_module_pin_harness.mjs"},
 ]
 # Pre-existing routes of the home, with the classification they had before this
 # route. `proguard` is expected to FAIL: .github/workflows/skipi-guard.yml is
@@ -148,6 +173,24 @@ CREWING_HARNESSES = [
     {"name": "crewing_csp_inline_handlers", "command": "node tests/csp_inline_handlers_harness.mjs"},
     {"name": "crewing_mailbox_contract", "command": "node tests/crewing_mailbox_contract_harness.mjs"},
     {"name": "crewing_escaping_negative", "command": "node tests/crewing_escaping_negative_harness.mjs"},
+    {"name": "crewing_build_provenance", "command": "node tests/build_provenance_harness.mjs"},
+    {"name": "crewing_theme_default", "command": "node tests/crewing_theme_default_harness.mjs"},
+    {
+        "name": "crewing_compliance_manual_flow",
+        "command": "node tests/crewing_compliance_manual_flow_harness.mjs",
+    },
+    {"name": "crewing_mail_cv_intake_demo", "command": "node tests/crewing_mail_cv_intake_demo_harness.mjs"},
+    {"name": "crewing_settings5_preview_gated", "command": "node tests/settings5_preview_gated_harness.mjs"},
+    {"name": "crewing_trial_gate_wired", "command": "node tests/trial_gate_wired_harness.mjs"},
+    {
+        "name": "crewing_trial_activate_unconnected",
+        "command": "node tests/trial_activate_unconnected_harness.mjs",
+    },
+    {"name": "crewing_stack_build_metadata", "command": "node tests/stack_build_metadata_harness.mjs"},
+    {
+        "name": "crewing_stack_verification_negative_control",
+        "command": "node tests/stack_verification_negative_control_harness.mjs",
+    },
 ]
 CREWING_EXISTING_ROUTES = [
     {
@@ -702,6 +745,11 @@ class SecurityEscapingRouteContract:
     # for). Neither is in the declared set.
     RELEASE_BUMP_FILE = "src-tauri/Cargo.toml"
     CI_PIN_FILE = ".github/workflows/skipi-guard.yml"
+    EXPECTED_HARNESS_COUNT = 0
+    # Every green harness of the home that reads a file this route opens must
+    # run on the route: opening a file while dropping the only checks that read
+    # it is the defect this list exists to prevent (merge-gate audit F-1/F-2).
+    GUARDED_READERS: dict[str, list[str]] = {}
 
     # ------------------------------------------------------------------
     # helpers
@@ -734,31 +782,64 @@ class SecurityEscapingRouteContract:
         self.run_git(repo, "config", "user.name", "Skipi Guard Fixture")
         self.commit_files(repo, "seed fixture", {"fixture.txt": "seed\n"})
 
-    def run_guard(self, repo: Path, result_json: Path) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
-        proc = subprocess.run(
-            [
-                str(GUARD),
-                "verify",
-                "--home",
-                self.HOME,
-                "--auto-task",
-                "--repo",
-                str(repo),
-                "--base",
-                "HEAD~1",
-                "--head",
-                "HEAD",
-                "--json",
-                str(result_json),
-            ],
-            text=True,
-            capture_output=True,
-            env=self.child_env(),
-        )
+    def run_guard(
+        self,
+        repo: Path,
+        result_json: Path,
+        *,
+        guard_bin: Path | None = None,
+        run_harness: bool = False,
+    ) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
+        command = [
+            str(guard_bin or GUARD),
+            "verify",
+            "--home",
+            self.HOME,
+            "--auto-task",
+            "--repo",
+            str(repo),
+            "--base",
+            "HEAD~1",
+            "--head",
+            "HEAD",
+            "--json",
+            str(result_json),
+        ]
+        if run_harness:
+            command.append("--run-harness")
+        proc = subprocess.run(command, text=True, capture_output=True, env=self.child_env())
         with result_json.open("r", encoding="utf-8") as handle:
             return proc, json.load(handle)
 
-    def verify_files(self, files: list[str], *, prefix: str) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
+    def guard_root_with_config(self, root: Path, mutate) -> Path:
+        """Materialise a throwaway guard root whose config has been mutated.
+
+        skipi-guard resolves its config dir from its own location
+        (ROOT = Path(__file__).resolve().parents[1]), so copying the single
+        script next to a patched configs/homes/<home>.json runs the real gate
+        against a hypothetical config. Nothing in the checkout is touched.
+        """
+        guard_root = root / "guard"
+        (guard_root / "bin").mkdir(parents=True)
+        (guard_root / "configs" / "homes").mkdir(parents=True)
+        guard_bin = guard_root / "bin" / "skipi-guard"
+        shutil.copy2(GUARD, guard_bin)
+        guard_bin.chmod(0o755)
+        config = self.load_config()
+        mutate(config)
+        (guard_root / "configs" / "homes" / f"{self.HOME}.json").write_text(
+            json.dumps(config, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
+        return guard_bin
+
+    def verify_files(
+        self,
+        files: list[str],
+        *,
+        prefix: str,
+        mutate_config=None,
+        run_harness: bool = False,
+    ) -> tuple[subprocess.CompletedProcess[str], dict[str, Any]]:
         updates = {path: f"fixture for {path}\n" for path in files}
         with tempfile.TemporaryDirectory(prefix=prefix) as tmp:
             root = Path(tmp)
@@ -766,7 +847,8 @@ class SecurityEscapingRouteContract:
             repo.mkdir()
             self.init_repo(repo)
             self.commit_files(repo, "candidate change", updates)
-            return self.run_guard(repo, root / "result.json")
+            guard_bin = None if mutate_config is None else self.guard_root_with_config(root, mutate_config)
+            return self.run_guard(repo, root / "result.json", guard_bin=guard_bin, run_harness=run_harness)
 
     def load_config(self) -> dict[str, Any]:
         with (ROOT / "configs" / "homes" / f"{self.HOME}.json").open("r", encoding="utf-8") as handle:
@@ -933,7 +1015,11 @@ class SecurityEscapingRouteContract:
             self.assertIn(core, self.ROUTE_FILES)
         names = [entry["name"] for entry in self.HARNESSES]
         self.assertEqual(len(names), len(set(names)))
-        self.assertEqual(len(names), 7)
+        self.assertEqual(len(names), self.EXPECTED_HARNESS_COUNT)
+        # The allowlist must exist and be non-empty: a task with no allowed
+        # patterns is NOT scope-checked at all (see the fail-open test below),
+        # so an empty or missing entry silently unbounds the route.
+        self.assertTrue(config["allowed_file_patterns"].get(ROUTE_TASK))
 
     def test_route_is_not_a_release_task(self) -> None:
         config = self.load_config()
@@ -948,6 +1034,170 @@ class SecurityEscapingRouteContract:
         self.assertFalse(lowered.endswith("-release"))
         # And no exact set: partial pushes must pass (see the partial-push test).
         self.assertNotIn(ROUTE_TASK, config["exact_task_file_sets"])
+
+    # ------------------------------------------------------------------
+    # the declaration cannot be hollowed out
+    # ------------------------------------------------------------------
+    def test_route_patterns_are_directory_qualified_single_file_paths(self) -> None:
+        """Every route pattern must name exactly one file, by full path.
+
+        skipi-guard's matcher treats a glob-free pattern with no "/" as a
+        BASENAME match (`path.endswith("/" + pattern)`), so `map.js` would also
+        match `dist/map-module/map.js` -- the vendored Leaflet module. A
+        coordinated edit of the config and this file's constants would
+        otherwise keep the suite green while the real gate let a vendor file
+        ride the route.
+        """
+        config = self.load_config()
+        rule = config["task_routing"][0]
+        patterns = (
+            rule["when_all_files_in"] + rule["require_all_of"] + config["allowed_file_patterns"][ROUTE_TASK]
+        )
+        self.assertTrue(patterns)
+        for pattern in patterns:
+            with self.subTest(pattern=pattern):
+                for glob_char in ("*", "?", "["):
+                    self.assertNotIn(glob_char, pattern)
+                # A directory component is what disables basename matching.
+                self.assertIn("/", pattern, f"{pattern!r} would match by basename anywhere in the tree")
+                self.assertFalse(pattern.startswith("/"))
+                self.assertTrue(GUARD_MODULE.pattern_matches(pattern, pattern))
+                # ... and it must match nothing but itself.
+                directory, _, base = pattern.rpartition("/")
+                for decoy in (
+                    base,
+                    f"vendor/{pattern}",
+                    f"{directory}/vendored/{base}",
+                    f"{directory}/map-module/{base}",
+                    f"other/{base}",
+                    f"{pattern}.bak",
+                ):
+                    if decoy == pattern:
+                        continue
+                    self.assertFalse(
+                        GUARD_MODULE.pattern_matches(decoy, pattern),
+                        f"{pattern!r} also matches {decoy!r}",
+                    )
+
+    def test_declared_harnesses_cover_every_file_the_route_opens(self) -> None:
+        # Merge-gate audit F-1: the route opened src-tauri/src/lib.rs for the
+        # broker while leaving behind the only two harnesses that read it,
+        # because before the route lib.rs was reachable only through
+        # stack-metadata, where they are mandatory.
+        # Read the live config, not this file's constant: asserting a constant
+        # against a constant would prove nothing.
+        config = self.load_config()
+        commands = {entry["command"] for entry in config["harness_commands"][ROUTE_TASK]}
+        for opened_file, readers in self.GUARDED_READERS.items():
+            for reader in readers:
+                with self.subTest(opened=opened_file, harness=reader):
+                    self.assertIn(f"node tests/{reader}", commands)
+
+    def test_missing_harness_file_fails_the_run(self) -> None:
+        """--run-harness must actually execute the commands.
+
+        Without this the suite never runs a harness, so a command pointing at a
+        file that does not exist would sit in the config looking green forever.
+        The fixture repo has no real harness scripts, so every declared command
+        must fail loudly.
+        """
+        proc, payload = self.verify_files(
+            self.ROUTE_FILES,
+            prefix=f"skipi-guard-{self.HOME}-escaping-harness-",
+            run_harness=True,
+        )
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertEqual(payload["task"], ROUTE_TASK)
+        self.assertTrue(payload["tests"])
+        statuses = {entry["status"] for entry in payload["tests"]}
+        self.assertIn("fail", statuses)
+        self.assertTrue(
+            any("harness" in error.lower() or "failed" in error.lower() for error in payload["errors"]),
+            payload["errors"],
+        )
+
+    def test_gate_fails_open_without_a_route_allowlist(self) -> None:
+        """KNOWN GATE LIMITATION, pinned deliberately.
+
+        scope_check_for_task() returns None when a task has no allowed
+        patterns, so deleting allowed_file_patterns[route] does not turn the
+        route red -- it silently switches scope checking OFF for it. The gate
+        fails OPEN here, which is why the presence and exact content of the
+        allowlist is asserted structurally rather than behaviourally.
+
+        Fixing it means changing bin/skipi-guard, which is out of scope for a
+        route PR. If the gate is ever made to fail closed on a missing
+        allowlist, this test should start failing -- update it then.
+        """
+        def drop_allowlist(config: dict[str, Any]) -> None:
+            del config["allowed_file_patterns"][ROUTE_TASK]
+
+        proc, payload = self.verify_files(
+            self.ROUTE_FILES,
+            prefix=f"skipi-guard-{self.HOME}-escaping-noallowlist-",
+            mutate_config=drop_allowlist,
+        )
+
+        self.assertEqual(payload["task"], ROUTE_TASK)
+        self.assertEqual(payload["scope_checks"], [])
+        self.assertEqual(proc.returncode, 0, "gate now fails closed on a missing allowlist -- update this test")
+        self.assertEqual(payload["status"], "pass")
+
+    def test_route_allowlist_is_load_bearing_when_present(self) -> None:
+        # The counterpart to the fail-open test: as long as the allowlist is
+        # there, narrowing it does bite. Drop one path from it and that path
+        # becomes a scope violation while the routing rule still matches.
+        removed = self.ROUTE_FILES[1]
+
+        def narrow_allowlist(config: dict[str, Any]) -> None:
+            config["allowed_file_patterns"][ROUTE_TASK] = [
+                pattern for pattern in config["allowed_file_patterns"][ROUTE_TASK] if pattern != removed
+            ]
+
+        proc, payload = self.verify_files(
+            self.ROUTE_FILES,
+            prefix=f"skipi-guard-{self.HOME}-escaping-narrowed-",
+            mutate_config=narrow_allowlist,
+        )
+
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual(payload["status"], "fail")
+        self.assertEqual(payload["task"], ROUTE_TASK)
+        self.assertEqual(payload["scope_violations"], [removed])
+
+    def test_deleting_route_files_is_accepted_known_gate_limitation(self) -> None:
+        """KNOWN GATE LIMITATION, pinned deliberately.
+
+        The gate reads `git diff --name-only`, so it sees WHICH paths changed
+        but not HOW: a commit that deletes dist/map.js and src-tauri/src/lib.rs
+        outright routes and passes exactly like one that edits them. Blocking
+        deletions needs a change-kind check inside bin/skipi-guard, which a
+        route PR may not make. The boundary is held by the task card and
+        manager acceptance instead.
+        """
+        deletable = [path for path in self.ROUTE_FILES if path not in self.CORE_FILES]
+        self.assertTrue(deletable)
+        with tempfile.TemporaryDirectory(prefix=f"skipi-guard-{self.HOME}-escaping-delete-") as tmp:
+            root = Path(tmp)
+            repo = root / "repo"
+            repo.mkdir()
+            self.run_git(repo, "init", "-q")
+            self.run_git(repo, "config", "user.email", "skipi-guard@example.invalid")
+            self.run_git(repo, "config", "user.name", "Skipi Guard Fixture")
+            self.commit_files(repo, "base", {path: "original\n" for path in self.ROUTE_FILES})
+            for path in deletable:
+                (repo / path).unlink()
+            self.commit_files(repo, "delete route files", {path: "edited\n" for path in self.CORE_FILES})
+            proc, payload = self.run_guard(repo, root / "result.json")
+
+        self.assertEqual(payload["changed_files"], sorted(self.ROUTE_FILES))
+        self.assertEqual(payload["task"], ROUTE_TASK)
+        self.assertEqual(
+            proc.returncode, 0, "gate now distinguishes deletions from edits -- update this test"
+        )
+        self.assertEqual(payload["status"], "pass")
 
     # ------------------------------------------------------------------
     # additivity: nothing that existed before the route moved
@@ -1014,6 +1264,29 @@ class BrokerSecurityEscapingRouteTests(SecurityEscapingRouteContract, unittest.T
     HARNESSES = BROKER_HARNESSES
     EXISTING_ROUTES = BROKER_EXISTING_ROUTES
     PRE_ROUTE = BROKER_PRE_ROUTE
+    EXPECTED_HARNESS_COUNT = 10
+    # Green on the home's live main 7f163cb0. Every one of these reads a file
+    # the route opens, so every one of them has to run on the route.
+    GUARDED_READERS = {
+        "src-tauri/src/lib.rs": [
+            "stack_build_metadata_harness.mjs",
+            "stack_verification_negative_control_harness.mjs",
+            "build_provenance_harness.mjs",
+            "broker_plugin_isolation_harness.mjs",
+        ],
+        "dist/map.js": ["map_contract_harness.mjs"],
+        "dist/index.html": [
+            "broker_presence_contract_harness.mjs",
+            "build_provenance_harness.mjs",
+            "csp_inline_handlers_harness.mjs",
+            "map_contract_harness.mjs",
+            "map_msi_module_pin_harness.mjs",
+            "stack_build_metadata_harness.mjs",
+            "stack_verification_negative_control_harness.mjs",
+            "trial_gate_wired_harness.mjs",
+            "broker_plugin_isolation_harness.mjs",
+        ],
+    }
 
     def test_route_opens_the_three_paths_no_task_allowed_before(self) -> None:
         # The reason the route needed an owner GO at all: dist/map.js is not the
@@ -1044,6 +1317,27 @@ class CrewingSecurityEscapingRouteTests(SecurityEscapingRouteContract, unittest.
     HARNESSES = CREWING_HARNESSES
     EXISTING_ROUTES = CREWING_EXISTING_ROUTES
     PRE_ROUTE = CREWING_PRE_ROUTE
+    EXPECTED_HARNESS_COUNT = 16
+    # Green on the home's live main 12a7ce4c.
+    GUARDED_READERS = {
+        "src-tauri/src/messaging.rs": ["crewing_crew_flow_demo_harness.mjs"],
+        "dist/index.html": [
+            "build_provenance_harness.mjs",
+            "crewing_compliance_manual_flow_harness.mjs",
+            "crewing_crew_flow_demo_harness.mjs",
+            "crewing_mail_cv_intake_demo_harness.mjs",
+            "crewing_mailbox_contract_harness.mjs",
+            "crewing_plugin_isolation_harness.mjs",
+            "crewing_presence_contract_harness.mjs",
+            "crewing_theme_default_harness.mjs",
+            "csp_inline_handlers_harness.mjs",
+            "settings5_preview_gated_harness.mjs",
+            "stack_build_metadata_harness.mjs",
+            "stack_verification_negative_control_harness.mjs",
+            "trial_activate_unconnected_harness.mjs",
+            "trial_gate_wired_harness.mjs",
+        ],
+    }
 
     def test_route_opens_the_two_paths_no_task_allowed_before(self) -> None:
         # src-tauri/src/messaging.rs is allowed by none of the seven pre-route

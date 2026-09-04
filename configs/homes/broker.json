@@ -306,6 +306,18 @@
       {
         "name": "broker_escaping_negative",
         "command": "node tests/broker_escaping_negative_harness.mjs"
+      },
+      {
+        "name": "broker_stack_build_metadata",
+        "command": "node tests/stack_build_metadata_harness.mjs"
+      },
+      {
+        "name": "broker_stack_verification_negative_control",
+        "command": "node tests/stack_verification_negative_control_harness.mjs"
+      },
+      {
+        "name": "broker_map_msi_module_pin",
+        "command": "node tests/map_msi_module_pin_harness.mjs"
       }
     ]
   },

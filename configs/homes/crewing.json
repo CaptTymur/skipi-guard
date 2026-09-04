@@ -383,6 +383,42 @@
       {
         "name": "crewing_escaping_negative",
         "command": "node tests/crewing_escaping_negative_harness.mjs"
+      },
+      {
+        "name": "crewing_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "crewing_theme_default",
+        "command": "node tests/crewing_theme_default_harness.mjs"
+      },
+      {
+        "name": "crewing_compliance_manual_flow",
+        "command": "node tests/crewing_compliance_manual_flow_harness.mjs"
+      },
+      {
+        "name": "crewing_mail_cv_intake_demo",
+        "command": "node tests/crewing_mail_cv_intake_demo_harness.mjs"
+      },
+      {
+        "name": "crewing_settings5_preview_gated",
+        "command": "node tests/settings5_preview_gated_harness.mjs"
+      },
+      {
+        "name": "crewing_trial_gate_wired",
+        "command": "node tests/trial_gate_wired_harness.mjs"
+      },
+      {
+        "name": "crewing_trial_activate_unconnected",
+        "command": "node tests/trial_activate_unconnected_harness.mjs"
+      },
+      {
+        "name": "crewing_stack_build_metadata",
+        "command": "node tests/stack_build_metadata_harness.mjs"
+      },
+      {
+        "name": "crewing_stack_verification_negative_control",
+        "command": "node tests/stack_verification_negative_control_harness.mjs"
       }
     ]
   },
