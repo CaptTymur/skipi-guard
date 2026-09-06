@@ -95,6 +95,7 @@ LATER_OWNER_ROUTES = [
     "entry-fork-187",  # DECISIONS (297), 2026-09-06
     "mobile-ime-inset",  # DECISIONS (309), 2026-09-06
     "version-bump",  # DECISIONS (309), 2026-09-06
+    "native-share",  # DECISIONS (332), 2026-09-06
 ]
 
 
