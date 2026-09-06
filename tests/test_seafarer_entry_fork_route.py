@@ -14,27 +14,23 @@ GUARD = ROOT / "bin" / "skipi-guard"
 CONFIG = ROOT / "configs" / "homes" / "seafarer.json"
 OVERRIDE_ENV = "SKIPI_GUARD_OVERRIDE_TOKEN"
 
-ROUTE_TASK = "login-gate-first-162b"
-ROUTE_RULE = "login gate first screen + 0.4.186 bump routing (162b)"
-# Push set of fix/ios-login-visibility-162 (b5cd14a8) as the pre-push hook saw
-# it on 2026-09-02: range 7c3e0b5 -> b5cd14a8 (stale origin/main in the home
-# checkout) = 9 files. Against the live main 8ce7023a the union is 8 files
-# (tests/no_dead_tauri_invoke_harness.mjs is unchanged by the two new
-# commits). The route must open for BOTH unions.
+ROUTE_TASK = "entry-fork-187"
+ROUTE_RULE = "seafarer mobile entry fork + 0.4.187 bump routing (187)"
+# Push set of feature/seafarer-entry-fork-20260906 against the live home main
+# c94802f6 as owner-authorized on 2026-09-06 (DECISIONS (297); task card
+# TASKCARD-2026-09-06-seafarer-mobile-entry-fork, OWNER (a)): the native
+# entry fork (Sign in / Demo) in dist/index.html, the 0.4.187 bump and the
+# three harness files the slice extends. No Rust file is opened by this route.
 ROUTE_FILES = [
     "dist/index.html",
     "src-tauri/Cargo.lock",
     "src-tauri/Cargo.toml",
-    "src-tauri/src/commands/app_login.rs",
-    "src-tauri/src/lib.rs",
     "src-tauri/tauri.conf.json",
+    "tests/bundled_plugin_isolation_harness.mjs",
     "tests/login_gate_first_screen_harness.mjs",
-    "tests/no_dead_tauri_invoke_harness.mjs",
     "tests/stack_build_metadata_harness.mjs",
 ]
-LIVE_MAIN_UNION_FILES = [path for path in ROUTE_FILES if path != "tests/no_dead_tauri_invoke_harness.mjs"]
 ROUTE_CORE_FILES = [
-    "src-tauri/src/commands/app_login.rs",
     "dist/index.html",
     "tests/login_gate_first_screen_harness.mjs",
 ]
@@ -48,14 +44,23 @@ ROUTE_HARNESSES = [
     {"name": "seafarer_stack_build_metadata", "command": "node tests/stack_build_metadata_harness.mjs"},
     {"name": "seafarer_stack_verification_negative_control", "command": "node tests/stack_verification_negative_control_harness.mjs"},
     {"name": "seafarer_login_gate_first_screen", "command": "node tests/login_gate_first_screen_harness.mjs"},
+    {"name": "seafarer_demo_vault_contract", "command": "node tests/demo_vault_contract_harness.mjs"},
 ]
 
-# Seafarer config surface on main a059e6d (before this route). The route must
+# Seafarer config surface on main 58a7d86 (before this route). The route must
 # be purely additive: every entry below stays, nothing else is added.
-PRE_ROUTE_RELEASE_TASKS = ["release", "release-infra", "build-release", "stack-metadata", "mobile-external-url"]
+PRE_ROUTE_RELEASE_TASKS = [
+    "release",
+    "release-infra",
+    "build-release",
+    "stack-metadata",
+    "mobile-external-url",
+    "login-gate-first-162b",
+]
 PRE_ROUTE_ROUTING_TASKS = [
     "mobile-external-url",
     "assistant-nonblocking",
+    "login-gate-first-162b",
     "repo-meta",
     "stack-metadata",
     "release",
@@ -66,6 +71,7 @@ PRE_ROUTE_ROUTING_TASKS = [
 PRE_ROUTE_HARNESS_TASKS = {
     "mobile-external-url",
     "assistant-nonblocking",
+    "login-gate-first-162b",
     "plugin-host",
     "assistant-module",
     "demo-vault",
@@ -79,6 +85,7 @@ PRE_ROUTE_HARNESS_TASKS = {
 PRE_ROUTE_ALLOWED_TASKS = {
     "mobile-external-url",
     "assistant-nonblocking",
+    "login-gate-first-162b",
     "repo-meta",
     "plugin-host",
     "demo-vault",
@@ -89,12 +96,21 @@ PRE_ROUTE_ALLOWED_TASKS = {
     "assistant-module",
     "release",
 }
-# Owner-authorized exact routes added AFTER this one (each with its own test
-# module); the snapshot stays strict for anything else.
-LATER_OWNER_ROUTES = ["entry-fork-187"]  # DECISIONS (297), 2026-09-06
+
+LOGIN_GATE_162B_FILES = [
+    "dist/index.html",
+    "src-tauri/Cargo.lock",
+    "src-tauri/Cargo.toml",
+    "src-tauri/src/commands/app_login.rs",
+    "src-tauri/src/lib.rs",
+    "src-tauri/tauri.conf.json",
+    "tests/login_gate_first_screen_harness.mjs",
+    "tests/no_dead_tauri_invoke_harness.mjs",
+    "tests/stack_build_metadata_harness.mjs",
+]
 
 
-class SeafarerLoginGateRouteTests(unittest.TestCase):
+class SeafarerEntryForkRouteTests(unittest.TestCase):
     def child_env(self) -> dict[str, str]:
         env = os.environ.copy()
         env.pop(OVERRIDE_ENV, None)
@@ -172,7 +188,14 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
         with CONFIG.open("r", encoding="utf-8") as handle:
             return json.load(handle)
 
-    def assert_routed_pass(self, payload: dict[str, Any], proc: subprocess.CompletedProcess[str], files: list[str]) -> None:
+    def assert_routed_pass(
+        self,
+        payload: dict[str, Any],
+        proc: subprocess.CompletedProcess[str],
+        files: list[str],
+        *,
+        release_changes: bool,
+    ) -> None:
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual(payload["status"], "pass")
         self.assertEqual(payload["changed_files"], sorted(files))
@@ -184,9 +207,9 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
         self.assertEqual(payload["exact_file_set_missing"], [])
         self.assertEqual(payload["exact_file_set_unexpected"], [])
         # Cargo.toml/Cargo.lock/tauri.conf.json are release-sensitive: the
-        # 0.4.186 bump is authorized because the task is a release task, not
+        # 0.4.187 bump is authorized because the task is a release task, not
         # silenced.
-        self.assertTrue(payload["release_changes"])
+        self.assertEqual(payload["release_changes"], release_changes)
         # Effective harness list is exactly the declared one: the inherited
         # plugin-host/provenance commands are identical (name, command) pairs
         # and dedupe away, so nothing extra and nothing missing runs.
@@ -195,22 +218,24 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
             ROUTE_HARNESSES,
         )
 
-    def test_stale_origin_union_of_9_routes_to_login_gate(self) -> None:
-        # Hook base 7c3e0b5 (stale origin/main in the home checkout): 9 files.
+    def test_push_set_of_7_routes_to_entry_fork(self) -> None:
+        # Base c94802f6 (live home main): 7 files, no Rust.
         proc, payload = self.verify_updates(
             self.candidate(ROUTE_FILES),
-            prefix="skipi-guard-seafarer-login-gate-union9-",
+            prefix="skipi-guard-seafarer-entry-fork-union7-",
         )
-        self.assert_routed_pass(payload, proc, ROUTE_FILES)
+        self.assert_routed_pass(payload, proc, ROUTE_FILES, release_changes=True)
 
-    def test_live_main_union_of_8_routes_to_login_gate(self) -> None:
-        # CI / fetched base 8ce7023a (live main): 8 files, no
-        # tests/no_dead_tauri_invoke_harness.mjs in the delta.
+    def test_core_only_diff_routes_without_release_changes(self) -> None:
+        # The fork slice without the bump commit (dist + its harness): still
+        # bounded by when_all_files_in, still this route, nothing
+        # release-sensitive touched.
         proc, payload = self.verify_updates(
-            self.candidate(LIVE_MAIN_UNION_FILES),
-            prefix="skipi-guard-seafarer-login-gate-union8-",
+            self.candidate(ROUTE_CORE_FILES),
+            prefix="skipi-guard-seafarer-entry-fork-core-",
         )
-        self.assert_routed_pass(payload, proc, LIVE_MAIN_UNION_FILES)
+        self.assert_routed_pass(payload, proc, ROUTE_CORE_FILES, release_changes=False)
+        self.assertEqual(payload["release_paths_touched"], [])
 
     def test_route_is_literal_release_task_bounded_by_routing(self) -> None:
         config = self.load_config()
@@ -224,21 +249,36 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
         self.assertEqual(config["allowed_file_patterns"][ROUTE_TASK], ROUTE_FILES)
         self.assertEqual(config["harness_commands"][ROUTE_TASK], ROUTE_HARNESSES)
         # The bump commit touches version files -> the task must be a release
-        # task. It deliberately has NO exact_task_file_sets entry: an exact set
-        # cannot accept both the 9-file (stale origin/main) and the 8-file
-        # (live main) union, so the diff is bounded by the routing rule
+        # task. It deliberately has NO exact_task_file_sets entry (exact sets
+        # are strict on `missing`, so the fork slice without the bump could not
+        # ride the route); the diff is bounded by the routing rule
         # (when_all_files_in) plus allowed_file_patterns instead (mirrors the
-        # mobile-external-url route).
+        # login-gate-first-162b route).
         self.assertIn(ROUTE_TASK, config["release_tasks"])
         self.assertNotIn(ROUTE_TASK, config["exact_task_file_sets"])
         harness_names = [entry["name"] for entry in config["harness_commands"][ROUTE_TASK]]
-        self.assertIn("seafarer_no_dead_tauri_invoke", harness_names)
-        self.assertIn("seafarer_stack_build_metadata", harness_names)
-        self.assertIn("seafarer_build_provenance", harness_names)
-        self.assertIn("seafarer_login_gate_first_screen", harness_names)
+        for required in (
+            "seafarer_no_dead_tauri_invoke",
+            "seafarer_stack_build_metadata",
+            "seafarer_stack_verification_negative_control",
+            "seafarer_build_provenance",
+            "seafarer_login_gate_first_screen",
+            "seafarer_demo_vault_contract",
+        ):
+            self.assertIn(required, harness_names)
         self.assertEqual(len(harness_names), len(set(harness_names)))
         plugin_host_generic = {entry["name"] for entry in config["harness_commands"]["plugin-host"]}
         self.assertTrue(plugin_host_generic <= set(harness_names))
+        # Every harness this route runs is the same (name, command) pair as the
+        # existing task that already owns it: nothing is redefined here.
+        owned_elsewhere = {
+            (entry["name"], entry["command"])
+            for task, entries in config["harness_commands"].items()
+            if task != ROUTE_TASK
+            for entry in entries
+        }
+        for entry in config["harness_commands"][ROUTE_TASK]:
+            self.assertIn((entry["name"], entry["command"]), owned_elsewhere)
         for pattern in (
             routes[0]["when_all_files_in"]
             + routes[0]["require_all_of"]
@@ -249,63 +289,52 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
             self.assertNotIn("[", pattern)
         for core in ROUTE_CORE_FILES:
             self.assertIn(core, ROUTE_FILES)
+        # No Rust source is opened by this route (STOP line of the task card:
+        # profile.rs/vault.rs edits are out of this slice).
+        for pattern in ROUTE_FILES:
+            self.assertFalse(pattern.endswith(".rs"), pattern)
 
     def test_route_is_additive_to_pre_route_config(self) -> None:
         config = self.load_config()
 
-        self.assertEqual(config["release_tasks"], PRE_ROUTE_RELEASE_TASKS + [ROUTE_TASK] + LATER_OWNER_ROUTES)
+        self.assertEqual(config["release_tasks"], PRE_ROUTE_RELEASE_TASKS + [ROUTE_TASK])
         self.assertEqual(config["default_task"], "plugin-host")
         self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata"})
         routing_tasks = [rule["task"] for rule in config["task_routing"]]
-        self.assertEqual(
-            [task for task in routing_tasks if task != ROUTE_TASK and task not in LATER_OWNER_ROUTES],
-            PRE_ROUTE_ROUTING_TASKS,
-        )
+        self.assertEqual([task for task in routing_tasks if task != ROUTE_TASK], PRE_ROUTE_ROUTING_TASKS)
         self.assertEqual(routing_tasks.count(ROUTE_TASK), 1)
-        self.assertEqual(set(config["harness_commands"]), PRE_ROUTE_HARNESS_TASKS | {ROUTE_TASK} | set(LATER_OWNER_ROUTES))
-        self.assertEqual(set(config["allowed_file_patterns"]), PRE_ROUTE_ALLOWED_TASKS | {ROUTE_TASK} | set(LATER_OWNER_ROUTES))
-        # The superseded 31.08 proposal (login-nonblocking-162, 7 files, never
-        # merged; its file set already landed on the home main 8ce7023a) is not
-        # part of this route.
-        for stale_task in ("login-nonblocking-162", "login-gate-162b"):
-            self.assertNotIn(stale_task, config["release_tasks"])
-            self.assertNotIn(stale_task, config["allowed_file_patterns"])
-            self.assertNotIn(stale_task, config["harness_commands"])
-            self.assertNotIn(stale_task, routing_tasks)
+        self.assertEqual(set(config["harness_commands"]), PRE_ROUTE_HARNESS_TASKS | {ROUTE_TASK})
+        self.assertEqual(set(config["allowed_file_patterns"]), PRE_ROUTE_ALLOWED_TASKS | {ROUTE_TASK})
+        # The route is the only task named after the entry fork: no alias, no
+        # draft name left behind.
+        for task in set(config["release_tasks"]) | set(config["harness_commands"]) | set(config["allowed_file_patterns"]) | set(routing_tasks):
+            if "entry" in task or "fork" in task or "187" in task:
+                self.assertEqual(task, ROUTE_TASK)
 
-    def test_union_without_app_login_does_not_route_and_stays_red(self) -> None:
-        # require_all_of core: without app_login.rs the route stays closed ->
-        # default plugin-host -> release-sensitive + scope violation.
-        files = [path for path in ROUTE_FILES if path != "src-tauri/src/commands/app_login.rs"]
-        proc, payload = self.verify_updates(
-            self.candidate(files),
-            prefix="skipi-guard-seafarer-login-gate-no-app-login-",
-        )
-
-        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertEqual(payload["status"], "fail")
-        self.assertNotEqual(payload["task"], ROUTE_TASK)
-        self.assertTrue(
-            any("changes outside allowed patterns" in error for error in payload["errors"]),
-            payload["errors"],
-        )
-
-    def test_union_without_other_core_files_does_not_route(self) -> None:
-        for core in ("dist/index.html", "tests/login_gate_first_screen_harness.mjs"):
+    def test_union_without_core_file_does_not_route_and_stays_red(self) -> None:
+        # require_all_of core: without dist/index.html or without the login
+        # gate harness the route stays closed -> default plugin-host ->
+        # release-sensitive + scope violation.
+        for core in ROUTE_CORE_FILES:
             with self.subTest(missing=core):
                 files = [path for path in ROUTE_FILES if path != core]
                 proc, payload = self.verify_updates(
                     self.candidate(files),
-                    prefix="skipi-guard-seafarer-login-gate-no-core-",
+                    prefix="skipi-guard-seafarer-entry-fork-no-core-",
                 )
 
                 self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
                 self.assertEqual(payload["status"], "fail")
                 self.assertNotEqual(payload["task"], ROUTE_TASK)
+                self.assertTrue(
+                    any("changes outside allowed patterns" in error for error in payload["errors"]),
+                    payload["errors"],
+                )
 
     def test_bump_only_does_not_route_and_stays_red(self) -> None:
-        # Only the bump commit b5cd14a8 (5 files) without the login-gate fix:
-        # no route may silently authorize the release-sensitive touch.
+        # Only the bump commit (version files + stack harness) without the
+        # entry fork: no route may silently authorize the release-sensitive
+        # touch.
         proc, payload = self.verify_updates(
             self.candidate(
                 [
@@ -316,39 +345,67 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
                     "tests/stack_build_metadata_harness.mjs",
                 ]
             ),
-            prefix="skipi-guard-seafarer-login-gate-bumponly-",
+            prefix="skipi-guard-seafarer-entry-fork-bumponly-",
         )
 
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
         self.assertEqual(payload["status"], "fail")
         self.assertNotEqual(payload["task"], ROUTE_TASK)
 
-    def test_candidate_plus_unrelated_file_does_not_route_and_stays_red(self) -> None:
-        updates = self.candidate(ROUTE_FILES)
-        updates["src/unrelated.txt"] = "forbidden extra file\n"
+    def test_harnesses_only_diff_does_not_route_and_stays_red(self) -> None:
         proc, payload = self.verify_updates(
-            updates,
-            prefix="skipi-guard-seafarer-login-gate-mixed-",
+            self.candidate(
+                [
+                    "tests/bundled_plugin_isolation_harness.mjs",
+                    "tests/login_gate_first_screen_harness.mjs",
+                    "tests/stack_build_metadata_harness.mjs",
+                ]
+            ),
+            prefix="skipi-guard-seafarer-entry-fork-harnesses-only-",
         )
 
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
         self.assertEqual(payload["status"], "fail")
         self.assertNotEqual(payload["task"], ROUTE_TASK)
-        self.assertTrue(
-            any("changes outside allowed patterns" in error for error in payload["errors"]),
-            payload["errors"],
-        )
+
+    def test_candidate_plus_extra_file_does_not_route_and_stays_red(self) -> None:
+        # when_all_files_in is the upper bound: any 8th file falls through to
+        # default plugin-host and stays RED. The Rust files are the ones the
+        # task card forbids in this slice; the workflow file is the gate pin.
+        for extra in (
+            "src-tauri/src/commands/app_login.rs",
+            "src-tauri/src/commands/profile.rs",
+            "src-tauri/src/commands/vault.rs",
+            "src-tauri/src/lib.rs",
+            ".github/workflows/skipi-guard.yml",
+            "src/unrelated.txt",
+        ):
+            with self.subTest(extra=extra):
+                updates = self.candidate(ROUTE_FILES)
+                updates[extra] = "forbidden extra file\n"
+                proc, payload = self.verify_updates(
+                    updates,
+                    prefix="skipi-guard-seafarer-entry-fork-mixed-",
+                )
+
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertEqual(payload["status"], "fail")
+                self.assertNotEqual(payload["task"], ROUTE_TASK)
+                self.assertTrue(
+                    any("changes outside allowed patterns" in error for error in payload["errors"]),
+                    payload["errors"],
+                )
 
     def test_candidate_plus_release_sensitive_file_cannot_reach_route(self) -> None:
         # Without an exact set, a release task's allowed patterns are widened
         # by release_sensitive_paths for EXPLICIT --task use only. Under
         # auto-task (hook + CI default) the routing rule bounds the diff to the
-        # 9 files, so a generated/mobile file never reaches this task.
+        # 7 files, so a generated/mobile file never reaches this task.
         updates = self.candidate(ROUTE_FILES)
         updates["src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt"] = "fixture activity\n"
         proc, payload = self.verify_updates(
             updates,
-            prefix="skipi-guard-seafarer-login-gate-release-sensitive-",
+            prefix="skipi-guard-seafarer-entry-fork-release-sensitive-",
         )
 
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
@@ -374,6 +431,10 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
                     "src-tauri/src/commands/assistant.rs": "fixture assistant\n",
                     "tests/no_dead_tauri_invoke_harness.mjs": "fixture harness\n",
                 },
+            ),
+            "login-gate-first-162b": (
+                "login gate first screen + 0.4.186 bump routing (162b)",
+                self.candidate(LOGIN_GATE_162B_FILES),
             ),
             "stack-metadata": (
                 "seafarer Stage 4 stack-metadata routing",
