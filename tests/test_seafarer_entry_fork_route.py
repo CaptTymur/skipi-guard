@@ -97,6 +97,13 @@ PRE_ROUTE_ALLOWED_TASKS = {
     "release",
 }
 
+# Owner-authorized exact routes added AFTER this one (each with its own test
+# module); the snapshot stays strict for anything else.
+LATER_OWNER_ROUTES = [
+    "mobile-ime-inset",  # DECISIONS (309), 2026-09-06
+    "version-bump",  # DECISIONS (309), 2026-09-06
+]
+
 LOGIN_GATE_162B_FILES = [
     "dist/index.html",
     "src-tauri/Cargo.lock",
@@ -297,14 +304,17 @@ class SeafarerEntryForkRouteTests(unittest.TestCase):
     def test_route_is_additive_to_pre_route_config(self) -> None:
         config = self.load_config()
 
-        self.assertEqual(config["release_tasks"], PRE_ROUTE_RELEASE_TASKS + [ROUTE_TASK])
+        self.assertEqual(config["release_tasks"], PRE_ROUTE_RELEASE_TASKS + [ROUTE_TASK] + LATER_OWNER_ROUTES)
         self.assertEqual(config["default_task"], "plugin-host")
         self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata"})
         routing_tasks = [rule["task"] for rule in config["task_routing"]]
-        self.assertEqual([task for task in routing_tasks if task != ROUTE_TASK], PRE_ROUTE_ROUTING_TASKS)
+        self.assertEqual(
+            [task for task in routing_tasks if task != ROUTE_TASK and task not in LATER_OWNER_ROUTES],
+            PRE_ROUTE_ROUTING_TASKS,
+        )
         self.assertEqual(routing_tasks.count(ROUTE_TASK), 1)
-        self.assertEqual(set(config["harness_commands"]), PRE_ROUTE_HARNESS_TASKS | {ROUTE_TASK})
-        self.assertEqual(set(config["allowed_file_patterns"]), PRE_ROUTE_ALLOWED_TASKS | {ROUTE_TASK})
+        self.assertEqual(set(config["harness_commands"]), PRE_ROUTE_HARNESS_TASKS | {ROUTE_TASK} | set(LATER_OWNER_ROUTES))
+        self.assertEqual(set(config["allowed_file_patterns"]), PRE_ROUTE_ALLOWED_TASKS | {ROUTE_TASK} | set(LATER_OWNER_ROUTES))
         # The route is the only task named after the entry fork: no alias, no
         # draft name left behind.
         for task in set(config["release_tasks"]) | set(config["harness_commands"]) | set(config["allowed_file_patterns"]) | set(routing_tasks):
@@ -331,10 +341,12 @@ class SeafarerEntryForkRouteTests(unittest.TestCase):
                     payload["errors"],
                 )
 
-    def test_bump_only_does_not_route_and_stays_red(self) -> None:
+    def test_bump_only_does_not_route_to_this_route(self) -> None:
         # Only the bump commit (version files + stack harness) without the
-        # entry fork: no route may silently authorize the release-sensitive
-        # touch.
+        # entry fork: this route may not silently authorize it. Since
+        # DECISIONS (309) the bump has its own permanent owner-authorized
+        # route (version-bump, tests/test_seafarer_version_bump_route.py) — it
+        # is authorized there, by name, never as a side effect of this one.
         proc, payload = self.verify_updates(
             self.candidate(
                 [
@@ -348,9 +360,9 @@ class SeafarerEntryForkRouteTests(unittest.TestCase):
             prefix="skipi-guard-seafarer-entry-fork-bumponly-",
         )
 
-        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertEqual(payload["status"], "fail")
         self.assertNotEqual(payload["task"], ROUTE_TASK)
+        self.assertEqual(payload["task"], "version-bump")
+        self.assertNotEqual(payload["task_rule"], ROUTE_RULE)
 
     def test_harnesses_only_diff_does_not_route_and_stays_red(self) -> None:
         proc, payload = self.verify_updates(

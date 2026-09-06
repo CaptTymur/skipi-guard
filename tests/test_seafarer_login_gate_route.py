@@ -91,7 +91,11 @@ PRE_ROUTE_ALLOWED_TASKS = {
 }
 # Owner-authorized exact routes added AFTER this one (each with its own test
 # module); the snapshot stays strict for anything else.
-LATER_OWNER_ROUTES = ["entry-fork-187"]  # DECISIONS (297), 2026-09-06
+LATER_OWNER_ROUTES = [
+    "entry-fork-187",  # DECISIONS (297), 2026-09-06
+    "mobile-ime-inset",  # DECISIONS (309), 2026-09-06
+    "version-bump",  # DECISIONS (309), 2026-09-06
+]
 
 
 class SeafarerLoginGateRouteTests(unittest.TestCase):
@@ -303,9 +307,12 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
                 self.assertEqual(payload["status"], "fail")
                 self.assertNotEqual(payload["task"], ROUTE_TASK)
 
-    def test_bump_only_does_not_route_and_stays_red(self) -> None:
+    def test_bump_only_does_not_route_to_this_route(self) -> None:
         # Only the bump commit b5cd14a8 (5 files) without the login-gate fix:
-        # no route may silently authorize the release-sensitive touch.
+        # this route may not silently authorize it. Since DECISIONS (309) the
+        # bump has its own permanent owner-authorized route (version-bump,
+        # tests/test_seafarer_version_bump_route.py) — it is authorized there,
+        # by name, never as a side effect of the login-gate route.
         proc, payload = self.verify_updates(
             self.candidate(
                 [
@@ -319,9 +326,9 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
             prefix="skipi-guard-seafarer-login-gate-bumponly-",
         )
 
-        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
-        self.assertEqual(payload["status"], "fail")
         self.assertNotEqual(payload["task"], ROUTE_TASK)
+        self.assertEqual(payload["task"], "version-bump")
+        self.assertNotEqual(payload["task_rule"], ROUTE_RULE)
 
     def test_candidate_plus_unrelated_file_does_not_route_and_stays_red(self) -> None:
         updates = self.candidate(ROUTE_FILES)
