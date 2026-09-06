@@ -97,6 +97,13 @@ LATER_OWNER_ROUTES = [
     "version-bump",  # DECISIONS (309), 2026-09-06
     "native-share",  # DECISIONS (332), 2026-09-06
 ]
+# Later owner routes that are deliberately NOT release tasks: they open no
+# release-sensitive path, so adding them to release_tasks would only glue every
+# release_sensitive_path onto their allowed patterns (finding Н-1, RISKS
+# №224b). They register in routing/harness/allowed, never in release_tasks.
+LATER_OWNER_ROUTES_NON_RELEASE = [
+    "mobile-189-native",  # owner word 2026-09-06, 0.4.189 native fixes
+]
 
 
 class SeafarerLoginGateRouteTests(unittest.TestCase):
@@ -258,17 +265,20 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
     def test_route_is_additive_to_pre_route_config(self) -> None:
         config = self.load_config()
 
+        later_routes = LATER_OWNER_ROUTES + LATER_OWNER_ROUTES_NON_RELEASE
         self.assertEqual(config["release_tasks"], PRE_ROUTE_RELEASE_TASKS + [ROUTE_TASK] + LATER_OWNER_ROUTES)
+        for non_release in LATER_OWNER_ROUTES_NON_RELEASE:
+            self.assertNotIn(non_release, config["release_tasks"])
         self.assertEqual(config["default_task"], "plugin-host")
         self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata"})
         routing_tasks = [rule["task"] for rule in config["task_routing"]]
         self.assertEqual(
-            [task for task in routing_tasks if task != ROUTE_TASK and task not in LATER_OWNER_ROUTES],
+            [task for task in routing_tasks if task != ROUTE_TASK and task not in later_routes],
             PRE_ROUTE_ROUTING_TASKS,
         )
         self.assertEqual(routing_tasks.count(ROUTE_TASK), 1)
-        self.assertEqual(set(config["harness_commands"]), PRE_ROUTE_HARNESS_TASKS | {ROUTE_TASK} | set(LATER_OWNER_ROUTES))
-        self.assertEqual(set(config["allowed_file_patterns"]), PRE_ROUTE_ALLOWED_TASKS | {ROUTE_TASK} | set(LATER_OWNER_ROUTES))
+        self.assertEqual(set(config["harness_commands"]), PRE_ROUTE_HARNESS_TASKS | {ROUTE_TASK} | set(later_routes))
+        self.assertEqual(set(config["allowed_file_patterns"]), PRE_ROUTE_ALLOWED_TASKS | {ROUTE_TASK} | set(later_routes))
         # The superseded 31.08 proposal (login-nonblocking-162, 7 files, never
         # merged; its file set already landed on the home main 8ce7023a) is not
         # part of this route.
