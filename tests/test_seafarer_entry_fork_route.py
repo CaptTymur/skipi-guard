@@ -102,6 +102,7 @@ PRE_ROUTE_ALLOWED_TASKS = {
 LATER_OWNER_ROUTES = [
     "mobile-ime-inset",  # DECISIONS (309), 2026-09-06
     "version-bump",  # DECISIONS (309), 2026-09-06
+    "native-share",  # DECISIONS (332), 2026-09-06
 ]
 
 LOGIN_GATE_162B_FILES = [
