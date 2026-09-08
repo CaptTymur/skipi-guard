@@ -960,25 +960,34 @@ class SecurityEscapingRouteContract:
             payload["errors"],
         )
 
-    def test_dist_index_alone_still_routes_to_the_default_task(self) -> None:
-        # dist/index.html was already allowed by plugin-host before the route.
-        # The route must not capture it on its own, and must not widen what a
-        # lone dist/index.html push is allowed to do.
+    def test_dist_index_alone_does_not_route_to_security191(self) -> None:
+        # security191 must not capture index-only. OWNER422 now requires six
+        # checks for Broker index-only; Crewing keeps its prior default route.
         proc, payload = self.verify_files(
             ["dist/index.html"], prefix=f"skipi-guard-{self.HOME}-escaping-index-alone-"
         )
 
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual(payload["status"], "pass")
-        self.assertEqual(payload["task"], DEFAULT_TASK)
-        self.assertIsNone(payload["task_rule"])
+        self.assertEqual(payload["task"], "broker-map-demo-422" if self.HOME == "broker" else DEFAULT_TASK)
+        self.assertEqual(
+            payload["task_rule"],
+            "broker Map/shared Demo routing (OWNER422, 2026-09-08)" if self.HOME == "broker" else None,
+        )
         self.assertNotEqual(payload["task"], ROUTE_TASK)
+        expected_harnesses = [
+            {"name": name, "command": command}
+            for name, command in self.PRE_ROUTE["harness_commands"][DEFAULT_TASK]
+        ]
+        if self.HOME == "broker":
+            expected_harnesses.extend([
+                {"name": "broker_map_contract", "command": "node tests/map_contract_harness.mjs"},
+                {"name": "broker_trial_gate_wired", "command": "node tests/trial_gate_wired_harness.mjs"},
+                {"name": "broker_demo", "command": "node tests/broker_demo_harness.mjs"},
+            ])
         self.assertEqual(
             [{"name": entry["name"], "command": entry["command"]} for entry in payload["tests"]],
-            [
-                {"name": name, "command": command}
-                for name, command in self.PRE_ROUTE["harness_commands"][DEFAULT_TASK]
-            ],
+            expected_harnesses,
         )
 
     # ------------------------------------------------------------------
@@ -1210,19 +1219,27 @@ class SecurityEscapingRouteContract:
         self.assertEqual(config["default_task"], pre["default_task"])
         self.assertEqual(config["exact_task_file_sets"], pre["exact_task_file_sets"])
 
-        # The route is prepended; every rule after it is untouched and in order.
+        # OWNER422 adds one independently tested Broker route. Exclude only
+        # that task from this historical snapshot; its exact shape and the
+        # entire pre-422 config are pinned in test_broker_map_demo_route.py.
+        later_tasks = {"broker-map-demo-422"} if self.HOME == "broker" else set()
+        # The security route stays first; every historical rule stays in order.
         self.assertEqual(config["task_routing"][0]["task"], ROUTE_TASK)
-        self.assertEqual(config["task_routing"][1:], pre["task_routing"])
+        self.assertEqual(
+            [rule for rule in config["task_routing"][1:] if rule["task"] not in later_tasks],
+            pre["task_routing"],
+        )
 
         self.assertEqual(
-            {task: patterns for task, patterns in config["allowed_file_patterns"].items() if task != ROUTE_TASK},
+            {task: patterns for task, patterns in config["allowed_file_patterns"].items()
+             if task != ROUTE_TASK and task not in later_tasks},
             pre["allowed_file_patterns"],
         )
         self.assertEqual(
             {
                 task: [[entry["name"], entry["command"]] for entry in entries]
                 for task, entries in config["harness_commands"].items()
-                if task != ROUTE_TASK
+                if task != ROUTE_TASK and task not in later_tasks
             },
             pre["harness_commands"],
         )

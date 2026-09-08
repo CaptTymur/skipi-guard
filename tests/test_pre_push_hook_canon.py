@@ -65,6 +65,11 @@ BROKER_SEED = {
     "tests/broker_plugin_isolation_harness.mjs": "process.exit(0);\n",
     "tests/build_provenance_harness.mjs": "process.exit(0);\n",
     "tests/broker_presence_contract_harness.mjs": "process.exit(0);\n",
+    # Synthetic invocation fixtures for the OWNER422 index-only route; these
+    # do not implement or validate the future product Map/Demo harnesses.
+    "tests/map_contract_harness.mjs": "process.exit(0);\n",
+    "tests/trial_gate_wired_harness.mjs": "process.exit(0);\n",
+    "tests/broker_demo_harness.mjs": "process.exit(0);\n",
 }
 
 
@@ -487,8 +492,8 @@ class PrePushHookCanonTests(unittest.TestCase):
         self.assertEqual(
             GUARD_MODULE.resolve_task(config, ["dist/skipi-settings.js"])["task"], "settings-adopt"
         )
-        # index.html alone is a plugin-host change, not an adopt (require_any_of).
-        self.assertEqual(GUARD_MODULE.resolve_task(config, ["dist/index.html"])["task"], "plugin-host")
+        # index-only still is not an adopt; OWNER422 now requires its six checks.
+        self.assertEqual(GUARD_MODULE.resolve_task(config, ["dist/index.html"])["task"], "broker-map-demo-422")
         # Mixed diff with a foreign file: default task...
         mixed = ["dist/skipi-settings.js", "src/other.js"]
         self.assertEqual(GUARD_MODULE.resolve_task(config, mixed)["task"], "plugin-host")
@@ -649,6 +654,7 @@ class PrePushHookCanonTests(unittest.TestCase):
             branch_sha = self.make_branch(
                 clone, "host-change", "plugin-host change", {"dist/index.html": "<main>v2</main>\n"}
             )
+            result_json = root / "result.json"
             proc = self.run_guard(
                 "pre-push-ref",
                 "--home",
@@ -663,8 +669,16 @@ class PrePushHookCanonTests(unittest.TestCase):
                 "refs/heads/host-change",
                 "--remote-sha",
                 ZERO_SHA,
+                "--json",
+                str(result_json),
             )
             self.assertNotEqual(proc.returncode, 0, "failing harness must fail the guard")
+            payload = json.loads(result_json.read_text(encoding="utf-8"))
+            self.assertEqual(
+                [entry["name"] for entry in payload["tests"] if entry["status"] == "fail"],
+                ["broker_plugin_isolation"],
+                "cleanup negative must fail for its intended harness, not missing fixture scripts",
+            )
             leftovers = [path for path in clone.parent.iterdir() if path.name.startswith(".skipi-guard")]
             self.assertEqual(leftovers, [], "harness worktree must be cleaned up on failure too")
             worktrees = self.run_git(clone, "worktree", "list", "--porcelain").stdout
