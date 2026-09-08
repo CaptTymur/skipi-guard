@@ -39,6 +39,7 @@ FILES = [
     "tests/broker_demo_harness.mjs",
     "tests/broker_demo_showcase_harness.mjs",
     "tests/broker_plugin_isolation_harness.mjs",
+    "tests/map_contract_harness.mjs",
 ]
 HARNESSES = [
     {"name": "broker_plugin_isolation", "command": "node tests/broker_plugin_isolation_harness.mjs"},
@@ -64,7 +65,6 @@ FOREIGN_FILES = [
     "dist/assistant-vendor.json.bak",
     "dist/assistant/skipi-assistant.js",
     "other/dist/skipi-assistant.js",
-    "tests/map_contract_harness.mjs",
     "src/index.ts",
     "consultant_web.py",
 ]
@@ -171,7 +171,7 @@ class BrokerDemoShowcaseRouteTests(unittest.TestCase):
         self.assertFalse(payload["release_changes"])
         self.assert_all_seven_executed(payload, calls)
 
-    def test_all_1023_nonempty_subsets_resolve_with_exact_scope_and_seven_checks(self) -> None:
+    def test_all_2047_nonempty_subsets_resolve_with_exact_scope_and_seven_checks(self) -> None:
         config = json.loads(CONFIG.read_text())
         count = 0
         for size in range(1, len(FILES) + 1):
@@ -183,7 +183,7 @@ class BrokerDemoShowcaseRouteTests(unittest.TestCase):
                     self.assertEqual(scope["scope_violations"], [])
                     self.assertEqual(MODULE.configured_harnesses(config, TASK), HARNESSES)
                     count += 1
-        self.assertEqual(count, 1023)
+        self.assertEqual(count, 2047)
 
     def test_every_singleton_full_branch_and_natural_increment_execute_seven_actual_commands(self) -> None:
         cases = [[path] for path in FILES] + [FILES, FILES[3:7], FILES[:3], FILES[7:]]
@@ -197,7 +197,7 @@ class BrokerDemoShowcaseRouteTests(unittest.TestCase):
         self.assert_route_pass(["dist/index.html"])
         self.assert_route_pass(["dist/index.html"], task=TASK)
 
-    def test_full_ten_file_candidate_works_as_explicit_task(self) -> None:
+    def test_full_eleven_file_candidate_works_as_explicit_task(self) -> None:
         self.candidate(FILES)
         self.assert_route_pass(FILES, task=TASK)
 
@@ -257,16 +257,37 @@ class BrokerDemoShowcaseRouteTests(unittest.TestCase):
                 self.assertEqual(payload["status"], "fail")
                 self.assertIn("dist/skipi-assistant-renamed.js", payload["scope_violations"])
 
-    def test_old_422_task_keeps_six_commands_and_cannot_accept_new_assets(self) -> None:
+    def test_old_422_explicit_keeps_six_but_auto_requires_seven(self) -> None:
         old_files = ["dist/index.html", "dist/broker-demo.js", "tests/broker_demo_harness.mjs", "tests/map_contract_harness.mjs"]
         self.candidate(old_files)
         for task in (None, "broker-map-demo-422"):
             with self.subTest(task=task):
                 proc, payload, calls = self.run_guard(task=task)
                 self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-                self.assertEqual(payload["task"], "broker-map-demo-422")
-                self.assertEqual(calls, [entry["name"] for entry in HARNESSES[:-1]])
-                self.assertEqual([entry["command"] for entry in payload["tests"]], [entry["command"] for entry in HARNESSES[:-1]])
+                expected = HARNESSES[:-1] if task else HARNESSES
+                self.assertEqual(payload["task"], "broker-map-demo-422" if task else TASK)
+                self.assertEqual(calls, [entry["name"] for entry in expected])
+                self.assertEqual([entry["command"] for entry in payload["tests"]], [entry["command"] for entry in expected])
+
+    def test_index_plus_map_and_full_422_cannot_skip_failing_showcase(self) -> None:
+        # Adversarial review found these inputs falling back to six-check422.
+        # Require a real failing seventh Node command to block both inputs.
+        cases = [
+            ["dist/index.html", "tests/map_contract_harness.mjs"],
+            ["dist/index.html", "dist/broker-demo.js", "tests/broker_demo_harness.mjs", "tests/map_contract_harness.mjs"],
+        ]
+        self.env["SKIPI_GUARD_FIXTURE_FAIL"] = "broker_demo_showcase"
+        for files in cases:
+            with self.subTest(files=files):
+                self.candidate(files)
+                proc, payload, calls = self.run_guard()
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertEqual(payload["status"], "fail")
+                self.assertEqual(payload["task"], TASK)
+                self.assertEqual(calls, [entry["name"] for entry in HARNESSES])
+                failed = [entry for entry in payload["tests"] if entry["status"] == "fail"]
+                self.assertEqual([entry["name"] for entry in failed], ["broker_demo_showcase"])
+                self.assertEqual(failed[0]["exit_code"], 23)
 
     def test_each_nonzero_harness_fails_actual_cli(self) -> None:
         self.candidate(["dist/index.html"])

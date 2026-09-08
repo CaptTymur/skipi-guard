@@ -143,7 +143,7 @@ class BrokerMapDemoRouteTests(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual(payload["status"], "pass")
         # The later showcase route adds one check for overlapping incremental
-        # inputs. Explicit422 and inputs containing map_contract remain six.
+        # inputs, including index+map_contract. Explicit422 remains six.
         showcase = task is None and set(files) <= set(SHOWCASE_FILES)
         self.assertEqual(payload["task"], SHOWCASE_TASK if showcase else TASK)
         self.assertEqual(payload["task_rule"], None if task else (SHOWCASE_RULE if showcase else RULE))
@@ -272,7 +272,7 @@ class BrokerMapDemoRouteTests(unittest.TestCase):
 
     def test_config_only_invocation_is_reported_as_not_run(self) -> None:
         self.candidate(FILES)
-        proc, payload, calls = self.run_guard(run_harness=False)
+        proc, payload, calls = self.run_guard(task=TASK, run_harness=False)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual(payload["task"], TASK)
         self.assertEqual([entry["status"] for entry in payload["tests"]], ["not_run"] * 6)

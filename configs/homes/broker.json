@@ -111,7 +111,8 @@
         "dist/assistant-vendor.json",
         "tests/broker_demo_harness.mjs",
         "tests/broker_demo_showcase_harness.mjs",
-        "tests/broker_plugin_isolation_harness.mjs"
+        "tests/broker_plugin_isolation_harness.mjs",
+        "tests/map_contract_harness.mjs"
       ],
       "require_any_of": [
         "dist/index.html",
@@ -123,7 +124,8 @@
         "dist/assistant-vendor.json",
         "tests/broker_demo_harness.mjs",
         "tests/broker_demo_showcase_harness.mjs",
-        "tests/broker_plugin_isolation_harness.mjs"
+        "tests/broker_plugin_isolation_harness.mjs",
+        "tests/map_contract_harness.mjs"
       ]
     },
     {
@@ -478,7 +480,8 @@
       "dist/assistant-vendor.json",
       "tests/broker_demo_harness.mjs",
       "tests/broker_demo_showcase_harness.mjs",
-      "tests/broker_plugin_isolation_harness.mjs"
+      "tests/broker_plugin_isolation_harness.mjs",
+      "tests/map_contract_harness.mjs"
     ]
   },
   "exact_task_file_sets": {
