@@ -99,6 +99,36 @@
       ]
     },
     {
+      "name": "broker Demo showcase canonical Assistant/Apps routing (2026-09-08)",
+      "task": "broker-demo-showcase",
+      "when_all_files_in": [
+        "dist/index.html",
+        "dist/broker-demo.js",
+        "dist/broker-demo-apps.js",
+        "dist/skipi-assistant.js",
+        "dist/skipi-assistant.css",
+        "dist/skipi-assistant.ASSISTANT_VERSION",
+        "dist/assistant-vendor.json",
+        "tests/broker_demo_harness.mjs",
+        "tests/broker_demo_showcase_harness.mjs",
+        "tests/broker_plugin_isolation_harness.mjs",
+        "tests/map_contract_harness.mjs"
+      ],
+      "require_any_of": [
+        "dist/index.html",
+        "dist/broker-demo.js",
+        "dist/broker-demo-apps.js",
+        "dist/skipi-assistant.js",
+        "dist/skipi-assistant.css",
+        "dist/skipi-assistant.ASSISTANT_VERSION",
+        "dist/assistant-vendor.json",
+        "tests/broker_demo_harness.mjs",
+        "tests/broker_demo_showcase_harness.mjs",
+        "tests/broker_plugin_isolation_harness.mjs",
+        "tests/map_contract_harness.mjs"
+      ]
+    },
+    {
       "name": "broker Map/shared Demo routing (OWNER422, 2026-09-08)",
       "task": "broker-map-demo-422",
       "when_all_files_in": [
@@ -361,6 +391,36 @@
         "name": "broker_map_msi_module_pin",
         "command": "node tests/map_msi_module_pin_harness.mjs"
       }
+    ],
+    "broker-demo-showcase": [
+      {
+        "name": "broker_plugin_isolation",
+        "command": "node tests/broker_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "broker_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "broker_presence_contract",
+        "command": "node tests/broker_presence_contract_harness.mjs"
+      },
+      {
+        "name": "broker_map_contract",
+        "command": "node tests/map_contract_harness.mjs"
+      },
+      {
+        "name": "broker_trial_gate_wired",
+        "command": "node tests/trial_gate_wired_harness.mjs"
+      },
+      {
+        "name": "broker_demo",
+        "command": "node tests/broker_demo_harness.mjs"
+      },
+      {
+        "name": "broker_demo_showcase",
+        "command": "node tests/broker_demo_showcase_harness.mjs"
+      }
     ]
   },
   "allowed_file_patterns": {
@@ -409,6 +469,19 @@
       "dist/map.js",
       "src-tauri/src/lib.rs",
       "tests/broker_escaping_negative_harness.mjs"
+    ],
+    "broker-demo-showcase": [
+      "dist/index.html",
+      "dist/broker-demo.js",
+      "dist/broker-demo-apps.js",
+      "dist/skipi-assistant.js",
+      "dist/skipi-assistant.css",
+      "dist/skipi-assistant.ASSISTANT_VERSION",
+      "dist/assistant-vendor.json",
+      "tests/broker_demo_harness.mjs",
+      "tests/broker_demo_showcase_harness.mjs",
+      "tests/broker_plugin_isolation_harness.mjs",
+      "tests/map_contract_harness.mjs"
     ]
   },
   "exact_task_file_sets": {

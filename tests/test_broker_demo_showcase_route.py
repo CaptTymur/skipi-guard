@@ -1,15 +1,17 @@
-"""OWNER422: exact Broker Map/shared Demo route, without activating any pin.
+"""Broker showcase proposal: exact canonical assets, without activating any pin.
 
 Drive the actual CLI against disposable git/Node fixtures. These scripts prove
-selection, invocation and failure propagation only; the future product Demo
+selection, invocation and failure propagation only; the product Demo/showcase
 harness and browser rendering are NOT implemented or tested by this proposal.
-Baseline config: 95fdbdb7ade5c248d5bf8f536434c04cd0716cdb (live SSH 2026-09-08).
+Baseline config: a17ab320d2f7366c471f3159898e1213985096f9 (live SSH 2026-09-08).
 """
 
 from __future__ import annotations
 
 import copy
 import hashlib
+import importlib.util
+from importlib.machinery import SourceFileLoader
 import itertools
 import json
 import os
@@ -19,22 +21,24 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from test_broker_demo_showcase_route import (
-    FILES as SHOWCASE_FILES, HARNESSES as SHOWCASE_HARNESSES,
-    RULE as SHOWCASE_RULE, TASK as SHOWCASE_TASK,
-)
-
 
 ROOT = Path(__file__).resolve().parents[1]
 GUARD = ROOT / "bin/skipi-guard"
 CONFIG = ROOT / "configs/homes/broker.json"
-SCRATCH = ROOT / "scratchpad/broker-map-demo-422-20260908"
-TASK = "broker-map-demo-422"
-RULE = "broker Map/shared Demo routing (OWNER422, 2026-09-08)"
+SCRATCH = ROOT / "scratchpad/broker-demo-showcase-20260908-guard"
+TASK = "broker-demo-showcase"
+RULE = "broker Demo showcase canonical Assistant/Apps routing (2026-09-08)"
 FILES = [
     "dist/index.html",
     "dist/broker-demo.js",
+    "dist/broker-demo-apps.js",
+    "dist/skipi-assistant.js",
+    "dist/skipi-assistant.css",
+    "dist/skipi-assistant.ASSISTANT_VERSION",
+    "dist/assistant-vendor.json",
     "tests/broker_demo_harness.mjs",
+    "tests/broker_demo_showcase_harness.mjs",
+    "tests/broker_plugin_isolation_harness.mjs",
     "tests/map_contract_harness.mjs",
 ]
 HARNESSES = [
@@ -44,8 +48,9 @@ HARNESSES = [
     {"name": "broker_map_contract", "command": "node tests/map_contract_harness.mjs"},
     {"name": "broker_trial_gate_wired", "command": "node tests/trial_gate_wired_harness.mjs"},
     {"name": "broker_demo", "command": "node tests/broker_demo_harness.mjs"},
+    {"name": "broker_demo_showcase", "command": "node tests/broker_demo_showcase_harness.mjs"},
 ]
-BASE_CONFIG_SHA256 = "b76ca5c45b0ff2edd77d64581e9c5be1005da7d97cc8ce2083f5872455301b03"
+BASE_CONFIG_SHA256 = "7688528685c49daddacea47a76c1614eb82296286c8e5e0a25233b889b304b89"
 FOREIGN_FILES = [
     "src-tauri/src/lib.rs",
     ".github/workflows/skipi-guard.yml",
@@ -55,10 +60,23 @@ FOREIGN_FILES = [
     "dist/map-module/map.js",
     "vendor/dist/broker-demo.js",
     "dist/broker-demo.js.bak",
+    "dist/skipi-assistant.js.map",
+    "dist/skipi-assistant-extra.js",
+    "dist/assistant-vendor.json.bak",
+    "dist/assistant/skipi-assistant.js",
+    "other/dist/skipi-assistant.js",
+    "src/index.ts",
+    "consultant_web.py",
 ]
 
 
-class BrokerMapDemoRouteTests(unittest.TestCase):
+LOADER = SourceFileLoader("skipi_guard_showcase", str(GUARD))
+SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
+MODULE = importlib.util.module_from_spec(SPEC)
+LOADER.exec_module(MODULE)
+
+
+class BrokerDemoShowcaseRouteTests(unittest.TestCase):
     def setUp(self) -> None:
         SCRATCH.mkdir(parents=True, exist_ok=True)
         self.tmp = tempfile.TemporaryDirectory(prefix="fixture-", dir=SCRATCH)
@@ -74,7 +92,7 @@ class BrokerMapDemoRouteTests(unittest.TestCase):
         self.git("config", "user.email", "skipi-guard@example.invalid")
         self.write("dist/index.html", "<main>synthetic Guard fixture</main>\n")
         self.write("dist/broker-demo.js", "// synthetic Guard fixture, not product Demo\n")
-        for entry in SHOWCASE_HARNESSES:
+        for entry in HARNESSES:
             name = json.dumps(entry["name"])
             # Actual Node processes leave independent receipts. No mocked
             # subprocess/selector, no production code or credential values.
@@ -129,57 +147,57 @@ class BrokerMapDemoRouteTests(unittest.TestCase):
         calls = [json.loads(line) for line in receipt.read_text().splitlines()] if receipt.exists() else []
         return proc, payload, calls
 
-    def assert_all_six_executed(self, payload: dict, calls: list[str]) -> None:
+    def assert_all_seven_executed(self, payload: dict, calls: list[str]) -> None:
         self.assertEqual(
             [{"name": entry["name"], "command": entry["command"]} for entry in payload["tests"]],
             HARNESSES,
         )
         self.assertEqual(calls, [entry["name"] for entry in HARNESSES])
-        self.assertEqual([entry["status"] for entry in payload["tests"]], ["pass"] * 6)
-        self.assertEqual([entry["exit_code"] for entry in payload["tests"]], [0] * 6)
+        self.assertEqual([entry["status"] for entry in payload["tests"]], ["pass"] * 7)
+        self.assertEqual([entry["exit_code"] for entry in payload["tests"]], [0] * 7)
 
     def assert_route_pass(self, files: list[str] | tuple[str, ...], *, task: str | None = None) -> None:
         proc, payload, calls = self.run_guard(task=task)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual(payload["status"], "pass")
-        # The later showcase route adds one check for overlapping incremental
-        # inputs, including index+map_contract. Explicit422 remains six.
-        showcase = task is None and set(files) <= set(SHOWCASE_FILES)
-        self.assertEqual(payload["task"], SHOWCASE_TASK if showcase else TASK)
-        self.assertEqual(payload["task_rule"], None if task else (SHOWCASE_RULE if showcase else RULE))
+        self.assertEqual(payload["task"], TASK)
+        self.assertEqual(payload["task_rule"], None if task else RULE)
         self.assertEqual(payload["task_source"], "explicit" if task else "auto")
         self.assertEqual(payload["changed_files"], sorted(files))
-        self.assertEqual(payload["allowed_file_patterns"], SHOWCASE_FILES if showcase else FILES)
+        self.assertEqual(payload["allowed_file_patterns"], FILES)
         self.assertEqual(payload["scope_violations"], [])
         self.assertEqual(payload["exact_file_set_missing"], [])
         self.assertFalse(payload["override_present"])
         self.assertFalse(payload["release_changes"])
-        if showcase:
-            self.assertEqual(
-                [{"name": entry["name"], "command": entry["command"]} for entry in payload["tests"]],
-                SHOWCASE_HARNESSES,
-            )
-            self.assertEqual(calls, [entry["name"] for entry in SHOWCASE_HARNESSES])
-            self.assertEqual([entry["status"] for entry in payload["tests"]], ["pass"] * 7)
-        else:
-            self.assert_all_six_executed(payload, calls)
+        self.assert_all_seven_executed(payload, calls)
 
-    def test_all_15_nonempty_subsets_auto_route_keep_six_or_add_showcase(self) -> None:
+    def test_all_2047_nonempty_subsets_resolve_with_exact_scope_and_seven_checks(self) -> None:
+        config = json.loads(CONFIG.read_text())
         count = 0
         for size in range(1, len(FILES) + 1):
             for subset in itertools.combinations(FILES, size):
                 with self.subTest(files=subset):
-                    self.candidate(subset)
-                    self.assert_route_pass(subset)
+                    self.assertEqual(MODULE.resolve_task(config, list(subset)), {"task": TASK, "rule": RULE})
+                    scope = MODULE.scope_check_for_task(config, TASK, list(subset))
+                    self.assertIsNotNone(scope)
+                    self.assertEqual(scope["scope_violations"], [])
+                    self.assertEqual(MODULE.configured_harnesses(config, TASK), HARNESSES)
                     count += 1
-        self.assertEqual(count, 15)
+        self.assertEqual(count, 2047)
+
+    def test_every_singleton_full_branch_and_natural_increment_execute_seven_actual_commands(self) -> None:
+        cases = [[path] for path in FILES] + [FILES, FILES[3:7], FILES[:3], FILES[7:]]
+        for subset in cases:
+            with self.subTest(files=subset):
+                self.candidate(subset)
+                self.assert_route_pass(subset)
 
     def test_index_only_does_not_need_a_dummy_harness_edit(self) -> None:
         self.candidate(["dist/index.html"])
         self.assert_route_pass(["dist/index.html"])
         self.assert_route_pass(["dist/index.html"], task=TASK)
 
-    def test_full_four_file_candidate_works_as_explicit_task(self) -> None:
+    def test_full_eleven_file_candidate_works_as_explicit_task(self) -> None:
         self.candidate(FILES)
         self.assert_route_pass(FILES, task=TASK)
 
@@ -208,19 +226,75 @@ class BrokerMapDemoRouteTests(unittest.TestCase):
 
     def test_other_scoped_tasks_cannot_accept_full_feature_set(self) -> None:
         self.candidate(FILES)
-        for task in ("plugin-host", "security-escaping-191", "release", "repo-meta", "settings-adopt", "stack-metadata"):
+        for task in ("plugin-host", "broker-map-demo-422", "security-escaping-191", "release", "repo-meta", "settings-adopt", "stack-metadata"):
             with self.subTest(task=task):
                 proc, payload, _ = self.run_guard(task=task, run_harness=False)
                 self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
                 self.assertEqual(payload["status"], "fail")
-                self.assertIn("dist/broker-demo.js", payload["scope_violations"])
+                self.assertIn("dist/skipi-assistant.js", payload["scope_violations"])
+
+    def test_path_escapes_and_sibling_paths_fail_actual_resolver_and_scope(self) -> None:
+        config = json.loads(CONFIG.read_text())
+        escapes = [
+            "../dist/skipi-assistant.js", "dist/../skipi-assistant.js",
+            "/dist/skipi-assistant.js", "../skipi-broker/dist/skipi-assistant.js",
+            "dist/skipi-assistant.js/child", "../tests/broker_demo_showcase_harness.mjs",
+            "dist/../dist/skipi-assistant.js",
+        ]
+        for path in escapes + FOREIGN_FILES:
+            with self.subTest(path=path):
+                self.assertNotEqual(MODULE.resolve_task(config, [path])["task"], TASK)
+                self.assertEqual(MODULE.scope_check_for_task(config, TASK, [path])["scope_violations"], [path])
+
+    def test_renamed_asset_cannot_escape_the_exact_route_in_actual_cli(self) -> None:
+        self.candidate(["dist/skipi-assistant.js"])
+        self.git("mv", "dist/skipi-assistant.js", "dist/skipi-assistant-renamed.js")
+        self.git("commit", "-q", "-m", "rename synthetic asset outside route")
+        for task in (None, TASK):
+            with self.subTest(task=task):
+                proc, payload, _ = self.run_guard(task=task, run_harness=False)
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertEqual(payload["status"], "fail")
+                self.assertIn("dist/skipi-assistant-renamed.js", payload["scope_violations"])
+
+    def test_old_422_explicit_keeps_six_but_auto_requires_seven(self) -> None:
+        old_files = ["dist/index.html", "dist/broker-demo.js", "tests/broker_demo_harness.mjs", "tests/map_contract_harness.mjs"]
+        self.candidate(old_files)
+        for task in (None, "broker-map-demo-422"):
+            with self.subTest(task=task):
+                proc, payload, calls = self.run_guard(task=task)
+                self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+                expected = HARNESSES[:-1] if task else HARNESSES
+                self.assertEqual(payload["task"], "broker-map-demo-422" if task else TASK)
+                self.assertEqual(calls, [entry["name"] for entry in expected])
+                self.assertEqual([entry["command"] for entry in payload["tests"]], [entry["command"] for entry in expected])
+
+    def test_index_plus_map_and_full_422_cannot_skip_failing_showcase(self) -> None:
+        # Adversarial review found these inputs falling back to six-check422.
+        # Require a real failing seventh Node command to block both inputs.
+        cases = [
+            ["dist/index.html", "tests/map_contract_harness.mjs"],
+            ["dist/index.html", "dist/broker-demo.js", "tests/broker_demo_harness.mjs", "tests/map_contract_harness.mjs"],
+        ]
+        self.env["SKIPI_GUARD_FIXTURE_FAIL"] = "broker_demo_showcase"
+        for files in cases:
+            with self.subTest(files=files):
+                self.candidate(files)
+                proc, payload, calls = self.run_guard()
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertEqual(payload["status"], "fail")
+                self.assertEqual(payload["task"], TASK)
+                self.assertEqual(calls, [entry["name"] for entry in HARNESSES])
+                failed = [entry for entry in payload["tests"] if entry["status"] == "fail"]
+                self.assertEqual([entry["name"] for entry in failed], ["broker_demo_showcase"])
+                self.assertEqual(failed[0]["exit_code"], 23)
 
     def test_each_nonzero_harness_fails_actual_cli(self) -> None:
         self.candidate(["dist/index.html"])
         for entry in HARNESSES:
             with self.subTest(harness=entry["name"]):
                 self.env["SKIPI_GUARD_FIXTURE_FAIL"] = entry["name"]
-                proc, payload, calls = self.run_guard(task=TASK)
+                proc, payload, calls = self.run_guard()
                 self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
                 self.assertEqual(payload["status"], "fail")
                 self.assertEqual(calls, [item["name"] for item in HARNESSES])
@@ -237,7 +311,7 @@ class BrokerMapDemoRouteTests(unittest.TestCase):
                 contents = path.read_bytes()
                 path.unlink()
                 try:
-                    proc, payload, calls = self.run_guard(task=TASK)
+                    proc, payload, calls = self.run_guard()
                 finally:
                     path.write_bytes(contents)
                 self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
@@ -263,19 +337,19 @@ class BrokerMapDemoRouteTests(unittest.TestCase):
                 mutated = copy.deepcopy(config)
                 mutated["harness_commands"][TASK].remove(omitted)
                 (guard_copy / "configs/homes/broker.json").write_text(json.dumps(mutated), encoding="utf-8")
-                proc, payload, calls = self.run_guard(task=TASK, guard=guard_copy / "bin/skipi-guard")
+                proc, payload, calls = self.run_guard(guard=guard_copy / "bin/skipi-guard")
                 self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
-                self.assertEqual(len(calls), 5)
+                self.assertEqual(len(calls), 6)
                 self.assertNotIn(omitted["name"], calls)
                 with self.assertRaises(AssertionError):
-                    self.assert_all_six_executed(payload, calls)
+                    self.assert_all_seven_executed(payload, calls)
 
     def test_config_only_invocation_is_reported_as_not_run(self) -> None:
         self.candidate(FILES)
-        proc, payload, calls = self.run_guard(task=TASK, run_harness=False)
+        proc, payload, calls = self.run_guard(run_harness=False)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual(payload["task"], TASK)
-        self.assertEqual([entry["status"] for entry in payload["tests"]], ["not_run"] * 6)
+        self.assertEqual([entry["status"] for entry in payload["tests"]], ["not_run"] * 7)
         self.assertEqual(calls, [])
 
     def test_exact_new_route_and_entire_previous_config_are_preserved(self) -> None:
@@ -291,11 +365,6 @@ class BrokerMapDemoRouteTests(unittest.TestCase):
         config["task_routing"].remove(routes[0])
         del config["allowed_file_patterns"][TASK]
         del config["harness_commands"][TASK]
-        # The showcase suite independently pins this entire baseline including
-        #422. Remove only its additive entries from the pre-422 snapshot.
-        config["task_routing"] = [rule for rule in config["task_routing"] if rule["task"] != SHOWCASE_TASK]
-        del config["allowed_file_patterns"][SHOWCASE_TASK]
-        del config["harness_commands"][SHOWCASE_TASK]
         canonical = json.dumps(config, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
         self.assertEqual(hashlib.sha256(canonical.encode()).hexdigest(), BASE_CONFIG_SHA256)
 
@@ -310,7 +379,6 @@ class BrokerMapDemoRouteTests(unittest.TestCase):
             (["src-tauri/gen/android/app/proguard-rules.pro", ".github/workflows/skipi-guard.yml"], "release", 1, ()),
             (["dist/plugin-host-bridge.js"], "plugin-host", 0, ()),
             ([".github/workflows/skipi-guard.yml"], "plugin-host", 1, ()),
-            ([".github/workflows/skipi-guard.yml"], "plugin-host", 0, ("--auto-bootstrap-override",)),
         ]
         for files, task, exit_code, extra in cases:
             with self.subTest(files=files, extra=extra):

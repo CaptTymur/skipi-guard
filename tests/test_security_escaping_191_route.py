@@ -961,7 +961,7 @@ class SecurityEscapingRouteContract:
         )
 
     def test_dist_index_alone_does_not_route_to_security191(self) -> None:
-        # security191 must not capture index-only. OWNER422 now requires six
+        # security191 must not capture index-only. Showcase now requires seven
         # checks for Broker index-only; Crewing keeps its prior default route.
         proc, payload = self.verify_files(
             ["dist/index.html"], prefix=f"skipi-guard-{self.HOME}-escaping-index-alone-"
@@ -969,10 +969,10 @@ class SecurityEscapingRouteContract:
 
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual(payload["status"], "pass")
-        self.assertEqual(payload["task"], "broker-map-demo-422" if self.HOME == "broker" else DEFAULT_TASK)
+        self.assertEqual(payload["task"], "broker-demo-showcase" if self.HOME == "broker" else DEFAULT_TASK)
         self.assertEqual(
             payload["task_rule"],
-            "broker Map/shared Demo routing (OWNER422, 2026-09-08)" if self.HOME == "broker" else None,
+            "broker Demo showcase canonical Assistant/Apps routing (2026-09-08)" if self.HOME == "broker" else None,
         )
         self.assertNotEqual(payload["task"], ROUTE_TASK)
         expected_harnesses = [
@@ -984,6 +984,7 @@ class SecurityEscapingRouteContract:
                 {"name": "broker_map_contract", "command": "node tests/map_contract_harness.mjs"},
                 {"name": "broker_trial_gate_wired", "command": "node tests/trial_gate_wired_harness.mjs"},
                 {"name": "broker_demo", "command": "node tests/broker_demo_harness.mjs"},
+                {"name": "broker_demo_showcase", "command": "node tests/broker_demo_showcase_harness.mjs"},
             ])
         self.assertEqual(
             [{"name": entry["name"], "command": entry["command"]} for entry in payload["tests"]],
@@ -1219,10 +1220,9 @@ class SecurityEscapingRouteContract:
         self.assertEqual(config["default_task"], pre["default_task"])
         self.assertEqual(config["exact_task_file_sets"], pre["exact_task_file_sets"])
 
-        # OWNER422 adds one independently tested Broker route. Exclude only
-        # that task from this historical snapshot; its exact shape and the
-        # entire pre-422 config are pinned in test_broker_map_demo_route.py.
-        later_tasks = {"broker-map-demo-422"} if self.HOME == "broker" else set()
+        # Later Broker routes have their own exact-shape and complete-baseline
+        # oracles in test_broker_map_demo_route.py and test_broker_demo_showcase_route.py.
+        later_tasks = {"broker-map-demo-422", "broker-demo-showcase"} if self.HOME == "broker" else set()
         # The security route stays first; every historical rule stays in order.
         self.assertEqual(config["task_routing"][0]["task"], ROUTE_TASK)
         self.assertEqual(
