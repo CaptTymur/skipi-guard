@@ -70,6 +70,8 @@ BROKER_SEED = {
     "tests/map_contract_harness.mjs": "process.exit(0);\n",
     "tests/trial_gate_wired_harness.mjs": "process.exit(0);\n",
     "tests/broker_demo_harness.mjs": "process.exit(0);\n",
+    # Later showcase route adds a mandatory check for index-only fixtures.
+    "tests/broker_demo_showcase_harness.mjs": "process.exit(0);\n",
 }
 
 
@@ -492,8 +494,8 @@ class PrePushHookCanonTests(unittest.TestCase):
         self.assertEqual(
             GUARD_MODULE.resolve_task(config, ["dist/skipi-settings.js"])["task"], "settings-adopt"
         )
-        # index-only still is not an adopt; OWNER422 now requires its six checks.
-        self.assertEqual(GUARD_MODULE.resolve_task(config, ["dist/index.html"])["task"], "broker-map-demo-422")
+        # index-only still is not an adopt; showcase now requires seven checks.
+        self.assertEqual(GUARD_MODULE.resolve_task(config, ["dist/index.html"])["task"], "broker-demo-showcase")
         # Mixed diff with a foreign file: default task...
         mixed = ["dist/skipi-settings.js", "src/other.js"]
         self.assertEqual(GUARD_MODULE.resolve_task(config, mixed)["task"], "plugin-host")
