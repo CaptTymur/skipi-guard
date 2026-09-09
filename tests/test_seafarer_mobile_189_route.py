@@ -476,7 +476,10 @@ class SeafarerMobile189RouteTests(unittest.TestCase):
         # is glued onto its allowed patterns.
         if ROUTE_TASK in config["release_tasks"]:
             self.assertIn(ROUTE_TASK, config["exact_task_file_sets"])
-        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata"})
+        # ios-apple-project-265b joined as the only other exact-set task: task
+        # card A0 of wave 0.4.191 (skipi-ops/handoffs/seafarer-0-4-191/TASKCARD-A0-guard-routes.md),
+        # oracle in tests/test_seafarer_ios_apple_route.py.
+        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata", "ios-apple-project-265b"})
 
     def test_route_harnesses_are_the_strictest_tier_and_inherit_nothing(self) -> None:
         config = self.load_config()
