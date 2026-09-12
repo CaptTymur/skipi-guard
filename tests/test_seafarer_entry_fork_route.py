@@ -111,6 +111,8 @@ LATER_OWNER_ROUTES = [
 # release_sensitive_path onto their allowed patterns (finding Н-1, RISKS
 # №224b). They register in routing/harness/allowed, never in release_tasks.
 LATER_OWNER_ROUTES_NON_RELEASE = [
+    "cv-order-282",  # wave 0.4.192: singleton db.rs + exact set
+    "career-pattern-302",  # wave 0.4.192: singleton cv.rs + exact set
     "mobile-189-native",  # owner word 2026-09-06, 0.4.189 native fixes
     "ai-recognize-257",  # task card A0 wave 0.4.191 (OWNER (430)/(431)), 2026-09-09: ai.rs only
     "guard-pin-bump",  # wave 0.4.192, 2026-09-12: the lone .github/workflows/skipi-guard.yml pin bump, oracle in tests/test_seafarer_brand_icons_route.py
@@ -328,7 +330,7 @@ class SeafarerEntryForkRouteTests(unittest.TestCase):
         # (2026-09-12), oracle in tests/test_seafarer_brand_icons_route.py.
         self.assertEqual(
             set(config["exact_task_file_sets"]),
-            {"stack-metadata", "ios-apple-project-265b", "brand-icons"},
+            {"stack-metadata", "ios-apple-project-265b", "brand-icons", "cv-order-282", "career-pattern-302"},
         )
         routing_tasks = [rule["task"] for rule in config["task_routing"]]
         self.assertEqual(
