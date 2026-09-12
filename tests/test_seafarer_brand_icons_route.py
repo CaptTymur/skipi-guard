@@ -39,9 +39,20 @@ Why the two routes have the shape asserted below:
       allowed pattern, any extra file is already a scope violation, and the
       routing rule's require_all_of keeps the route closed for it.
       `test_pin_bump_needs_no_exact_file_set` states that mechanically.
-    * Without the route a lone pin bump routes to default_task plugin-host,
-      whose allowed patterns do not contain the workflow file. The only
-      existing task that lists the path is publication-infra, whose
+    * Why the route exists at all — the honest version, after both reviewers
+      caught the first one being false. A lone pin bump passes the gate
+      TODAY, without any new route: the home's own workflow
+      (`.github/workflows/skipi-guard.yml` on Seafarer dd271a80, the step
+      "Run skipi-guard") adds `--override-protected
+      skipi-guard-workflow-bootstrap` when the diff is exactly that one file,
+      and pre_push_ref() passes auto_bootstrap_override=True for the same
+      diff. So the route is NOT what makes the pin bump land. It is added so
+      that this diff goes through a regular task with the seven harnesses
+      instead of a named override — the price being that a pin bump stops
+      looking like an override in an audit. Without the route the diff falls
+      to default_task plugin-host (whose allowed patterns do not list the
+      workflow file) and is carried by the bootstrap override instead; the
+      only existing task that lists the path is publication-infra, whose
       require_any_of demands `scripts/publish-rf-mirror.sh`.
 
 Both tasks run all seven harnesses of the home (the stack-metadata tier); an
@@ -431,9 +442,13 @@ class SeafarerBrandIconsRouteTests(unittest.TestCase):
     # ---- guard-pin-bump ----
 
     def test_lone_workflow_routes_to_guard_pin_bump_and_passes(self) -> None:
-        # No --auto-bootstrap-override here: the route carries the pin bump on
-        # its own, which is what CI (templates/github-actions/skipi-guard.yml,
-        # --auto-task without the bootstrap flag) actually runs.
+        # No --auto-bootstrap-override here on purpose: this asserts that the
+        # ROUTE carries the diff by itself, as a regular task with seven
+        # harnesses. It is not the only way the diff can pass — the home's
+        # live workflow hands the gate the named bootstrap override for
+        # exactly this one-file diff, and pre_push_ref() sets
+        # auto_bootstrap_override=True — which is why the route buys
+        # auditability (no override in the record), not feasibility.
         proc, payload = self.verify_updates(
             self.candidate(PIN_FILES),
             prefix="skipi-guard-seafarer-pin-alone-",
