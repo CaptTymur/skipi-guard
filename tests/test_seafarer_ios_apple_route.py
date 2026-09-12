@@ -43,6 +43,15 @@ from importlib.machinery import SourceFileLoader
 from pathlib import Path
 from typing import Any
 
+# The 0.4.192 brand-icon routes own their own oracle module; the delta they add
+# to this config is enumerated here, never waved through.
+from test_seafarer_brand_icons_route import (
+    BRAND_FILES,
+    BRAND_TASK,
+    PIN_FILES,
+    PIN_TASK,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 GUARD = ROOT / "bin" / "skipi-guard"
@@ -856,7 +865,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         self.assertIn(ROUTE_TASK, config["exact_task_file_sets"])
         self.assertEqual(config["exact_task_file_sets"][ROUTE_TASK], ROUTE_FILES)
         self.assertEqual(len(config["exact_task_file_sets"][ROUTE_TASK]), 34)
-        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata", ROUTE_TASK})
+        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata", ROUTE_TASK, BRAND_TASK})
         self.assertTrue(config["harness_commands"][ROUTE_TASK])
         self.assertEqual(config["harness_commands"][ROUTE_TASK], ROUTE_HARNESSES)
         self.assertEqual(config["harness_commands"][ROUTE_TASK], config["harness_commands"]["stack-metadata"])
@@ -914,15 +923,20 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
 
         routing = config["task_routing"]
         self.assertEqual(len(baseline["task_routing"]), 14)
-        self.assertEqual(len(routing), 16)
+        self.assertEqual(len(routing), 18)
         self.assertEqual(routing[:14], baseline["task_routing"])
-        self.assertEqual([rule["task"] for rule in routing[14:]], [SIBLING_TASK, ROUTE_TASK])
+        self.assertEqual(
+            [rule["task"] for rule in routing[14:]],
+            [SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK],
+        )
 
     # PRESERVE: everything that existed at 746bc882 is byte-identical.
     def test_pre_route_config_is_preserved_byte_for_byte(self) -> None:
         config = self.load_config()
         baseline = baseline_config()
-        new_tasks = {SIBLING_TASK, ROUTE_TASK}
+        # Delta since 746bc882: the two routes of task card A0 (wave 0.4.191)
+        # and the two brand-icon routes of wave 0.4.192.
+        new_tasks = {SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK}
 
         self.assertEqual(config["home"], baseline["home"])
         self.assertEqual(config["repo"], baseline["repo"])
@@ -931,11 +945,16 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         self.assertEqual(config["default_task"], "plugin-host")
         self.assertEqual(config["protected_paths"], baseline["protected_paths"])
         self.assertEqual(config["release_sensitive_paths"], baseline["release_sensitive_paths"])
-        self.assertEqual(config["release_tasks"], baseline["release_tasks"] + [ROUTE_TASK])
+        self.assertEqual(config["release_tasks"], baseline["release_tasks"] + [ROUTE_TASK, BRAND_TASK])
         self.assertEqual(
             config["exact_task_file_sets"],
-            {**baseline["exact_task_file_sets"], ROUTE_TASK: ROUTE_FILES},
+            {**baseline["exact_task_file_sets"], ROUTE_TASK: ROUTE_FILES, BRAND_TASK: BRAND_FILES},
         )
+        # guard-pin-bump is deliberately neither a release task nor an exact
+        # set: its single path is not release-sensitive (Н-1 / RISKS №224b).
+        self.assertNotIn(PIN_TASK, config["release_tasks"])
+        self.assertNotIn(PIN_TASK, config["exact_task_file_sets"])
+        self.assertEqual(config["allowed_file_patterns"][PIN_TASK], PIN_FILES)
         self.assertEqual(
             config["exact_task_file_sets"]["stack-metadata"],
             baseline["exact_task_file_sets"]["stack-metadata"],
