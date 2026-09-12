@@ -865,7 +865,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         self.assertIn(ROUTE_TASK, config["exact_task_file_sets"])
         self.assertEqual(config["exact_task_file_sets"][ROUTE_TASK], ROUTE_FILES)
         self.assertEqual(len(config["exact_task_file_sets"][ROUTE_TASK]), 34)
-        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata", ROUTE_TASK, BRAND_TASK})
+        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata", ROUTE_TASK, BRAND_TASK, "cv-order-282", "career-pattern-302"})
         self.assertTrue(config["harness_commands"][ROUTE_TASK])
         self.assertEqual(config["harness_commands"][ROUTE_TASK], ROUTE_HARNESSES)
         self.assertEqual(config["harness_commands"][ROUTE_TASK], config["harness_commands"]["stack-metadata"])
@@ -923,11 +923,11 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
 
         routing = config["task_routing"]
         self.assertEqual(len(baseline["task_routing"]), 14)
-        self.assertEqual(len(routing), 18)
+        self.assertEqual(len(routing), 20)
         self.assertEqual(routing[:14], baseline["task_routing"])
         self.assertEqual(
             [rule["task"] for rule in routing[14:]],
-            [SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK],
+            [SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK, "cv-order-282", "career-pattern-302"],
         )
 
     # PRESERVE: everything that existed at 746bc882 is byte-identical.
@@ -936,7 +936,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         baseline = baseline_config()
         # Delta since 746bc882: the two routes of task card A0 (wave 0.4.191)
         # and the two brand-icon routes of wave 0.4.192.
-        new_tasks = {SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK}
+        new_tasks = {SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK, "cv-order-282", "career-pattern-302"}
 
         self.assertEqual(config["home"], baseline["home"])
         self.assertEqual(config["repo"], baseline["repo"])
@@ -948,7 +948,8 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         self.assertEqual(config["release_tasks"], baseline["release_tasks"] + [ROUTE_TASK, BRAND_TASK])
         self.assertEqual(
             config["exact_task_file_sets"],
-            {**baseline["exact_task_file_sets"], ROUTE_TASK: ROUTE_FILES, BRAND_TASK: BRAND_FILES},
+            {**baseline["exact_task_file_sets"], ROUTE_TASK: ROUTE_FILES, BRAND_TASK: BRAND_FILES,
+             "cv-order-282": ["src-tauri/src/db.rs"], "career-pattern-302": ["src-tauri/src/cv.rs"]},
         )
         # guard-pin-bump is deliberately neither a release task nor an exact
         # set: its single path is not release-sensitive (Н-1 / RISKS №224b).

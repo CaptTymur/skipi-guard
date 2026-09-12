@@ -483,7 +483,7 @@ class SeafarerMobile189RouteTests(unittest.TestCase):
         # of 52 files, oracle in tests/test_seafarer_brand_icons_route.py.
         self.assertEqual(
             set(config["exact_task_file_sets"]),
-            {"stack-metadata", "ios-apple-project-265b", "brand-icons"},
+            {"stack-metadata", "ios-apple-project-265b", "brand-icons", "cv-order-282", "career-pattern-302"},
         )
 
     def test_route_harnesses_are_the_strictest_tier_and_inherit_nothing(self) -> None:

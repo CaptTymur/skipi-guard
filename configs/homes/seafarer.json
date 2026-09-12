@@ -102,7 +102,9 @@
       "src-tauri/icons/icon.ico",
       "src-tauri/icons/icon.png",
       "src-tauri/icons/source.png"
-    ]
+    ],
+    "cv-order-282": ["src-tauri/src/db.rs"],
+    "career-pattern-302": ["src-tauri/src/cv.rs"]
   },
   "task_routing": [
     {
@@ -340,6 +342,26 @@
       ],
       "require_all_of": [
         ".github/workflows/skipi-guard.yml"
+      ]
+    },
+    {
+      "name": "seafarer CV sea-service order routing (282)",
+      "task": "cv-order-282",
+      "when_all_files_in": [
+        "src-tauri/src/db.rs"
+      ],
+      "require_all_of": [
+        "src-tauri/src/db.rs"
+      ]
+    },
+    {
+      "name": "seafarer redacted CV latest career groups (302)",
+      "task": "career-pattern-302",
+      "when_all_files_in": [
+        "src-tauri/src/cv.rs"
+      ],
+      "require_all_of": [
+        "src-tauri/src/cv.rs"
       ]
     }
   ],
@@ -671,6 +693,24 @@
       { "name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs" },
       { "name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs" },
       { "name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs" }
+    ],
+    "cv-order-282": [
+      {"name": "seafarer_stack_build_metadata", "command": "node tests/stack_build_metadata_harness.mjs"},
+      {"name": "seafarer_stack_verification_negative_control", "command": "node tests/stack_verification_negative_control_harness.mjs"},
+      {"name": "seafarer_bundled_plugin_isolation", "command": "node tests/bundled_plugin_isolation_harness.mjs"},
+      {"name": "seafarer_build_provenance", "command": "node tests/build_provenance_harness.mjs"},
+      {"name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs"},
+      {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
+      {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"}
+    ],
+    "career-pattern-302": [
+      {"name": "seafarer_stack_build_metadata", "command": "node tests/stack_build_metadata_harness.mjs"},
+      {"name": "seafarer_stack_verification_negative_control", "command": "node tests/stack_verification_negative_control_harness.mjs"},
+      {"name": "seafarer_bundled_plugin_isolation", "command": "node tests/bundled_plugin_isolation_harness.mjs"},
+      {"name": "seafarer_build_provenance", "command": "node tests/build_provenance_harness.mjs"},
+      {"name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs"},
+      {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
+      {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"}
     ]
   },
   "allowed_file_patterns": {
@@ -782,6 +822,8 @@
       "src-tauri/icons/icon.png",
       "src-tauri/icons/source.png"
     ],
-    "guard-pin-bump": [".github/workflows/skipi-guard.yml"]
+    "guard-pin-bump": [".github/workflows/skipi-guard.yml"],
+    "cv-order-282": ["src-tauri/src/db.rs"],
+    "career-pattern-302": ["src-tauri/src/cv.rs"]
   }
 }

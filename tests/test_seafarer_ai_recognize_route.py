@@ -347,10 +347,10 @@ class SeafarerAiRecognizeRouteTests(unittest.TestCase):
 
         # first-match: appended after the 14 historical rules, before R2.
         routing_tasks = [rule["task"] for rule in config["task_routing"]]
-        self.assertEqual(len(routing_tasks), 18)
+        self.assertEqual(len(routing_tasks), 20)
         # …followed by the two brand-icon routes of wave 0.4.192 (2026-09-12,
         # oracle in tests/test_seafarer_brand_icons_route.py).
-        self.assertEqual(routing_tasks[14:], [ROUTE_TASK, SIBLING_TASK, "brand-icons", "guard-pin-bump"])
+        self.assertEqual(routing_tasks[14:], [ROUTE_TASK, SIBLING_TASK, "brand-icons", "guard-pin-bump", "cv-order-282", "career-pattern-302"])
         self.assertEqual(routing_tasks.count(ROUTE_TASK), 1)
 
     def test_route_is_not_a_release_task_and_needs_no_exact_file_set(self) -> None:
@@ -374,7 +374,7 @@ class SeafarerAiRecognizeRouteTests(unittest.TestCase):
         # Task card A0: the sibling R2 is the only new exact-set task of this
         # card; brand-icons joined in wave 0.4.192 (release + exact set, 52
         # files, oracle in tests/test_seafarer_brand_icons_route.py).
-        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata", SIBLING_TASK, "brand-icons"})
+        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata", SIBLING_TASK, "brand-icons", "cv-order-282", "career-pattern-302"})
         self.assertEqual(GUARD_MODULE.effective_allowed_patterns(config, ROUTE_TASK, []), ROUTE_FILES)
 
     def test_route_harnesses_are_the_strictest_tier_and_inherit_nothing(self) -> None:
