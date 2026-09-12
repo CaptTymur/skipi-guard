@@ -97,6 +97,7 @@ LATER_OWNER_ROUTES = [
     "version-bump",  # DECISIONS (309), 2026-09-06
     "native-share",  # DECISIONS (332), 2026-09-06
     "ios-apple-project-265b",  # task card A0 wave 0.4.191 (OWNER (430)/(431)), 2026-09-09: release + exact set (34 files)
+    "brand-icons",  # wave 0.4.192 brand icons (owner-accepted app icon), 2026-09-12: release + exact set (52 files), oracle in tests/test_seafarer_brand_icons_route.py
 ]
 # Later owner routes that are deliberately NOT release tasks: they open no
 # release-sensitive path, so adding them to release_tasks would only glue every
@@ -105,6 +106,7 @@ LATER_OWNER_ROUTES = [
 LATER_OWNER_ROUTES_NON_RELEASE = [
     "mobile-189-native",  # owner word 2026-09-06, 0.4.189 native fixes
     "ai-recognize-257",  # task card A0 wave 0.4.191 (OWNER (430)/(431)), 2026-09-09: ai.rs only
+    "guard-pin-bump",  # wave 0.4.192, 2026-09-12: the lone .github/workflows/skipi-guard.yml pin bump, oracle in tests/test_seafarer_brand_icons_route.py
 ]
 
 
@@ -275,7 +277,12 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
         # ios-apple-project-265b is the second (and only other) exact-set task:
         # task card A0 of wave 0.4.191 (skipi-ops/handoffs/seafarer-0-4-191/TASKCARD-A0-guard-routes.md),
         # oracle in tests/test_seafarer_ios_apple_route.py.
-        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata", "ios-apple-project-265b"})
+        # brand-icons joined as the third exact-set task in wave 0.4.192
+        # (2026-09-12), oracle in tests/test_seafarer_brand_icons_route.py.
+        self.assertEqual(
+            set(config["exact_task_file_sets"]),
+            {"stack-metadata", "ios-apple-project-265b", "brand-icons"},
+        )
         routing_tasks = [rule["task"] for rule in config["task_routing"]]
         self.assertEqual(
             [task for task in routing_tasks if task != ROUTE_TASK and task not in later_routes],
