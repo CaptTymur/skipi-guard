@@ -104,7 +104,22 @@
       "src-tauri/icons/source.png"
     ],
     "cv-order-282": ["src-tauri/src/db.rs"],
-    "career-pattern-302": ["src-tauri/src/cv.rs"]
+    "career-pattern-302": ["src-tauri/src/cv.rs"],
+    "one-account-sync-192": [
+      "dist/index.html",
+      "src-tauri/src/commands/account_sync.rs",
+      "src-tauri/src/commands/ai.rs",
+      "src-tauri/src/commands/app_login.rs",
+      "src-tauri/src/commands/account_delete.rs",
+      "src-tauri/src/commands/vault.rs",
+      "src-tauri/src/commands/profile.rs",
+      "src-tauri/src/commands/documents.rs",
+      "src-tauri/src/commands/work_history.rs",
+      "src-tauri/src/db.rs",
+      "src-tauri/src/lib.rs",
+      "tests/account_profile_sync_harness.mjs",
+      "tests/one_account_sync_harness.mjs"
+    ]
   },
   "task_routing": [
     {
@@ -362,6 +377,40 @@
       ],
       "require_all_of": [
         "src-tauri/src/cv.rs"
+      ]
+    },
+    {
+      "name": "seafarer one account profile sea service and scans sync (192)",
+      "task": "one-account-sync-192",
+      "when_all_files_in": [
+        "dist/index.html",
+        "src-tauri/src/commands/account_sync.rs",
+        "src-tauri/src/commands/ai.rs",
+        "src-tauri/src/commands/app_login.rs",
+        "src-tauri/src/commands/account_delete.rs",
+        "src-tauri/src/commands/vault.rs",
+        "src-tauri/src/commands/profile.rs",
+        "src-tauri/src/commands/documents.rs",
+        "src-tauri/src/commands/work_history.rs",
+        "src-tauri/src/db.rs",
+        "src-tauri/src/lib.rs",
+        "tests/account_profile_sync_harness.mjs",
+        "tests/one_account_sync_harness.mjs"
+      ],
+      "require_all_of": [
+        "dist/index.html",
+        "src-tauri/src/commands/account_sync.rs",
+        "src-tauri/src/commands/ai.rs",
+        "src-tauri/src/commands/app_login.rs",
+        "src-tauri/src/commands/account_delete.rs",
+        "src-tauri/src/commands/vault.rs",
+        "src-tauri/src/commands/profile.rs",
+        "src-tauri/src/commands/documents.rs",
+        "src-tauri/src/commands/work_history.rs",
+        "src-tauri/src/db.rs",
+        "src-tauri/src/lib.rs",
+        "tests/account_profile_sync_harness.mjs",
+        "tests/one_account_sync_harness.mjs"
       ]
     }
   ],
@@ -711,6 +760,56 @@
       {"name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs"},
       {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
       {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"}
+    ],
+    "one-account-sync-192": [
+      {
+        "name": "seafarer_bundled_plugin_isolation",
+        "command": "node tests/bundled_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "seafarer_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "seafarer_presence_contract",
+        "command": "node tests/seafarer_presence_contract_harness.mjs"
+      },
+      {
+        "name": "seafarer_theme_default",
+        "command": "node tests/seafarer_theme_default_harness.mjs"
+      },
+      {
+        "name": "seafarer_remote_prod_delivery_config",
+        "command": "node tests/remote_prod_delivery_config_harness.mjs"
+      },
+      {
+        "name": "seafarer_no_dead_tauri_invoke",
+        "command": "node tests/no_dead_tauri_invoke_harness.mjs"
+      },
+      {
+        "name": "seafarer_stack_build_metadata",
+        "command": "node tests/stack_build_metadata_harness.mjs"
+      },
+      {
+        "name": "seafarer_stack_verification_negative_control",
+        "command": "node tests/stack_verification_negative_control_harness.mjs"
+      },
+      {
+        "name": "seafarer_login_gate_first_screen",
+        "command": "node tests/login_gate_first_screen_harness.mjs"
+      },
+      {
+        "name": "seafarer_demo_vault_contract",
+        "command": "node tests/demo_vault_contract_harness.mjs"
+      },
+      {
+        "name": "seafarer_account_profile_sync",
+        "command": "node tests/account_profile_sync_harness.mjs"
+      },
+      {
+        "name": "seafarer_one_account_sync",
+        "command": "node tests/one_account_sync_harness.mjs"
+      }
     ]
   },
   "allowed_file_patterns": {
@@ -824,6 +923,21 @@
     ],
     "guard-pin-bump": [".github/workflows/skipi-guard.yml"],
     "cv-order-282": ["src-tauri/src/db.rs"],
-    "career-pattern-302": ["src-tauri/src/cv.rs"]
+    "career-pattern-302": ["src-tauri/src/cv.rs"],
+    "one-account-sync-192": [
+      "dist/index.html",
+      "src-tauri/src/commands/account_sync.rs",
+      "src-tauri/src/commands/ai.rs",
+      "src-tauri/src/commands/app_login.rs",
+      "src-tauri/src/commands/account_delete.rs",
+      "src-tauri/src/commands/vault.rs",
+      "src-tauri/src/commands/profile.rs",
+      "src-tauri/src/commands/documents.rs",
+      "src-tauri/src/commands/work_history.rs",
+      "src-tauri/src/db.rs",
+      "src-tauri/src/lib.rs",
+      "tests/account_profile_sync_harness.mjs",
+      "tests/one_account_sync_harness.mjs"
+    ]
   }
 }

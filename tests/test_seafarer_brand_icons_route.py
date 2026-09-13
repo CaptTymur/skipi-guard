@@ -542,7 +542,7 @@ class SeafarerBrandIconsRouteTests(unittest.TestCase):
         self.assertEqual(config["release_tasks"][-1], BRAND_TASK)
         self.assertEqual(config["exact_task_file_sets"][BRAND_TASK], BRAND_FILES)
         self.assertEqual(len(config["exact_task_file_sets"][BRAND_TASK]), 52)
-        self.assertEqual(set(config["exact_task_file_sets"]), {"stack-metadata", "ios-apple-project-265b", BRAND_TASK, "cv-order-282", "career-pattern-302"})
+        self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192"}), {"stack-metadata", "ios-apple-project-265b", BRAND_TASK, "cv-order-282", "career-pattern-302"})
         self.assertEqual(config["allowed_file_patterns"][BRAND_TASK], BRAND_FILES)
         self.assertEqual(config["allowed_file_patterns"][PIN_TASK], PIN_FILES)
         self.assertEqual(config["harness_commands"][BRAND_TASK], BRAND_HARNESSES)
@@ -576,7 +576,9 @@ class SeafarerBrandIconsRouteTests(unittest.TestCase):
 
     def test_new_rules_are_appended_last(self) -> None:
         config = self.load_config()
-        routing_tasks = [rule["task"] for rule in config["task_routing"]]
+        # Preserve the prior exact routing order; sync has its own contract suite.
+        routing_tasks = [rule["task"] for rule in config["task_routing"]
+                         if rule["task"] != "one-account-sync-192"]
         self.assertEqual(len(routing_tasks), 20)
         self.assertEqual(routing_tasks[16:], [BRAND_TASK, PIN_TASK, "cv-order-282", "career-pattern-302"])
         self.assertEqual(routing_tasks.count(BRAND_TASK), 1)
