@@ -920,6 +920,13 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
     def test_new_routing_rules_are_appended_last(self) -> None:
         config = self.load_config()
         baseline = baseline_config()
+        # OWNER 2026-09-13, №273: only these two literal version-bump additions
+        # extend the historical baseline; its pinned original text is unchanged.
+        plist = "src-tauri/gen/apple/skipi_iOS/Info.plist"
+        for rule in baseline["task_routing"]:
+            if rule["task"] == "version-bump":
+                rule["when_all_files_in"].append(plist)
+        baseline["allowed_file_patterns"]["version-bump"].append(plist)
 
         routing = config["task_routing"]
         self.assertEqual(len(baseline["task_routing"]), 14)
@@ -934,6 +941,13 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
     def test_pre_route_config_is_preserved_byte_for_byte(self) -> None:
         config = self.load_config()
         baseline = baseline_config()
+        # OWNER 2026-09-13, №273: only these two literal version-bump additions
+        # extend the historical baseline; its pinned original text is unchanged.
+        plist = "src-tauri/gen/apple/skipi_iOS/Info.plist"
+        for rule in baseline["task_routing"]:
+            if rule["task"] == "version-bump":
+                rule["when_all_files_in"].append(plist)
+        baseline["allowed_file_patterns"]["version-bump"].append(plist)
         # Delta since 746bc882: the two routes of task card A0 (wave 0.4.191)
         # and the two brand-icon routes of wave 0.4.192.
         new_tasks = {SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK, "cv-order-282", "career-pattern-302"}
