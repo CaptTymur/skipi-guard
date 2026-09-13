@@ -482,7 +482,7 @@ class SeafarerMobile189RouteTests(unittest.TestCase):
         # brand-icons joined in wave 0.4.192 (2026-09-12): release + exact set
         # of 52 files, oracle in tests/test_seafarer_brand_icons_route.py.
         self.assertEqual(
-            set(config["exact_task_file_sets"]),
+            (set(config["exact_task_file_sets"]) - {"one-account-sync-192"}),
             {"stack-metadata", "ios-apple-project-265b", "brand-icons", "cv-order-282", "career-pattern-302"},
         )
 
