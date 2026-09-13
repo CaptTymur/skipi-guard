@@ -152,7 +152,7 @@
     {
       "name": "seafarer canonical version bump routing (204)",
       "task": "version-bump",
-      "when_all_files_in": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs"],
+      "when_all_files_in": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "src-tauri/gen/apple/skipi_iOS/Info.plist"],
       "require_all_of": ["src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs"]
     },
     {
@@ -719,7 +719,7 @@
     "login-gate-first-162b": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/app_login.rs", "src-tauri/src/lib.rs", "src-tauri/tauri.conf.json", "tests/login_gate_first_screen_harness.mjs", "tests/no_dead_tauri_invoke_harness.mjs", "tests/stack_build_metadata_harness.mjs"],
     "entry-fork-187": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/tauri.conf.json", "tests/bundled_plugin_isolation_harness.mjs", "tests/login_gate_first_screen_harness.mjs", "tests/stack_build_metadata_harness.mjs"],
     "mobile-ime-inset": ["dist/index.html", "src-tauri/gen/android/app/src/main/AndroidManifest.xml", "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt", "tests/bundled_plugin_isolation_harness.mjs"],
-    "version-bump": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs"],
+    "version-bump": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "src-tauri/gen/apple/skipi_iOS/Info.plist"],
     "native-share": ["dist/index.html", "presence-manifest.json", "src-tauri/gen/android/app/src/main/res/xml/file_paths.xml", "src-tauri/src/commands/mail_intent.rs", "src-tauri/src/commands/packages.rs", "src-tauri/src/lib.rs", "tests/bundled_plugin_isolation_harness.mjs"],
     "mobile-189-native": ["dist/index.html", "dist/intelligence.js", "src-tauri/src/commands/account_delete.rs", "src-tauri/src/commands/vault.rs", "src-tauri/src/feedback.rs", "src-tauri/src/lib.rs", "tests/bundled_plugin_isolation_harness.mjs"],
     "repo-meta": ["AGENTS.md", "CLAUDE.md"],

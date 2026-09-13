@@ -101,6 +101,19 @@ class SeafarerCvRoutesTests(unittest.TestCase):
         for section in ("allowed_file_patterns", "exact_task_file_sets", "harness_commands"):
             for task in ROUTES:
                 config[section].pop(task, None)
+        # OWNER 2026-09-13, №273 adds this one literal in two version-bump
+        # positions. Validate their exact shape before restoring this test's
+        # older baseline; every other byte of config remains hash-checked.
+        plist = "src-tauri/gen/apple/skipi_iOS/Info.plist"
+        old_bump = ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml",
+                    "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs"]
+        bump_routes = [r for r in config["task_routing"] if r["task"] == "version-bump"]
+        self.assertEqual(len(bump_routes), 1)
+        for paths in (bump_routes[0]["when_all_files_in"],
+                      config["allowed_file_patterns"]["version-bump"]):
+            self.assertEqual(paths, old_bump + [plist])
+            self.assertEqual(paths.count(plist), 1)
+            paths.remove(plist)
         # Canonical JSON hash of c9076a9 seafarer.json; works in shallow CI.
         self.assertEqual(hashlib.sha256(json.dumps(config, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
                          "77bee5c4a74fcfb3f8c09428438973ed4060d32dc6bd4cdc025ca8910af713b7")
