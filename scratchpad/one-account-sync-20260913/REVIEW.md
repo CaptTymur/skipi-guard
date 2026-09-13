@@ -1,6 +1,6 @@
 # One-account sync route review
 
-Status: DRAFT preparation; native final path reconciliation pending. Human merge required.
+Status: DRAFT; native final functional path scope reconciled: exactly 13 paths, no missing or extra paths. Human merge required. Product runtime correctness remains pending.
 
 The complete profile, sea-service and document sync implementation spans account/vault lifecycle and destructive writers. Its combined diff currently falls through to plugin-host and fails scope. This adds one non-release task, `one-account-sync-192`, with the same 13 literal paths in the exact set, allowed patterns, routing set and required set. All 13 are mandatory. No wildcard, protected-path, release-path, release-task or override change. Existing routes retain order.
 
@@ -24,6 +24,8 @@ Base: live SSH `a6904f60ec2b46535dba2ce54faecc43083f84a7`, including PR60's cano
 | `tests/account_profile_sync_harness.mjs` | Update existing manual-profile privacy regression for explicit opt-in. |
 | `tests/one_account_sync_harness.mjs` | Add sync UI/command behavior regression. |
 
+On 2026-09-13 the native executor froze the final functional scope at these 13 paths. An independent read of its worktree found the same 12 tracked changed files plus the new `tests/one_account_sync_harness.mjs`; no functional path was missing or extra. Native scratch artifacts are excluded from this product source inventory and are not allowed by this route. This is a scope reconciliation only: implementation bytes and product tests are still being completed.
+
 The previous ten mobile-189-native harness commands remain in full, followed by account_profile_sync and one_account_sync. The existing profile harness is genuinely changed to reflect explicit opt-in; it is not changed merely to satisfy this route.
 
 ## Validation
@@ -36,4 +38,4 @@ Prior config canonical JSON hash: `90494abb14bd68b69a829892111d7890a7bf068fd78ab
 
 Seven older route test files have narrowly named exclusions for this new task in historical global count/key/hash assertions. Their previous routing, protection, release, harness and negative checks remain. The prior ai.rs route continues to prohibit document edits; only this new exact thirteen-file task has the explicitly justified documents.rs allowance.
 
-This PR does not install Guard or update any native CI pin. Guard human merge, installed hook enforcement and the later exact native CI pin update remain separate. Native product tests and final path reconciliation are handled by the native executor; this route does not establish sync correctness.
+This PR does not install Guard or update any native CI pin. Guard human merge, installed hook enforcement and the later exact native CI pin update remain separate. Native product tests remain with the native executor; the completed path reconciliation does not establish runtime sync correctness.
