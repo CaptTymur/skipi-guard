@@ -865,7 +865,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         self.assertIn(ROUTE_TASK, config["exact_task_file_sets"])
         self.assertEqual(config["exact_task_file_sets"][ROUTE_TASK], ROUTE_FILES)
         self.assertEqual(len(config["exact_task_file_sets"][ROUTE_TASK]), 34)
-        self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192"}), {"stack-metadata", ROUTE_TASK, BRAND_TASK, "cv-order-282", "career-pattern-302"})
+        self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192", "consent193"}), {"stack-metadata", ROUTE_TASK, BRAND_TASK, "cv-order-282", "career-pattern-302"})
         self.assertTrue(config["harness_commands"][ROUTE_TASK])
         self.assertEqual(config["harness_commands"][ROUTE_TASK], ROUTE_HARNESSES)
         self.assertEqual(config["harness_commands"][ROUTE_TASK], config["harness_commands"]["stack-metadata"])
@@ -929,7 +929,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         baseline["allowed_file_patterns"]["version-bump"].append(plist)
 
         # Preserve the prior exact routing order; sync is checked separately.
-        routing = [r for r in config["task_routing"] if r["task"] != "one-account-sync-192"]
+        routing = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193")]
         self.assertEqual(len(baseline["task_routing"]), 14)
         self.assertEqual(len(routing), 20)
         self.assertEqual(routing[:14], baseline["task_routing"])
@@ -942,9 +942,10 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
     def test_pre_route_config_is_preserved_byte_for_byte(self) -> None:
         config = self.load_config()
         # Remove only the independently tested sync delta from this older oracle.
-        config["task_routing"] = [r for r in config["task_routing"] if r["task"] != "one-account-sync-192"]
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193")]
         for section in ("exact_task_file_sets", "allowed_file_patterns", "harness_commands"):
             config[section].pop("one-account-sync-192", None)
+            config[section].pop("consent193", None)
         baseline = baseline_config()
         # OWNER 2026-09-13, №273: only these two literal version-bump additions
         # extend the historical baseline; its pinned original text is unchanged.

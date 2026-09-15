@@ -271,9 +271,10 @@ class SeafarerLoginGateRouteTests(unittest.TestCase):
     def test_route_is_additive_to_pre_route_config(self) -> None:
         config = self.load_config()
         # Exclude only the independently tested sync delta from this old oracle.
-        config["task_routing"] = [r for r in config["task_routing"] if r["task"] != "one-account-sync-192"]
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193")]
         for section in ("exact_task_file_sets", "allowed_file_patterns", "harness_commands"):
             config[section].pop("one-account-sync-192", None)
+            config[section].pop("consent193", None)
 
         later_routes = LATER_OWNER_ROUTES + LATER_OWNER_ROUTES_NON_RELEASE
         self.assertEqual(config["release_tasks"], PRE_ROUTE_RELEASE_TASKS + [ROUTE_TASK] + LATER_OWNER_ROUTES)
