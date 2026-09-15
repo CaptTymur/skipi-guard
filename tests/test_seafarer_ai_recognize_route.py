@@ -348,7 +348,7 @@ class SeafarerAiRecognizeRouteTests(unittest.TestCase):
         # first-match: appended after the 14 historical rules, before R2.
         # Preserve the prior exact routing order; sync has its own contract suite.
         routing_tasks = [rule["task"] for rule in config["task_routing"]
-                         if rule["task"] != "one-account-sync-192"]
+                         if rule["task"] not in ("one-account-sync-192", "consent193")]
         self.assertEqual(len(routing_tasks), 20)
         # …followed by the two brand-icon routes of wave 0.4.192 (2026-09-12,
         # oracle in tests/test_seafarer_brand_icons_route.py).
@@ -376,7 +376,7 @@ class SeafarerAiRecognizeRouteTests(unittest.TestCase):
         # Task card A0: the sibling R2 is the only new exact-set task of this
         # card; brand-icons joined in wave 0.4.192 (release + exact set, 52
         # files, oracle in tests/test_seafarer_brand_icons_route.py).
-        self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192"}), {"stack-metadata", SIBLING_TASK, "brand-icons", "cv-order-282", "career-pattern-302"})
+        self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192", "consent193"}), {"stack-metadata", SIBLING_TASK, "brand-icons", "cv-order-282", "career-pattern-302"})
         self.assertEqual(GUARD_MODULE.effective_allowed_patterns(config, ROUTE_TASK, []), ROUTE_FILES)
 
     def test_route_harnesses_are_the_strictest_tier_and_inherit_nothing(self) -> None:

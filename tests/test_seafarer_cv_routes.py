@@ -86,7 +86,7 @@ class SeafarerCvRoutesTests(unittest.TestCase):
         config = self.load_config()
         # New sync route is checked independently; preserve the exact prior 20.
         tasks = [rule["task"] for rule in config["task_routing"]
-                 if rule["task"] != "one-account-sync-192"]
+                 if rule["task"] not in ("one-account-sync-192", "consent193")]
         self.assertEqual(len(tasks), 20)
         self.assertEqual(tasks[-2:], list(ROUTES))
         for task, target in ROUTES.items():
@@ -99,9 +99,9 @@ class SeafarerCvRoutesTests(unittest.TestCase):
 
     def test_retained_config_matches_reviewed_baseline(self):
         config = self.load_config()
-        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (*ROUTES, "one-account-sync-192")]
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (*ROUTES, "one-account-sync-192", "consent193")]
         for section in ("allowed_file_patterns", "exact_task_file_sets", "harness_commands"):
-            for task in (*ROUTES, "one-account-sync-192"):
+            for task in (*ROUTES, "one-account-sync-192", "consent193"):
                 config[section].pop(task, None)
         # OWNER 2026-09-13, №273 adds this one literal in two version-bump
         # positions. Validate their exact shape before restoring this test's

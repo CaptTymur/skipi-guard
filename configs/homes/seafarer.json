@@ -12,6 +12,12 @@
   "release_tasks": ["release", "release-infra", "build-release", "stack-metadata", "mobile-external-url", "login-gate-first-162b", "entry-fork-187", "mobile-ime-inset", "version-bump", "native-share", "ios-apple-project-265b", "brand-icons"],
   "default_task": "plugin-host",
   "exact_task_file_sets": {
+    "consent193": [
+      "dist/index.html",
+      "src-tauri/src/commands/account_sync.rs",
+      "tests/bundled_plugin_isolation_harness.mjs",
+      "tests/one_account_sync_harness.mjs"
+    ],
     "stack-metadata": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/vault.rs", "src-tauri/tauri.conf.json", "tests/stack_build_metadata_harness.mjs", "tests/stack_verification_negative_control_harness.mjs"],
     "ios-apple-project-265b": [
       "src-tauri/gen/apple/.gitignore",
@@ -412,6 +418,22 @@
         "tests/account_profile_sync_harness.mjs",
         "tests/one_account_sync_harness.mjs"
       ]
+    },
+    {
+      "name": "seafarer explicit two-checkbox account sync consent (193)",
+      "task": "consent193",
+      "when_all_files_in": [
+        "dist/index.html",
+        "src-tauri/src/commands/account_sync.rs",
+        "tests/bundled_plugin_isolation_harness.mjs",
+        "tests/one_account_sync_harness.mjs"
+      ],
+      "require_all_of": [
+        "dist/index.html",
+        "src-tauri/src/commands/account_sync.rs",
+        "tests/bundled_plugin_isolation_harness.mjs",
+        "tests/one_account_sync_harness.mjs"
+      ]
     }
   ],
   "protected_paths": [
@@ -451,6 +473,56 @@
     }
   ],
   "harness_commands": {
+    "consent193": [
+      {
+        "name": "seafarer_bundled_plugin_isolation",
+        "command": "node tests/bundled_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "seafarer_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "seafarer_presence_contract",
+        "command": "node tests/seafarer_presence_contract_harness.mjs"
+      },
+      {
+        "name": "seafarer_theme_default",
+        "command": "node tests/seafarer_theme_default_harness.mjs"
+      },
+      {
+        "name": "seafarer_remote_prod_delivery_config",
+        "command": "node tests/remote_prod_delivery_config_harness.mjs"
+      },
+      {
+        "name": "seafarer_no_dead_tauri_invoke",
+        "command": "node tests/no_dead_tauri_invoke_harness.mjs"
+      },
+      {
+        "name": "seafarer_stack_build_metadata",
+        "command": "node tests/stack_build_metadata_harness.mjs"
+      },
+      {
+        "name": "seafarer_stack_verification_negative_control",
+        "command": "node tests/stack_verification_negative_control_harness.mjs"
+      },
+      {
+        "name": "seafarer_login_gate_first_screen",
+        "command": "node tests/login_gate_first_screen_harness.mjs"
+      },
+      {
+        "name": "seafarer_demo_vault_contract",
+        "command": "node tests/demo_vault_contract_harness.mjs"
+      },
+      {
+        "name": "seafarer_account_profile_sync",
+        "command": "node tests/account_profile_sync_harness.mjs"
+      },
+      {
+        "name": "seafarer_one_account_sync",
+        "command": "node tests/one_account_sync_harness.mjs"
+      }
+    ],
     "mobile-external-url": [
       { "name": "seafarer_bundled_plugin_isolation", "command": "node tests/bundled_plugin_isolation_harness.mjs" },
       { "name": "seafarer_build_provenance", "command": "node tests/build_provenance_harness.mjs" },
@@ -813,6 +885,12 @@
     ]
   },
   "allowed_file_patterns": {
+    "consent193": [
+      "dist/index.html",
+      "src-tauri/src/commands/account_sync.rs",
+      "tests/bundled_plugin_isolation_harness.mjs",
+      "tests/one_account_sync_harness.mjs"
+    ],
     "mobile-external-url": ["src-tauri/src/commands/vault.rs", "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt"],
     "assistant-nonblocking": ["src-tauri/src/commands/assistant.rs", "tests/no_dead_tauri_invoke_harness.mjs"],
     "login-gate-first-162b": ["dist/index.html", "src-tauri/Cargo.lock", "src-tauri/Cargo.toml", "src-tauri/src/commands/app_login.rs", "src-tauri/src/lib.rs", "src-tauri/tauri.conf.json", "tests/login_gate_first_screen_harness.mjs", "tests/no_dead_tauri_invoke_harness.mjs", "tests/stack_build_metadata_harness.mjs"],

@@ -1,0 +1,245 @@
+FFFFFFFFF.FFFFFFFFFFFFFF
+======================================================================
+FAIL: test_contract_detects_route_scope_exact_harness_and_release_mutations (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_contract_detects_route_scope_exact_harness_and_release_mutations) (mutation='remove_rule')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 184, in test_contract_detects_route_scope_exact_harness_and_release_mutations
+    self.assert_contract(config)
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 60, in assert_contract
+    self.assertEqual(len(rules), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_contract_detects_route_scope_exact_harness_and_release_mutations (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_contract_detects_route_scope_exact_harness_and_release_mutations) (mutation='partial_route')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 184, in test_contract_detects_route_scope_exact_harness_and_release_mutations
+    self.assert_contract(config)
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 60, in assert_contract
+    self.assertEqual(len(rules), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_contract_detects_route_scope_exact_harness_and_release_mutations (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_contract_detects_route_scope_exact_harness_and_release_mutations) (mutation='widen_scope')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 184, in test_contract_detects_route_scope_exact_harness_and_release_mutations
+    self.assert_contract(config)
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 60, in assert_contract
+    self.assertEqual(len(rules), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_contract_detects_route_scope_exact_harness_and_release_mutations (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_contract_detects_route_scope_exact_harness_and_release_mutations) (mutation='remove_exact')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 184, in test_contract_detects_route_scope_exact_harness_and_release_mutations
+    self.assert_contract(config)
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 60, in assert_contract
+    self.assertEqual(len(rules), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_contract_detects_route_scope_exact_harness_and_release_mutations (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_contract_detects_route_scope_exact_harness_and_release_mutations) (mutation='widen_exact')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 184, in test_contract_detects_route_scope_exact_harness_and_release_mutations
+    self.assert_contract(config)
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 60, in assert_contract
+    self.assertEqual(len(rules), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_contract_detects_route_scope_exact_harness_and_release_mutations (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_contract_detects_route_scope_exact_harness_and_release_mutations) (mutation='drop_harness')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 184, in test_contract_detects_route_scope_exact_harness_and_release_mutations
+    self.assert_contract(config)
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 60, in assert_contract
+    self.assertEqual(len(rules), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_contract_detects_route_scope_exact_harness_and_release_mutations (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_contract_detects_route_scope_exact_harness_and_release_mutations) (mutation='release')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 184, in test_contract_detects_route_scope_exact_harness_and_release_mutations
+    self.assert_contract(config)
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 60, in assert_contract
+    self.assertEqual(len(rules), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_every_harness_failure_propagates_with_spawn_stub (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_every_harness_failure_propagates_with_spawn_stub)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 169, in test_every_harness_failure_propagates_with_spawn_stub
+    self.assert_contract(config)
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 60, in assert_contract
+    self.assertEqual(len(rules), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_exact_route_and_retained_ten_plus_two_harnesses (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_exact_route_and_retained_ten_plus_two_harnesses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 81, in test_exact_route_and_retained_ten_plus_two_harnesses
+    self.assert_contract(self.load_config())
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 60, in assert_contract
+    self.assertEqual(len(rules), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_real_cli_each_missing_and_empty_auto_and_explicit_are_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_missing_and_empty_auto_and_explicit_are_red) (absent='dist/index.html', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 143, in test_real_cli_each_missing_and_empty_auto_and_explicit_are_red
+    self.assertEqual(result["exact_file_set_missing"], [absent] if absent else FILES)
+AssertionError: Lists differ: [] != ['dist/index.html']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'dist/index.html'
+
+- []
++ ['dist/index.html']
+
+======================================================================
+FAIL: test_real_cli_each_missing_and_empty_auto_and_explicit_are_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_missing_and_empty_auto_and_explicit_are_red) (absent='src-tauri/src/commands/account_sync.rs', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 143, in test_real_cli_each_missing_and_empty_auto_and_explicit_are_red
+    self.assertEqual(result["exact_file_set_missing"], [absent] if absent else FILES)
+AssertionError: Lists differ: [] != ['src-tauri/src/commands/account_sync.rs']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'src-tauri/src/commands/account_sync.rs'
+
+- []
++ ['src-tauri/src/commands/account_sync.rs']
+
+======================================================================
+FAIL: test_real_cli_each_missing_and_empty_auto_and_explicit_are_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_missing_and_empty_auto_and_explicit_are_red) (absent='tests/bundled_plugin_isolation_harness.mjs', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 143, in test_real_cli_each_missing_and_empty_auto_and_explicit_are_red
+    self.assertEqual(result["exact_file_set_missing"], [absent] if absent else FILES)
+AssertionError: Lists differ: [] != ['tests/bundled_plugin_isolation_harness.mjs']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'tests/bundled_plugin_isolation_harness.mjs'
+
+- []
++ ['tests/bundled_plugin_isolation_harness.mjs']
+
+======================================================================
+FAIL: test_real_cli_each_missing_and_empty_auto_and_explicit_are_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_missing_and_empty_auto_and_explicit_are_red) (absent='tests/one_account_sync_harness.mjs', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 143, in test_real_cli_each_missing_and_empty_auto_and_explicit_are_red
+    self.assertEqual(result["exact_file_set_missing"], [absent] if absent else FILES)
+AssertionError: Lists differ: [] != ['tests/one_account_sync_harness.mjs']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'tests/one_account_sync_harness.mjs'
+
+- []
++ ['tests/one_account_sync_harness.mjs']
+
+======================================================================
+FAIL: test_real_cli_each_missing_and_empty_auto_and_explicit_are_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_missing_and_empty_auto_and_explicit_are_red) (absent=None, explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 143, in test_real_cli_each_missing_and_empty_auto_and_explicit_are_red
+    self.assertEqual(result["exact_file_set_missing"], [absent] if absent else FILES)
+AssertionError: Lists differ: [] != ['dist/index.html', 'src-tauri/src/command[98 chars]mjs']
+
+Second list contains 4 additional elements.
+First extra element 0:
+'dist/index.html'
+
+- []
++ ['dist/index.html',
++  'src-tauri/src/commands/account_sync.rs',
++  'tests/bundled_plugin_isolation_harness.mjs',
++  'tests/one_account_sync_harness.mjs']
+
+======================================================================
+FAIL: test_real_cli_each_unrelated_protected_release_extra_is_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_unrelated_protected_release_extra_is_red) (extra='src-tauri/Cargo.toml', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 159, in test_real_cli_each_unrelated_protected_release_extra_is_red
+    self.assertTrue(result["scope_violations"], result)
+AssertionError: [] is not true : {'schema_version': 'skipi-guard.v1', 'home': 'seafarer', 'task': 'consent193', 'task_source': 'explicit', 'task_rule': None, 'effective_tasks': ['consent193'], 'repo': '/home/linux/Developer/skipi-guard/.worktrees/consent193-route/scratchpad/scratch193-consent-route/fixture-dug13x9_', 'base': 'HEAD~1', 'head': 'HEAD', 'sha': '9c322c4', 'changed_files': ['dist/index.html', 'src-tauri/Cargo.toml', 'src-tauri/src/commands/account_sync.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'tests/one_account_sync_harness.mjs'], 'protected_paths_touched': [{'path': 'src-tauri/Cargo.toml', 'kind': 'release-sensitive', 'rule': 'versions/tags', 'pattern': 'Cargo.toml'}], 'release_paths_touched': [{'path': 'src-tauri/Cargo.toml', 'kind': 'release-sensitive', 'rule': 'versions/tags', 'pattern': 'Cargo.toml'}], 'release_changes': True, 'allowed_file_patterns': [], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': [], 'scope_checks': [], 'additive_task_checks': [], 'tests': [], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["unknown or unconfigured task 'consent193'", 'release-sensitive path touch is blocked for this task']}
+
+======================================================================
+FAIL: test_real_cli_each_unrelated_protected_release_extra_is_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_unrelated_protected_release_extra_is_red) (extra='src-tauri/tauri.conf.json', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 159, in test_real_cli_each_unrelated_protected_release_extra_is_red
+    self.assertTrue(result["scope_violations"], result)
+AssertionError: [] is not true : {'schema_version': 'skipi-guard.v1', 'home': 'seafarer', 'task': 'consent193', 'task_source': 'explicit', 'task_rule': None, 'effective_tasks': ['consent193'], 'repo': '/home/linux/Developer/skipi-guard/.worktrees/consent193-route/scratchpad/scratch193-consent-route/fixture-_tp3acwr', 'base': 'HEAD~1', 'head': 'HEAD', 'sha': 'ca117c5', 'changed_files': ['dist/index.html', 'src-tauri/src/commands/account_sync.rs', 'src-tauri/tauri.conf.json', 'tests/bundled_plugin_isolation_harness.mjs', 'tests/one_account_sync_harness.mjs'], 'protected_paths_touched': [{'path': 'src-tauri/tauri.conf.json', 'kind': 'release-sensitive', 'rule': 'versions/tags', 'pattern': 'src-tauri/tauri.conf.json'}], 'release_paths_touched': [{'path': 'src-tauri/tauri.conf.json', 'kind': 'release-sensitive', 'rule': 'versions/tags', 'pattern': 'src-tauri/tauri.conf.json'}], 'release_changes': True, 'allowed_file_patterns': [], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': [], 'scope_checks': [], 'additive_task_checks': [], 'tests': [], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["unknown or unconfigured task 'consent193'", 'release-sensitive path touch is blocked for this task']}
+
+======================================================================
+FAIL: test_real_cli_each_unrelated_protected_release_extra_is_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_unrelated_protected_release_extra_is_red) (extra='.github/workflows/skipi-guard.yml', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 159, in test_real_cli_each_unrelated_protected_release_extra_is_red
+    self.assertTrue(result["scope_violations"], result)
+AssertionError: [] is not true : {'schema_version': 'skipi-guard.v1', 'home': 'seafarer', 'task': 'consent193', 'task_source': 'explicit', 'task_rule': None, 'effective_tasks': ['consent193'], 'repo': '/home/linux/Developer/skipi-guard/.worktrees/consent193-route/scratchpad/scratch193-consent-route/fixture-pzlu8tj4', 'base': 'HEAD~1', 'head': 'HEAD', 'sha': '93be1e0', 'changed_files': ['.github/workflows/skipi-guard.yml', 'dist/index.html', 'src-tauri/src/commands/account_sync.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'tests/one_account_sync_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': [], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': [], 'scope_checks': [], 'additive_task_checks': [], 'tests': [], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["unknown or unconfigured task 'consent193'"]}
+
+======================================================================
+FAIL: test_real_cli_each_unrelated_protected_release_extra_is_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_unrelated_protected_release_extra_is_red) (extra='src-tauri/src/cv.rs', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 159, in test_real_cli_each_unrelated_protected_release_extra_is_red
+    self.assertTrue(result["scope_violations"], result)
+AssertionError: [] is not true : {'schema_version': 'skipi-guard.v1', 'home': 'seafarer', 'task': 'consent193', 'task_source': 'explicit', 'task_rule': None, 'effective_tasks': ['consent193'], 'repo': '/home/linux/Developer/skipi-guard/.worktrees/consent193-route/scratchpad/scratch193-consent-route/fixture-spe9mup3', 'base': 'HEAD~1', 'head': 'HEAD', 'sha': '1c103f7', 'changed_files': ['dist/index.html', 'src-tauri/src/commands/account_sync.rs', 'src-tauri/src/cv.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'tests/one_account_sync_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': [], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': [], 'scope_checks': [], 'additive_task_checks': [], 'tests': [], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["unknown or unconfigured task 'consent193'"]}
+
+======================================================================
+FAIL: test_real_cli_each_unrelated_protected_release_extra_is_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_unrelated_protected_release_extra_is_red) (extra='src-tauri/src/commands/mod.rs', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 159, in test_real_cli_each_unrelated_protected_release_extra_is_red
+    self.assertTrue(result["scope_violations"], result)
+AssertionError: [] is not true : {'schema_version': 'skipi-guard.v1', 'home': 'seafarer', 'task': 'consent193', 'task_source': 'explicit', 'task_rule': None, 'effective_tasks': ['consent193'], 'repo': '/home/linux/Developer/skipi-guard/.worktrees/consent193-route/scratchpad/scratch193-consent-route/fixture-mtwyer7x', 'base': 'HEAD~1', 'head': 'HEAD', 'sha': '226c45f', 'changed_files': ['dist/index.html', 'src-tauri/src/commands/account_sync.rs', 'src-tauri/src/commands/mod.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'tests/one_account_sync_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': [], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': [], 'scope_checks': [], 'additive_task_checks': [], 'tests': [], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["unknown or unconfigured task 'consent193'"]}
+
+======================================================================
+FAIL: test_real_cli_each_unrelated_protected_release_extra_is_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_unrelated_protected_release_extra_is_red) (extra='contracts/test.json', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 159, in test_real_cli_each_unrelated_protected_release_extra_is_red
+    self.assertTrue(result["scope_violations"], result)
+AssertionError: [] is not true : {'schema_version': 'skipi-guard.v1', 'home': 'seafarer', 'task': 'consent193', 'task_source': 'explicit', 'task_rule': None, 'effective_tasks': ['consent193'], 'repo': '/home/linux/Developer/skipi-guard/.worktrees/consent193-route/scratchpad/scratch193-consent-route/fixture-k204c64c', 'base': 'HEAD~1', 'head': 'HEAD', 'sha': '4511111', 'changed_files': ['contracts/test.json', 'dist/index.html', 'src-tauri/src/commands/account_sync.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'tests/one_account_sync_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': [], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': [], 'scope_checks': [], 'additive_task_checks': [], 'tests': [], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["unknown or unconfigured task 'consent193'"]}
+
+======================================================================
+FAIL: test_real_cli_each_unrelated_protected_release_extra_is_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_unrelated_protected_release_extra_is_red) (extra='keys/demo.pem', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 159, in test_real_cli_each_unrelated_protected_release_extra_is_red
+    self.assertTrue(result["scope_violations"], result)
+AssertionError: [] is not true : {'schema_version': 'skipi-guard.v1', 'home': 'seafarer', 'task': 'consent193', 'task_source': 'explicit', 'task_rule': None, 'effective_tasks': ['consent193'], 'repo': '/home/linux/Developer/skipi-guard/.worktrees/consent193-route/scratchpad/scratch193-consent-route/fixture-cxa39pi0', 'base': 'HEAD~1', 'head': 'HEAD', 'sha': '6d74098', 'changed_files': ['dist/index.html', 'keys/demo.pem', 'src-tauri/src/commands/account_sync.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'tests/one_account_sync_harness.mjs'], 'protected_paths_touched': [{'path': 'keys/demo.pem', 'kind': 'protected', 'rule': 'secrets/signing keys', 'pattern': 'keys/**'}], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': [], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': [], 'scope_checks': [], 'additive_task_checks': [], 'tests': [], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["unknown or unconfigured task 'consent193'", 'protected path touch requires --override-protected']}
+
+======================================================================
+FAIL: test_real_cli_each_unrelated_protected_release_extra_is_red (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_each_unrelated_protected_release_extra_is_red) (extra='src-tauri/gen/android/app/build.gradle.kts', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 159, in test_real_cli_each_unrelated_protected_release_extra_is_red
+    self.assertTrue(result["scope_violations"], result)
+AssertionError: [] is not true : {'schema_version': 'skipi-guard.v1', 'home': 'seafarer', 'task': 'consent193', 'task_source': 'explicit', 'task_rule': None, 'effective_tasks': ['consent193'], 'repo': '/home/linux/Developer/skipi-guard/.worktrees/consent193-route/scratchpad/scratch193-consent-route/fixture-602a7517', 'base': 'HEAD~1', 'head': 'HEAD', 'sha': '32cece2', 'changed_files': ['dist/index.html', 'src-tauri/gen/android/app/build.gradle.kts', 'src-tauri/src/commands/account_sync.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'tests/one_account_sync_harness.mjs'], 'protected_paths_touched': [{'path': 'src-tauri/gen/android/app/build.gradle.kts', 'kind': 'release-sensitive', 'rule': 'Tauri/Cargo/mobile generated files', 'pattern': 'src-tauri/gen/**'}], 'release_paths_touched': [{'path': 'src-tauri/gen/android/app/build.gradle.kts', 'kind': 'release-sensitive', 'rule': 'Tauri/Cargo/mobile generated files', 'pattern': 'src-tauri/gen/**'}], 'release_changes': True, 'allowed_file_patterns': [], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': [], 'scope_checks': [], 'additive_task_checks': [], 'tests': [], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["unknown or unconfigured task 'consent193'", 'release-sensitive path touch is blocked for this task']}
+
+======================================================================
+FAIL: test_real_cli_exact_auto_and_explicit_are_green_without_override (test_seafarer_consent193_route.SeafarerConsent193RouteTests.test_real_cli_exact_auto_and_explicit_are_green_without_override)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_consent193_route.py", line 124, in test_real_cli_exact_auto_and_explicit_are_green_without_override
+    self.assertEqual(code, 0, result)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'seafarer', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/skipi-guard/.worktrees/consent193-route/scratchpad/scratch193-consent-route/fixture-m1y_wsnt', 'base': 'HEAD~1', 'head': 'HEAD', 'sha': 'f8f0a60', 'changed_files': ['dist/index.html', 'src-tauri/src/commands/account_sync.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'tests/one_account_sync_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-ui.js', 'dist/plugin-host-bridge.js', 'dist/plugin-host-config.js', 'dist/plugin-loader.js', 'dist/plugin-remote-boot.js', 'src-tauri/src/commands/account_sync.rs', 'src-tauri/src/commands/mod.rs', 'src-tauri/src/commands/profile.rs', 'src-tauri/src/lib.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/seafarer_presence_contract_harness.mjs', 'tests/seafarer_theme_default_harness.mjs', 'tests/remote_prod_delivery_config_harness.mjs', 'tests/plugin_remote_over_bundled_harness.mjs', 'tests/account_profile_sync_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['tests/one_account_sync_harness.mjs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['dist/index.html', 'src-tauri/src/commands/account_sync.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'tests/one_account_sync_harness.mjs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-ui.js', 'dist/plugin-host-bridge.js', 'dist/plugin-host-config.js', 'dist/plugin-loader.js', 'dist/plugin-remote-boot.js', 'src-tauri/src/commands/account_sync.rs', 'src-tauri/src/commands/mod.rs', 'src-tauri/src/commands/profile.rs', 'src-tauri/src/lib.rs', 'tests/bundled_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/seafarer_presence_contract_harness.mjs', 'tests/seafarer_theme_default_harness.mjs', 'tests/remote_prod_delivery_config_harness.mjs', 'tests/plugin_remote_over_bundled_harness.mjs', 'tests/account_profile_sync_harness.mjs'], 'scope_violations': ['tests/one_account_sync_harness.mjs']}], 'additive_task_checks': [], 'tests': [{'name': 'seafarer_bundled_plugin_isolation', 'command': 'node tests/bundled_plugin_isolation_harness.mjs', 'status': 'not_run', 'summary': 'configured only; pass --run-harness to execute'}, {'name': 'seafarer_build_provenance', 'command': 'node tests/build_provenance_harness.mjs', 'status': 'not_run', 'summary': 'configured only; pass --run-harness to execute'}, {'name': 'seafarer_presence_contract', 'command': 'node tests/seafarer_presence_contract_harness.mjs', 'status': 'not_run', 'summary': 'configured only; pass --run-harness to execute'}, {'name': 'seafarer_theme_default', 'command': 'node tests/seafarer_theme_default_harness.mjs', 'status': 'not_run', 'summary': 'configured only; pass --run-harness to execute'}, {'name': 'seafarer_remote_prod_delivery_config', 'command': 'node tests/remote_prod_delivery_config_harness.mjs', 'status': 'not_run', 'summary': 'configured only; pass --run-harness to execute'}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.400s
+
+FAILED (failures=23)

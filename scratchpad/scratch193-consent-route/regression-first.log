@@ -1,0 +1,126 @@
+......................................................................................missing_path=/tmp/tmpx3c1vagm/missing-logcat.txt
+............................................................................F...F.............F..F...........F.......F........F..........F.FF.......F..............F......................F......................................................................................................................................
+======================================================================
+FAIL: test_route_config_shape (test_seafarer_ai_recognize_route.SeafarerAiRecognizeRouteTests.test_route_config_shape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_ai_recognize_route.py", line 352, in test_route_config_shape
+    self.assertEqual(len(routing_tasks), 20)
+AssertionError: 21 != 20
+
+======================================================================
+FAIL: test_route_is_not_a_release_task_and_needs_no_exact_file_set (test_seafarer_ai_recognize_route.SeafarerAiRecognizeRouteTests.test_route_is_not_a_release_task_and_needs_no_exact_file_set)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_ai_recognize_route.py", line 379, in test_route_is_not_a_release_task_and_needs_no_exact_file_set
+    self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192"}), {"stack-metadata", SIBLING_TASK, "brand-icons", "cv-order-282", "career-pattern-302"})
+AssertionError: Items in the first set but not the second:
+'consent193'
+
+======================================================================
+FAIL: test_new_rules_are_appended_last (test_seafarer_brand_icons_route.SeafarerBrandIconsRouteTests.test_new_rules_are_appended_last)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_brand_icons_route.py", line 582, in test_new_rules_are_appended_last
+    self.assertEqual(len(routing_tasks), 20)
+AssertionError: 21 != 20
+
+======================================================================
+FAIL: test_route_config_shape (test_seafarer_brand_icons_route.SeafarerBrandIconsRouteTests.test_route_config_shape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_brand_icons_route.py", line 545, in test_route_config_shape
+    self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192", "consent193"}), {"stack-metadata", "ios-apple-project-265b", BRAND_TASK, "cv-order-282", "career-pattern-302"})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Items in the first set but not the second:
+'consent193'
+
+======================================================================
+FAIL: test_config_adds_only_two_last_routes (test_seafarer_cv_routes.SeafarerCvRoutesTests.test_config_adds_only_two_last_routes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_cv_routes.py", line 90, in test_config_adds_only_two_last_routes
+    self.assertEqual(len(tasks), 20)
+AssertionError: 21 != 20
+
+======================================================================
+FAIL: test_retained_config_matches_reviewed_baseline (test_seafarer_cv_routes.SeafarerCvRoutesTests.test_retained_config_matches_reviewed_baseline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_cv_routes.py", line 120, in test_retained_config_matches_reviewed_baseline
+    self.assertEqual(hashlib.sha256(json.dumps(config, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
+AssertionError: 'e934613afb375fdc51a5157f2299daa1c41389b5e40f868ab1128a1c0160b618' != '77bee5c4a74fcfb3f8c09428438973ed4060d32dc6bd4cdc025ca8910af713b7'
+- e934613afb375fdc51a5157f2299daa1c41389b5e40f868ab1128a1c0160b618
++ 77bee5c4a74fcfb3f8c09428438973ed4060d32dc6bd4cdc025ca8910af713b7
+
+
+======================================================================
+FAIL: test_route_is_additive_to_pre_route_config (test_seafarer_entry_fork_route.SeafarerEntryForkRouteTests.test_route_is_additive_to_pre_route_config)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_entry_fork_route.py", line 335, in test_route_is_additive_to_pre_route_config
+    # (2026-09-12), oracle in tests/test_seafarer_brand_icons_route.py.
+AssertionError: Items in the first set but not the second:
+'consent193'
+
+======================================================================
+FAIL: test_new_routing_rules_are_appended_last (test_seafarer_ios_apple_route.SeafarerIosAppleRouteTests.test_new_routing_rules_are_appended_last)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_ios_apple_route.py", line 934, in test_new_routing_rules_are_appended_last
+    self.assertEqual(len(routing), 20)
+AssertionError: 21 != 20
+
+======================================================================
+FAIL: test_pre_route_config_is_preserved_byte_for_byte (test_seafarer_ios_apple_route.SeafarerIosAppleRouteTests.test_pre_route_config_is_preserved_byte_for_byte)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_ios_apple_route.py", line 968, in test_pre_route_config_is_preserved_byte_for_byte
+    self.assertEqual(config["release_tasks"], baseline["release_tasks"] + [ROUTE_TASK, BRAND_TASK])
+AssertionError: {'consent193': ['dist/index.html', 'src-tau[6154 chars]rs']} != {'stack-metadata': ['dist/index.html', 'src[5993 chars]rs']}
+Diff is 8365 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_route_config_shape (test_seafarer_ios_apple_route.SeafarerIosAppleRouteTests.test_route_config_shape)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_ios_apple_route.py", line 868, in test_route_config_shape
+    self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192", "consent193"}), {"stack-metadata", ROUTE_TASK, BRAND_TASK, "cv-order-282", "career-pattern-302"})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Items in the first set but not the second:
+'consent193'
+
+======================================================================
+FAIL: test_route_is_additive_to_pre_route_config (test_seafarer_login_gate_route.SeafarerLoginGateRouteTests.test_route_is_additive_to_pre_route_config)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_login_gate_route.py", line 288, in test_route_is_additive_to_pre_route_config
+    # (2026-09-12), oracle in tests/test_seafarer_brand_icons_route.py.
+AssertionError: Items in the first set but not the second:
+'consent193'
+
+======================================================================
+FAIL: test_route_is_not_a_release_task_and_needs_no_exact_file_set (test_seafarer_mobile_189_route.SeafarerMobile189RouteTests.test_route_is_not_a_release_task_and_needs_no_exact_file_set)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_mobile_189_route.py", line 484, in test_route_is_not_a_release_task_and_needs_no_exact_file_set
+    self.assertEqual(
+AssertionError: Items in the first set but not the second:
+'consent193'
+
+======================================================================
+FAIL: test_only_new_task_delta_preserves_live_pr60_baseline (test_seafarer_one_account_sync_route.SeafarerOneAccountSyncRouteTests.test_only_new_task_delta_preserves_live_pr60_baseline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/skipi-guard/.worktrees/consent193-route/tests/test_seafarer_one_account_sync_route.py", line 95, in test_only_new_task_delta_preserves_live_pr60_baseline
+    # Full parsed config at a6904f6, including PR60's iOS plist route.
+AssertionError: '67351770f41f8dd741b9fdd3ae6d7def093f9cdfd72579e611948b3d2554e641' != '90494abb14bd68b69a829892111d7890a7bf068fd78ab457636e9f0f840bd8c7'
+- 67351770f41f8dd741b9fdd3ae6d7def093f9cdfd72579e611948b3d2554e641
++ 90494abb14bd68b69a829892111d7890a7bf068fd78ab457636e9f0f840bd8c7
+
+
+----------------------------------------------------------------------
+Ran 407 tests in 59.196s
+
+FAILED (failures=13)
+files_scanned=0 crash_signals=0

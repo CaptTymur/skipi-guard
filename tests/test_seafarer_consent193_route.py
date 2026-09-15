@@ -1,4 +1,4 @@
-"""Bounded one-account sync route; synthetic Git and stubbed harness effects.
+"""Exact four-file explicit consent route; synthetic Git and stubbed harness effects.
 
 This is policy validation, not proof of native sync behavior. The unchanged
 pre-push/verify implementation is exercised without product or external effects.
@@ -20,24 +20,15 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 GUARD = ROOT / "bin/skipi-guard"
 CONFIG = ROOT / "configs/homes/seafarer.json"
-LOADER = SourceFileLoader("guard_one_account_sync", str(GUARD))
+LOADER = SourceFileLoader("guard_consent193", str(GUARD))
 SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
-TASK = "one-account-sync-192"
+TASK = "consent193"
 FILES = [
     "dist/index.html",
     "src-tauri/src/commands/account_sync.rs",
-    "src-tauri/src/commands/ai.rs",
-    "src-tauri/src/commands/app_login.rs",
-    "src-tauri/src/commands/account_delete.rs",
-    "src-tauri/src/commands/vault.rs",
-    "src-tauri/src/commands/profile.rs",
-    "src-tauri/src/commands/documents.rs",
-    "src-tauri/src/commands/work_history.rs",
-    "src-tauri/src/db.rs",
-    "src-tauri/src/lib.rs",
-    "tests/account_profile_sync_harness.mjs",
+    "tests/bundled_plugin_isolation_harness.mjs",
     "tests/one_account_sync_harness.mjs",
 ]
 SYNC_HARNESSES = [
@@ -54,14 +45,13 @@ EXTRAS = [
 
 def without_sync(config):
     config = copy.deepcopy(config)
-    config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (TASK, "consent193")]
+    config["task_routing"] = [r for r in config["task_routing"] if r["task"] != TASK]
     for section in ("exact_task_file_sets", "allowed_file_patterns", "harness_commands"):
         config[section].pop(TASK, None)
-        config[section].pop("consent193", None)
     return config
 
 
-class SeafarerOneAccountSyncRouteTests(unittest.TestCase):
+class SeafarerConsent193RouteTests(unittest.TestCase):
     def load_config(self):
         return json.loads(CONFIG.read_text())
 
@@ -69,7 +59,7 @@ class SeafarerOneAccountSyncRouteTests(unittest.TestCase):
         rules = [r for r in config["task_routing"] if r["task"] == TASK]
         self.assertEqual(len(rules), 1)
         self.assertEqual(rules[0], {
-            "name": "seafarer one account profile sea service and scans sync (192)",
+            "name": "seafarer explicit two-checkbox account sync consent (193)",
             "task": TASK, "when_all_files_in": FILES, "require_all_of": FILES,
         })
         self.assertEqual(config["exact_task_file_sets"][TASK], FILES)
@@ -90,18 +80,18 @@ class SeafarerOneAccountSyncRouteTests(unittest.TestCase):
     def test_exact_route_and_retained_ten_plus_two_harnesses(self):
         self.assert_contract(self.load_config())
 
-    def test_only_new_task_delta_preserves_live_pr60_baseline(self):
+    def test_only_new_task_delta_preserves_pr61_baseline(self):
         baseline = without_sync(self.load_config())
-        # Full parsed config at a6904f6, including PR60's iOS plist route.
+        # Full parsed config at 6fb4072, including the exact13 sync route.
         self.assertEqual(hashlib.sha256(json.dumps(baseline, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
-                         "90494abb14bd68b69a829892111d7890a7bf068fd78ab457636e9f0f840bd8c7")
+                         "43baca039e91fd8cccd7d44d6a0b8e6bda349ec3395b4d7fc6452f8d0849ad7c")
         old_task = MODULE.resolve_task(baseline, FILES)["task"]
         self.assertNotEqual(old_task, TASK)
         self.assertTrue(MODULE.scope_check_for_task(baseline, old_task, FILES,
                             MODULE.effective_allowed_patterns(baseline, old_task, []))["scope_violations"])
 
     def verify_fixture(self, files, explicit=False):
-        scratch = ROOT / "scratchpad/one-account-sync-20260913"
+        scratch = ROOT / "scratchpad/scratch193-consent-route"
         scratch.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix="fixture-", dir=scratch) as tmp:
             repo = Path(tmp)
@@ -152,8 +142,11 @@ class SeafarerOneAccountSyncRouteTests(unittest.TestCase):
                         self.assertEqual(code, 1, result)
                         self.assertEqual(result["exact_file_set_missing"], [absent] if absent else FILES)
                     elif files:
-                        self.assertEqual(code, 1, result)
+                        # The subset without the sync harness retains the existing
+                        # plugin-host route; consent193 must never claim a subset.
                         self.assertNotEqual(result["task"], TASK)
+                        if absent != "tests/one_account_sync_harness.mjs":
+                            self.assertEqual(code, 1, result)
                     else:
                         self.assertNotEqual(result["task"], TASK)
 
