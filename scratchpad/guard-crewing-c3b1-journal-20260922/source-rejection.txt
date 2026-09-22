@@ -1,0 +1,21 @@
+COMMAND: git push git@github.com:CaptTymur/skipi-crewing.git feature/crewing-c3b1-20260922
+RC: 1
+CAPTURE: exact exec/write_stdin output copied from the session transcript; the command was not piped through tee.
+
+Skipi Guard skipi-guard.v1: FAIL
+home/task: crewing / plugin-host
+repo: /home/linux/Developer/worktrees/.skipi-guard-harness-wt-crewing-7rcz4mg7
+range: d6298ce9a4d5358e92884c54e73868058881871c -> f743a8e04611e1b5ae1e91a7ad33b23a3df6474b (triple-dot)
+sha: f743a8e
+changed files: 1
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 4
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+errors:
+  - changes outside allowed patterns for task 'plugin-host'
+error: failed to push some refs to 'github.com:CaptTymur/skipi-crewing.git'
