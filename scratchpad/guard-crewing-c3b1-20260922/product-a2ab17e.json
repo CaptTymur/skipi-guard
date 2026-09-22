@@ -1,0 +1,106 @@
+{
+  "schema_version": "skipi-guard.v1",
+  "home": "crewing",
+  "task": "crewing-c3b1",
+  "task_source": "auto",
+  "task_rule": "crewing C3b1 synthetic intake desktop routing (owner612, 2026-09-22)",
+  "effective_tasks": [
+    "crewing-c3b1"
+  ],
+  "repo": "/home/linux/Developer/worktrees/crewing-c3b1-20260922",
+  "base": "origin/main",
+  "head": "a2ab17eeda738b0b81ad1558c6267ea9a178ba14",
+  "sha": "a2ab17e",
+  "changed_files": [
+    "dist/index.html",
+    "docs/crewing-pilot-c3b1/WORKLOG.md",
+    "src-tauri/src/crewing_intake.rs",
+    "src-tauri/src/lib.rs",
+    "tests/crewing_c3b1_pilot_harness.mjs"
+  ],
+  "protected_paths_touched": [],
+  "release_paths_touched": [],
+  "release_changes": false,
+  "allowed_file_patterns": [
+    "dist/index.html",
+    "src-tauri/src/crewing_intake.rs",
+    "src-tauri/src/lib.rs",
+    "tests/crewing_c3b1_pilot_harness.mjs",
+    "docs/crewing-pilot-c3b1/WORKLOG.md",
+    ".github/workflows/skipi-guard.yml"
+  ],
+  "exact_file_set_missing": [],
+  "exact_file_set_unexpected": [],
+  "scope_violations": [],
+  "scope_checks": [
+    {
+      "task": "crewing-c3b1",
+      "files": [
+        "dist/index.html",
+        "docs/crewing-pilot-c3b1/WORKLOG.md",
+        "src-tauri/src/crewing_intake.rs",
+        "src-tauri/src/lib.rs",
+        "tests/crewing_c3b1_pilot_harness.mjs"
+      ],
+      "allowed_file_patterns": [
+        "dist/index.html",
+        "src-tauri/src/crewing_intake.rs",
+        "src-tauri/src/lib.rs",
+        "tests/crewing_c3b1_pilot_harness.mjs",
+        "docs/crewing-pilot-c3b1/WORKLOG.md",
+        ".github/workflows/skipi-guard.yml"
+      ],
+      "scope_violations": []
+    }
+  ],
+  "additive_task_checks": [],
+  "tests": [
+    {
+      "name": "crewing_plugin_isolation",
+      "command": "node tests/crewing_plugin_isolation_harness.mjs",
+      "status": "pass",
+      "summary": "  \u2713 host theme adapter reports light on fresh launch\n  \u2713 theme check mounts through the sandbox runtime\n  \u2713 bridge init reached the frame\n  \u2713 bridge init carries theme:'light' on fresh launch \u2014 runtime dark fallbacks never fire\n  \u2713 explicitly saved dark still propagates over the bridge\n  \u2713 host adapter respects saved dark\n\nALL GREEN: 152 passed, 0 failed",
+      "exit_code": 0
+    },
+    {
+      "name": "shared_host_runtime_isolation",
+      "command": "node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs",
+      "status": "pass",
+      "summary": "# integrity is fail-closed\n  \u2713 integrity failure is fail-closed (stage:integrity, no mount)\n\n# feature flag is a kill switch\n  \u2713 disabled runtime returns stage:flag\n  \u2713 disabled runtime created NO frame (boot untouched)\n\nALL GREEN: 27 passed, 0 failed",
+      "exit_code": 0
+    },
+    {
+      "name": "crewing_presence_contract",
+      "command": "node tests/crewing_presence_contract_harness.mjs",
+      "status": "pass",
+      "summary": "  \u2713 rail CSS has no scroll-snap\n  \u2713 rail scroll hint arrows (::before/::after) removed\n  \u2713 mobile Apps grid shows module tiles vacancies,mailings,seafarers,crew_flow,compliance,documents \u2014 got [vacancies,mailings,seafarers,crew_flow,compliance,documents]\n  \u2713 module tiles precede the plugin region in the mobile Apps grid\n  \u2713 Requirements tile routes via mobileShow(compliance)\n  \u2713 Documents tile routes via mobileShow(documents)\n\ncrewing_presence_contract_harness: GREEN (212 passed, 0 failed)",
+      "exit_code": 0
+    },
+    {
+      "name": "crewing_crew_flow_demo",
+      "command": "node tests/crewing_crew_flow_demo_harness.mjs",
+      "status": "pass",
+      "summary": "  \u2713 Back returns from signal detail to the crew_flow screen\n  \u2713 default-off inline script loads\n  \u2713 non-demo Crew Flow does not auto-seed fixture signals\n  \u2713 non-demo Crew Flow renders no fixture candidates\n  \u2713 non-demo Crew Flow shows honest empty state with Applications direction\n  \u2713 Track 1 panel is default-off outside demo mode\n\ncrewing_crew_flow_demo_harness: GREEN (90 passed, 0 failed)",
+      "exit_code": 0
+    },
+    {
+      "name": "crewing_c3b1_pilot",
+      "command": "node tests/crewing_c3b1_pilot_harness.mjs",
+      "status": "pass",
+      "summary": "  \u2713 A to B to A context cycle cannot revive a pre-change alias response\n  \u2713 queue completion preserves the in-progress alias label draft\n  \u2713 settings save purges old alias before it can reach the clipboard\n# no-config and duplicate-click controls\n  \u2713 unconfigured pilot performs zero network invokes\n  \u2713 duplicate create clicks dispatch exactly one write\n\ncrewing_c3b1_pilot_harness: GREEN (59 passed, 0 failed)",
+      "exit_code": 0
+    },
+    {
+      "name": "crewing_csp_inline_handlers",
+      "command": "node tests/csp_inline_handlers_harness.mjs",
+      "status": "pass",
+      "summary": "OK: tauri.conf csp is null \u2014 inline handlers safe\nOK: dist has meta CSP but no script-src/default-src restriction",
+      "exit_code": 0
+    }
+  ],
+  "override_present": false,
+  "auto_bootstrap_override": false,
+  "comparison": "triple-dot",
+  "status": "pass",
+  "errors": []
+}
