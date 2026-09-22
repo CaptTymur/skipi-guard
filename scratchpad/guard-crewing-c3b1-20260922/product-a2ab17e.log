@@ -1,0 +1,20 @@
+Skipi Guard skipi-guard.v1: PASS
+home/task: crewing / crewing-c3b1
+repo: /home/linux/Developer/worktrees/crewing-c3b1-20260922
+range: origin/main -> a2ab17eeda738b0b81ad1558c6267ea9a178ba14 (triple-dot)
+sha: a2ab17e
+changed files: 5
+  - dist/index.html
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+  - src-tauri/src/crewing_intake.rs
+  - src-tauri/src/lib.rs
+  - tests/crewing_c3b1_pilot_harness.mjs
+protected touches: 0
+release changes: no
+harness commands: 6
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+  - crewing_c3b1_pilot: pass :: node tests/crewing_c3b1_pilot_harness.mjs
+  - crewing_csp_inline_handlers: pass :: node tests/csp_inline_handlers_harness.mjs

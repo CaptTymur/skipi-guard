@@ -1,0 +1,392 @@
+test_candidate_routes_and_preserves_all_six_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_candidate_routes_and_preserves_all_six_checks) ... FAIL
+test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) ... 
+  test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='crewing_plugin_isolation') ... FAIL
+  test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='shared_host_runtime_isolation') ... FAIL
+  test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='crewing_presence_contract') ... FAIL
+  test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='crewing_crew_flow_demo') ... FAIL
+  test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='crewing_c3b1_pilot') ... FAIL
+  test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='crewing_csp_inline_handlers') ... FAIL
+test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) ... 
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b1_pilot_harness.mjs')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b1_pilot_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks) ... 
+  test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks) (files=['dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md']) ... FAIL
+  test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks) (files=['dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md', '.github/workflows/skipi-guard.yml']) ... FAIL
+test_old_config_is_unchanged_after_removing_only_new_task (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_old_config_is_unchanged_after_removing_only_new_task) ... ok
+test_real_cli_each_missing_required_or_any_does_not_route (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_each_missing_required_or_any_does_not_route) ... ok
+test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) ... 
+  test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='src-tauri/src/other.rs', explicit=True) ... FAIL
+  test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='server/intake.rs', explicit=True) ... FAIL
+  test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='src-tauri/Cargo.toml', explicit=True) ... FAIL
+  test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='keys/signing.pem', explicit=True) ... FAIL
+  test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='presence-manifest.json', explicit=False) ... FAIL
+  test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='presence-manifest.json', explicit=True) ... FAIL
+  test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='tests/other.mjs', explicit=True) ... FAIL
+  test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='docs/other.md', explicit=True) ... FAIL
+  test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='dist/latest.json', explicit=True) ... FAIL
+
+======================================================================
+FAIL: test_candidate_routes_and_preserves_all_six_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_candidate_routes_and_preserves_all_six_checks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 62, in test_candidate_routes_and_preserves_all_six_checks
+    self.assertEqual(MODULE.resolve_task(config, files)["task"], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b1'
+- plugin-host
++ crewing-c3b1
+
+
+======================================================================
+FAIL: test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='crewing_plugin_isolation')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 222, in test_each_of_six_check_failures_rejects_ci_and_hook
+    self.assert_calls(f)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 173, in assert_calls
+    self.assertEqual([c["args"] for c in calls], [[cmd.split(" ", 1)[1]] for _, cmd in COMMANDS])
+AssertionError: Lists differ: [['te[218 chars]mjs']] != [['te[218 chars]mjs'], ['tests/crewing_c3b1_pilot_harness.mjs'[40 chars]js']]
+
+Second list contains 2 additional elements.
+First extra element 4:
+['tests/crewing_c3b1_pilot_harness.mjs']
+
+  [['tests/crewing_plugin_isolation_harness.mjs'],
+   ['/home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs'],
+   ['tests/crewing_presence_contract_harness.mjs'],
+-  ['tests/crewing_crew_flow_demo_harness.mjs']]
+?                                              ^
+
++  ['tests/crewing_crew_flow_demo_harness.mjs'],
+?                                              ^
+
++  ['tests/crewing_c3b1_pilot_harness.mjs'],
++  ['tests/csp_inline_handlers_harness.mjs']]
+
+======================================================================
+FAIL: test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='shared_host_runtime_isolation')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 222, in test_each_of_six_check_failures_rejects_ci_and_hook
+    self.assert_calls(f)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 173, in assert_calls
+    self.assertEqual([c["args"] for c in calls], [[cmd.split(" ", 1)[1]] for _, cmd in COMMANDS])
+AssertionError: Lists differ: [['te[218 chars]mjs']] != [['te[218 chars]mjs'], ['tests/crewing_c3b1_pilot_harness.mjs'[40 chars]js']]
+
+Second list contains 2 additional elements.
+First extra element 4:
+['tests/crewing_c3b1_pilot_harness.mjs']
+
+  [['tests/crewing_plugin_isolation_harness.mjs'],
+   ['/home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs'],
+   ['tests/crewing_presence_contract_harness.mjs'],
+-  ['tests/crewing_crew_flow_demo_harness.mjs']]
+?                                              ^
+
++  ['tests/crewing_crew_flow_demo_harness.mjs'],
+?                                              ^
+
++  ['tests/crewing_c3b1_pilot_harness.mjs'],
++  ['tests/csp_inline_handlers_harness.mjs']]
+
+======================================================================
+FAIL: test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='crewing_presence_contract')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 222, in test_each_of_six_check_failures_rejects_ci_and_hook
+    self.assert_calls(f)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 173, in assert_calls
+    self.assertEqual([c["args"] for c in calls], [[cmd.split(" ", 1)[1]] for _, cmd in COMMANDS])
+AssertionError: Lists differ: [['te[218 chars]mjs']] != [['te[218 chars]mjs'], ['tests/crewing_c3b1_pilot_harness.mjs'[40 chars]js']]
+
+Second list contains 2 additional elements.
+First extra element 4:
+['tests/crewing_c3b1_pilot_harness.mjs']
+
+  [['tests/crewing_plugin_isolation_harness.mjs'],
+   ['/home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs'],
+   ['tests/crewing_presence_contract_harness.mjs'],
+-  ['tests/crewing_crew_flow_demo_harness.mjs']]
+?                                              ^
+
++  ['tests/crewing_crew_flow_demo_harness.mjs'],
+?                                              ^
+
++  ['tests/crewing_c3b1_pilot_harness.mjs'],
++  ['tests/csp_inline_handlers_harness.mjs']]
+
+======================================================================
+FAIL: test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='crewing_crew_flow_demo')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 222, in test_each_of_six_check_failures_rejects_ci_and_hook
+    self.assert_calls(f)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 173, in assert_calls
+    self.assertEqual([c["args"] for c in calls], [[cmd.split(" ", 1)[1]] for _, cmd in COMMANDS])
+AssertionError: Lists differ: [['te[218 chars]mjs']] != [['te[218 chars]mjs'], ['tests/crewing_c3b1_pilot_harness.mjs'[40 chars]js']]
+
+Second list contains 2 additional elements.
+First extra element 4:
+['tests/crewing_c3b1_pilot_harness.mjs']
+
+  [['tests/crewing_plugin_isolation_harness.mjs'],
+   ['/home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs'],
+   ['tests/crewing_presence_contract_harness.mjs'],
+-  ['tests/crewing_crew_flow_demo_harness.mjs']]
+?                                              ^
+
++  ['tests/crewing_crew_flow_demo_harness.mjs'],
+?                                              ^
+
++  ['tests/crewing_c3b1_pilot_harness.mjs'],
++  ['tests/csp_inline_handlers_harness.mjs']]
+
+======================================================================
+FAIL: test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='crewing_c3b1_pilot')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 222, in test_each_of_six_check_failures_rejects_ci_and_hook
+    self.assert_calls(f)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 173, in assert_calls
+    self.assertEqual([c["args"] for c in calls], [[cmd.split(" ", 1)[1]] for _, cmd in COMMANDS])
+AssertionError: Lists differ: [['te[218 chars]mjs']] != [['te[218 chars]mjs'], ['tests/crewing_c3b1_pilot_harness.mjs'[40 chars]js']]
+
+Second list contains 2 additional elements.
+First extra element 4:
+['tests/crewing_c3b1_pilot_harness.mjs']
+
+  [['tests/crewing_plugin_isolation_harness.mjs'],
+   ['/home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs'],
+   ['tests/crewing_presence_contract_harness.mjs'],
+-  ['tests/crewing_crew_flow_demo_harness.mjs']]
+?                                              ^
+
++  ['tests/crewing_crew_flow_demo_harness.mjs'],
+?                                              ^
+
++  ['tests/crewing_c3b1_pilot_harness.mjs'],
++  ['tests/csp_inline_handlers_harness.mjs']]
+
+======================================================================
+FAIL: test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) (name='crewing_csp_inline_handlers')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 222, in test_each_of_six_check_failures_rejects_ci_and_hook
+    self.assert_calls(f)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 173, in assert_calls
+    self.assertEqual([c["args"] for c in calls], [[cmd.split(" ", 1)[1]] for _, cmd in COMMANDS])
+AssertionError: Lists differ: [['te[218 chars]mjs']] != [['te[218 chars]mjs'], ['tests/crewing_c3b1_pilot_harness.mjs'[40 chars]js']]
+
+Second list contains 2 additional elements.
+First extra element 4:
+['tests/crewing_c3b1_pilot_harness.mjs']
+
+  [['tests/crewing_plugin_isolation_harness.mjs'],
+   ['/home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs'],
+   ['tests/crewing_presence_contract_harness.mjs'],
+-  ['tests/crewing_crew_flow_demo_harness.mjs']]
+?                                              ^
+
++  ['tests/crewing_crew_flow_demo_harness.mjs'],
+?                                              ^
+
++  ['tests/crewing_c3b1_pilot_harness.mjs'],
++  ['tests/csp_inline_handlers_harness.mjs']]
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b1_pilot_harness.mjs'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b1_pilot_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 97, in test_every_subset_has_precise_required_and_any_semantics
+    self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
+AssertionError: False != True
+
+======================================================================
+FAIL: test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks) (files=['dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 198, in test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks
+    self.assertEqual(ci_proc.returncode, 0, ci)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/scratchpad/guard-crewing-c3b1-20260922/fixture-p9dbvjd5/repo', 'base': '37d228366e92ca4bea4ccc95842f039efcfb2db6', 'head': 'd2c158aa40d225865227124903f811b1025f2d4d', 'sha': 'd2c158a', 'changed_files': ['dist/index.html', 'docs/crewing-pilot-c3b1/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['docs/crewing-pilot-c3b1/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['dist/index.html', 'docs/crewing-pilot-c3b1/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['docs/crewing-pilot-c3b1/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks) (files=['dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md', '.github/workflows/skipi-guard.yml'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 198, in test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks
+    self.assertEqual(ci_proc.returncode, 0, ci)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/scratchpad/guard-crewing-c3b1-20260922/fixture-yzi4wpri/repo', 'base': '87067444fd0670fd352b6672b146bda04c42886a', 'head': 'f58025d8a4d4e2f34d43d32791dad75ac0fb42f3', 'sha': 'f58025d', 'changed_files': ['.github/workflows/skipi-guard.yml', 'dist/index.html', 'docs/crewing-pilot-c3b1/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b1/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['.github/workflows/skipi-guard.yml', 'dist/index.html', 'docs/crewing-pilot-c3b1/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b1/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='src-tauri/src/other.rs', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 189, in test_real_cli_unrelated_native_server_release_protected_extras_stay_red
+    self.assertIn(extra, report["scope_violations"])
+AssertionError: 'src-tauri/src/other.rs' not found in []
+
+======================================================================
+FAIL: test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='server/intake.rs', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 189, in test_real_cli_unrelated_native_server_release_protected_extras_stay_red
+    self.assertIn(extra, report["scope_violations"])
+AssertionError: 'server/intake.rs' not found in []
+
+======================================================================
+FAIL: test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='src-tauri/Cargo.toml', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 189, in test_real_cli_unrelated_native_server_release_protected_extras_stay_red
+    self.assertIn(extra, report["scope_violations"])
+AssertionError: 'src-tauri/Cargo.toml' not found in []
+
+======================================================================
+FAIL: test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='keys/signing.pem', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 189, in test_real_cli_unrelated_native_server_release_protected_extras_stay_red
+    self.assertIn(extra, report["scope_violations"])
+AssertionError: 'keys/signing.pem' not found in []
+
+======================================================================
+FAIL: test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='presence-manifest.json', explicit=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 189, in test_real_cli_unrelated_native_server_release_protected_extras_stay_red
+    self.assertIn(extra, report["scope_violations"])
+AssertionError: 'presence-manifest.json' not found in ['docs/crewing-pilot-c3b1/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs']
+
+======================================================================
+FAIL: test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='presence-manifest.json', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 189, in test_real_cli_unrelated_native_server_release_protected_extras_stay_red
+    self.assertIn(extra, report["scope_violations"])
+AssertionError: 'presence-manifest.json' not found in []
+
+======================================================================
+FAIL: test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='tests/other.mjs', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 189, in test_real_cli_unrelated_native_server_release_protected_extras_stay_red
+    self.assertIn(extra, report["scope_violations"])
+AssertionError: 'tests/other.mjs' not found in []
+
+======================================================================
+FAIL: test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='docs/other.md', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 189, in test_real_cli_unrelated_native_server_release_protected_extras_stay_red
+    self.assertIn(extra, report["scope_violations"])
+AssertionError: 'docs/other.md' not found in []
+
+======================================================================
+FAIL: test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='dist/latest.json', explicit=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 189, in test_real_cli_unrelated_native_server_release_protected_extras_stay_red
+    self.assertIn(extra, report["scope_violations"])
+AssertionError: 'dist/latest.json' not found in []
+
+----------------------------------------------------------------------
+Ran 7 tests in 3.869s
+
+FAILED (failures=30)

@@ -1,0 +1,21 @@
+test_candidate_routes_and_preserves_all_six_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_candidate_routes_and_preserves_all_six_checks) ... ok
+test_each_of_six_check_failures_rejects_ci_and_hook (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_each_of_six_check_failures_rejects_ci_and_hook) ... ok
+test_every_subset_has_precise_required_and_any_semantics (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_every_subset_has_precise_required_and_any_semantics) ... ok
+test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_hook_stdin_and_ci_same_five_and_six_paths_run_all_checks) ... ok
+test_old_config_is_unchanged_after_removing_only_new_task (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_old_config_is_unchanged_after_removing_only_new_task) ... ok
+test_real_cli_each_missing_required_or_any_does_not_route (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_each_missing_required_or_any_does_not_route) ... ok
+test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) ... 
+  test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='presence-manifest.json', explicit=False) ... FAIL
+
+======================================================================
+FAIL: test_real_cli_unrelated_native_server_release_protected_extras_stay_red (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_real_cli_unrelated_native_server_release_protected_extras_stay_red) (extra='presence-manifest.json', explicit=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-20260922/tests/test_crewing_c3b1_route.py", line 189, in test_real_cli_unrelated_native_server_release_protected_extras_stay_red
+    self.assertIn(extra, report["scope_violations"])
+AssertionError: 'presence-manifest.json' not found in ['docs/crewing-pilot-c3b1/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b1_pilot_harness.mjs']
+
+----------------------------------------------------------------------
+Ran 7 tests in 3.472s
+
+FAILED (failures=1)
