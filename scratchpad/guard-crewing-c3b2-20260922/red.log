@@ -1,0 +1,1195 @@
+test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) ... 
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('tests/crewing_c3b2_candidate_harness.mjs',)) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('docs/crewing-pilot-c3b2/WORKLOG.md',)) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml')) ... FAIL
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='src-tauri/src/other.rs') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='server/intake.rs') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='src-tauri/Cargo.toml') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='src-tauri/Cargo.lock') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='src-tauri/tauri.conf.json') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='keys/signing.pem') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='presence-manifest.json') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='tests/other.mjs') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='docs/other.md') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='dist/latest.json') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='.github/workflows/other.yml') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='tests/crewing_c3b1_pilot_harness.mjs') ... ERROR
+  test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='docs/crewing-pilot-c3b1/WORKLOG.md') ... ERROR
+test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) ... 
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_plugin_isolation', incremental=False) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_plugin_isolation', incremental=True) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='shared_host_runtime_isolation', incremental=False) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='shared_host_runtime_isolation', incremental=True) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_presence_contract', incremental=False) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_presence_contract', incremental=True) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_crew_flow_demo', incremental=False) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_crew_flow_demo', incremental=True) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_c3b1_pilot', incremental=False) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_c3b1_pilot', incremental=True) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_csp_inline_handlers', incremental=False) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_csp_inline_handlers', incremental=True) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_c3b2_candidate', incremental=False) ... FAIL
+  test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_c3b2_candidate', incremental=True) ... FAIL
+test_entire_old_parsed_config_and_legacy_routes_preserved (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_entire_old_parsed_config_and_legacy_routes_preserved) ... ok
+test_exact_ceiling_checks_and_order (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_exact_ceiling_checks_and_order) ... FAIL
+test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) ... 
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/src/other.rs', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/src/other.rs', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='server/intake.rs', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='server/intake.rs', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/Cargo.toml', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/Cargo.toml', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/Cargo.lock', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/Cargo.lock', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/tauri.conf.json', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/tauri.conf.json', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='keys/signing.pem', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='keys/signing.pem', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='presence-manifest.json', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='presence-manifest.json', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='tests/other.mjs', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='tests/other.mjs', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='docs/other.md', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='docs/other.md', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='dist/latest.json', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='dist/latest.json', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='.github/workflows/other.yml', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='.github/workflows/other.yml', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='tests/crewing_c3b1_pilot_harness.mjs', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='tests/crewing_c3b1_pilot_harness.mjs', incremental=True) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='docs/crewing-pilot-c3b1/WORKLOG.md', incremental=False) ... FAIL
+  test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='docs/crewing-pilot-c3b1/WORKLOG.md', incremental=True) ... FAIL
+test_missing_and_deleted_new_harness_fail_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_missing_and_deleted_new_harness_fail_both_ranges) ... 
+  test_missing_and_deleted_new_harness_fail_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_missing_and_deleted_new_harness_fail_both_ranges) (mode='missing', incremental=False) ... FAIL
+  test_missing_and_deleted_new_harness_fail_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_missing_and_deleted_new_harness_fail_both_ranges) (mode='missing', incremental=True) ... FAIL
+  test_missing_and_deleted_new_harness_fail_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_missing_and_deleted_new_harness_fail_both_ranges) (mode='deleted', incremental=False) ... FAIL
+  test_missing_and_deleted_new_harness_fail_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_missing_and_deleted_new_harness_fail_both_ranges) (mode='deleted', incremental=True) ... FAIL
+test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior) ... 
+  test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior) (files=['.github/workflows/skipi-guard.yml'], incremental=False) ... FAIL
+  test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior) (files=['.github/workflows/skipi-guard.yml'], incremental=True) ... FAIL
+test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) ... 
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'], incremental=False) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'], incremental=True) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['tests/crewing_c3b2_candidate_harness.mjs'], incremental=False) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['tests/crewing_c3b2_candidate_harness.mjs'], incremental=True) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['docs/crewing-pilot-c3b2/WORKLOG.md'], incremental=False) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['docs/crewing-pilot-c3b2/WORKLOG.md'], incremental=True) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'], incremental=False) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'], incremental=True) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs'], incremental=False) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs'], incremental=True) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md'], incremental=False) ... FAIL
+  test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md'], incremental=True) ... FAIL
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='src-tauri/src/other.rs')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='server/intake.rs')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='src-tauri/Cargo.toml')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='src-tauri/Cargo.lock')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='src-tauri/tauri.conf.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='keys/signing.pem')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='presence-manifest.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='tests/other.mjs')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='docs/other.md')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='dist/latest.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='.github/workflows/other.yml')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='tests/crewing_c3b1_pilot_harness.mjs')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (extra='docs/crewing-pilot-c3b1/WORKLOG.md')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 99, in test_all_64_subsets_and_forbidden_extras
+    self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('tests/crewing_c3b2_candidate_harness.mjs',))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('docs/crewing-pilot-c3b2/WORKLOG.md',))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_all_64_subsets_and_forbidden_extras (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_all_64_subsets_and_forbidden_extras) (files=('dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 94, in test_all_64_subsets_and_forbidden_extras
+    self.assertEqual(MODULE.resolve_task(config, list(files))['task'] == TASK,
+AssertionError: False != True
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_plugin_isolation', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_plugin_isolation', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='shared_host_runtime_isolation', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='shared_host_runtime_isolation', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_presence_contract', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_presence_contract', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_crew_flow_demo', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_crew_flow_demo', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_c3b1_pilot', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_c3b1_pilot', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_csp_inline_handlers', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_csp_inline_handlers', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_c3b2_candidate', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_each_of_seven_failures_rejects_cli_and_hook_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_each_of_seven_failures_rejects_cli_and_hook_both_ranges) (name='crewing_c3b2_candidate', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 214, in test_each_of_seven_failures_rejects_cli_and_hook_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_exact_ceiling_checks_and_order (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_exact_ceiling_checks_and_order)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 65, in test_exact_ceiling_checks_and_order
+    self.assertEqual(len(route), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/src/other.rs', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'src-tauri/src/other.rs' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/src/other.rs', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'src-tauri/src/other.rs' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='server/intake.rs', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'server/intake.rs' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='server/intake.rs', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'server/intake.rs' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/Cargo.toml', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'src-tauri/Cargo.toml' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/Cargo.toml', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'src-tauri/Cargo.toml' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/Cargo.lock', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'src-tauri/Cargo.lock' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/Cargo.lock', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'src-tauri/Cargo.lock' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/tauri.conf.json', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'src-tauri/tauri.conf.json' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='src-tauri/tauri.conf.json', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'src-tauri/tauri.conf.json' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='keys/signing.pem', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'keys/signing.pem' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='keys/signing.pem', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'keys/signing.pem' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='presence-manifest.json', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'presence-manifest.json' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='presence-manifest.json', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'presence-manifest.json' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='tests/other.mjs', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'tests/other.mjs' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='tests/other.mjs', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'tests/other.mjs' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='docs/other.md', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'docs/other.md' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='docs/other.md', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'docs/other.md' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='dist/latest.json', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'dist/latest.json' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='dist/latest.json', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'dist/latest.json' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='.github/workflows/other.yml', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: '.github/workflows/other.yml' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='.github/workflows/other.yml', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: '.github/workflows/other.yml' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='tests/crewing_c3b1_pilot_harness.mjs', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'tests/crewing_c3b1_pilot_harness.mjs' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='tests/crewing_c3b1_pilot_harness.mjs', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'tests/crewing_c3b1_pilot_harness.mjs' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='docs/crewing-pilot-c3b1/WORKLOG.md', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'docs/crewing-pilot-c3b1/WORKLOG.md' not found in []
+
+======================================================================
+FAIL: test_forbidden_extras_rejected_real_cli_and_hook (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_forbidden_extras_rejected_real_cli_and_hook) (extra='docs/crewing-pilot-c3b1/WORKLOG.md', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 235, in test_forbidden_extras_rejected_real_cli_and_hook
+    self.assertIn(extra, report['scope_violations'])
+AssertionError: 'docs/crewing-pilot-c3b1/WORKLOG.md' not found in []
+
+======================================================================
+FAIL: test_missing_and_deleted_new_harness_fail_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_missing_and_deleted_new_harness_fail_both_ranges) (mode='missing', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 224, in test_missing_and_deleted_new_harness_fail_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_missing_and_deleted_new_harness_fail_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_missing_and_deleted_new_harness_fail_both_ranges) (mode='missing', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 224, in test_missing_and_deleted_new_harness_fail_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_missing_and_deleted_new_harness_fail_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_missing_and_deleted_new_harness_fail_both_ranges) (mode='deleted', incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 224, in test_missing_and_deleted_new_harness_fail_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_missing_and_deleted_new_harness_fail_both_ranges (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_missing_and_deleted_new_harness_fail_both_ranges) (mode='deleted', incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 224, in test_missing_and_deleted_new_harness_fail_both_ranges
+    self.assert_seven(f, report, hook)
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 184, in assert_seven
+    self.assertEqual(report['task'], TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b2'
+- plugin-host
++ crewing-c3b2
+
+
+======================================================================
+FAIL: test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior) (files=['.github/workflows/skipi-guard.yml'], incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 249, in test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior
+    self.assertEqual(proc.returncode, 1, report)
+AssertionError: 0 != 1 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-9sbmzs1s/.skipi-guard-harness-wt-crewing-d51f7ov6', 'base': 'f02bc47c02f12c85252b8d2038a1193048aa60aa', 'head': '856264668c10db9b2e305f6db565ec8d4dc4f89d', 'sha': '8562646', 'changed_files': ['.github/workflows/skipi-guard.yml'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['.github/workflows/skipi-guard.yml'], 'scope_checks': [{'task': 'plugin-host', 'files': ['.github/workflows/skipi-guard.yml'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['.github/workflows/skipi-guard.yml']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': True, 'auto_bootstrap_override': True, 'comparison': 'triple-dot', 'status': 'pass', 'errors': [], 'push_ref': {'local_ref': 'refs/heads/candidate', 'local_sha': '856264668c10db9b2e305f6db565ec8d4dc4f89d', 'remote_ref': 'refs/heads/candidate', 'remote_sha': '0000000000000000000000000000000000000000', 'base_mode': 'merge-base-origin-main'}}
+
+======================================================================
+FAIL: test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior) (files=['.github/workflows/skipi-guard.yml'], incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 249, in test_pin_only_and_ambiguous_shared_code_keep_old_real_behavior
+    self.assertEqual(proc.returncode, 1, report)
+AssertionError: 0 != 1 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-5na8o5a6/.skipi-guard-harness-wt-crewing-4o8tle12', 'base': '0dd331e2e90425dcd9f5acb0e5abb4491121f587', 'head': '1158c64271a11dc25dda865ec30bb567aaf0a4ec', 'sha': '1158c64', 'changed_files': ['.github/workflows/skipi-guard.yml'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['.github/workflows/skipi-guard.yml'], 'scope_checks': [{'task': 'plugin-host', 'files': ['.github/workflows/skipi-guard.yml'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['.github/workflows/skipi-guard.yml']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': True, 'auto_bootstrap_override': True, 'comparison': 'triple-dot', 'status': 'pass', 'errors': [], 'push_ref': {'local_ref': 'refs/heads/candidate', 'local_sha': '1158c64271a11dc25dda865ec30bb567aaf0a4ec', 'remote_ref': 'refs/heads/candidate', 'remote_sha': '0dd331e2e90425dcd9f5acb0e5abb4491121f587', 'base_mode': 'remote-sha'}}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'], incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-uc8q8588/repo', 'base': '5d454120c4529098e767d621a2024fb42b7403fa', 'head': '5c1ce4d6d9221fb27e1f855bb645a63b054a317b', 'sha': '5c1ce4d', 'changed_files': ['.github/workflows/skipi-guard.yml', 'dist/index.html', 'docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['.github/workflows/skipi-guard.yml', 'dist/index.html', 'docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'], incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-0hve44od/repo', 'base': '442935677de7eb5daab646e2d4e6cc50dab29074', 'head': '6d42f9846c090b264f87a6b8c99671d963915b37', 'sha': '6d42f98', 'changed_files': ['.github/workflows/skipi-guard.yml', 'dist/index.html', 'docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['.github/workflows/skipi-guard.yml', 'dist/index.html', 'docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs', 'tests/crewing_c3b2_candidate_harness.mjs']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['tests/crewing_c3b2_candidate_harness.mjs'], incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-4sd89jwz/repo', 'base': '5d454120c4529098e767d621a2024fb42b7403fa', 'head': '2b0c304cccaa15558832be1a63ee90d605f72471', 'sha': '2b0c304', 'changed_files': ['tests/crewing_c3b2_candidate_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['tests/crewing_c3b2_candidate_harness.mjs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['tests/crewing_c3b2_candidate_harness.mjs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['tests/crewing_c3b2_candidate_harness.mjs']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['tests/crewing_c3b2_candidate_harness.mjs'], incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-kdiujp9t/repo', 'base': '442935677de7eb5daab646e2d4e6cc50dab29074', 'head': '398d1dbc75a5de1ae4cc5de7c770b1db91e929c6', 'sha': '398d1db', 'changed_files': ['tests/crewing_c3b2_candidate_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['tests/crewing_c3b2_candidate_harness.mjs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['tests/crewing_c3b2_candidate_harness.mjs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['tests/crewing_c3b2_candidate_harness.mjs']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['docs/crewing-pilot-c3b2/WORKLOG.md'], incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-_rfa8x0v/repo', 'base': '5d454120c4529098e767d621a2024fb42b7403fa', 'head': '16ff6d6b7070e2da204c1cf2dea5e924a6b47331', 'sha': '16ff6d6', 'changed_files': ['docs/crewing-pilot-c3b2/WORKLOG.md'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['docs/crewing-pilot-c3b2/WORKLOG.md'], 'scope_checks': [{'task': 'plugin-host', 'files': ['docs/crewing-pilot-c3b2/WORKLOG.md'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['docs/crewing-pilot-c3b2/WORKLOG.md']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['docs/crewing-pilot-c3b2/WORKLOG.md'], incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-gqxqgbdg/repo', 'base': '324b557897524d096ded0bc1884ca2e8e0b6c0ec', 'head': 'cd29acd9a977767f71f1d9b5b59a49d52736f9e6', 'sha': 'cd29acd', 'changed_files': ['docs/crewing-pilot-c3b2/WORKLOG.md'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['docs/crewing-pilot-c3b2/WORKLOG.md'], 'scope_checks': [{'task': 'plugin-host', 'files': ['docs/crewing-pilot-c3b2/WORKLOG.md'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['docs/crewing-pilot-c3b2/WORKLOG.md']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'], incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-lm1cg4r2/repo', 'base': '16611e42e4904acc4e4835f7506751d1cf11bf5c', 'head': '51bb51dcbb615d8db1302e17575d4fb4ccb7f8f4', 'sha': '51bb51d', 'changed_files': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md'], 'scope_checks': [{'task': 'plugin-host', 'files': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml'], incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-z7d3_n3g/repo', 'base': '324b557897524d096ded0bc1884ca2e8e0b6c0ec', 'head': 'a1bdb8508a8bbd2f537cb2e62bbf8de5fc25c53f', 'sha': 'a1bdb85', 'changed_files': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md'], 'scope_checks': [{'task': 'plugin-host', 'files': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['.github/workflows/skipi-guard.yml', 'docs/crewing-pilot-c3b2/WORKLOG.md']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs'], incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-p3rx93sq/repo', 'base': '16611e42e4904acc4e4835f7506751d1cf11bf5c', 'head': '6d16b115feb8af027f6026cfb46b9a5b8c7d465f', 'sha': '6d16b11', 'changed_files': ['dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['tests/crewing_c3b2_candidate_harness.mjs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['tests/crewing_c3b2_candidate_harness.mjs']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs'], incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-jaa_fodj/repo', 'base': '40ab1843f1332c1514316f291ed7b303b714bdf7', 'head': '12ff66659893e6c1eccb3f5a268a0c683627ced4', 'sha': '12ff666', 'changed_files': ['dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['tests/crewing_c3b2_candidate_harness.mjs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['dist/index.html', 'tests/crewing_c3b2_candidate_harness.mjs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['tests/crewing_c3b2_candidate_harness.mjs']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md'], incremental=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-1lov2ogl/repo', 'base': 'ed07075919bcb41cfe65f5e05e458ee346be02d2', 'head': 'af1a6db551fe43073d8dcc58463ce8f3894f4bdc', 'sha': 'af1a6db', 'changed_files': ['docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_supported_shapes_cli_and_hook_aggregate_and_incremental (test_crewing_c3b2_route.CrewingC3b2RouteTests.test_supported_shapes_cli_and_hook_aggregate_and_incremental) (files=['src-tauri/src/crewing_intake.rs', 'docs/crewing-pilot-c3b2/WORKLOG.md'], incremental=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/tests/test_crewing_c3b2_route.py", line 203, in test_supported_shapes_cli_and_hook_aggregate_and_incremental
+    self.assertEqual(proc.returncode, 0, report)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b2-20260922/scratchpad/guard-crewing-c3b2-20260922/fixture-1k7l7nel/repo', 'base': '40ab1843f1332c1514316f291ed7b303b714bdf7', 'head': 'bcbbb312b73479387e7e9e4bf91ff65907be5049', 'sha': 'bcbbb31', 'changed_files': ['docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs'], 'scope_checks': [{'task': 'plugin-host', 'files': ['docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['docs/crewing-pilot-c3b2/WORKLOG.md', 'src-tauri/src/crewing_intake.rs']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+----------------------------------------------------------------------
+Ran 8 tests in 14.556s
+
+FAILED (failures=107, errors=13)

@@ -1222,10 +1222,11 @@ class SecurityEscapingRouteContract:
 
         # Later routes have their own exact-shape and complete-baseline oracles
         # in test_broker_map_demo_route.py, test_broker_demo_showcase_route.py,
-        # and test_crewing_c3b1_route.py. Keep this historical baseline intact.
+        # and test_crewing_c3b1_route.py / test_crewing_c3b2_route.py.
+        # Keep this historical baseline intact.
         later_tasks = {"broker-map-demo-422", "broker-demo-showcase"} if self.HOME == "broker" else set()
         if self.HOME == "crewing":
-            later_tasks = {"crewing-c3b1", "crewing-c3b1-metadata"}
+            later_tasks = {"crewing-c3b1", "crewing-c3b1-metadata", "crewing-c3b2"}
         # The security route stays first; every historical rule stays in order.
         self.assertEqual(config["task_routing"][0]["task"], ROUTE_TASK)
         self.assertEqual(
