@@ -1,0 +1,13 @@
+diff --git a/.github/workflows/skipi-guard.yml b/.github/workflows/skipi-guard.yml
+index 1659940..af24760 100644
+--- a/.github/workflows/skipi-guard.yml
++++ b/.github/workflows/skipi-guard.yml
+@@ -20,7 +20,7 @@ jobs:
+         uses: actions/checkout@v4
+         with:
+           repository: CaptTymur/skipi-guard
+-          ref: 071eea0c3679c8b35bad2bd62adb2df4c3b17746
++          ref: 40e3a0633a05ec764f4852053c945a29fbc9a6b3
+           path: .skipi-guard
+           fetch-depth: 0
+ 

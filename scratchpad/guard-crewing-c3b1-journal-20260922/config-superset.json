@@ -1,0 +1,35 @@
+{
+  "schema_version": "skipi-guard.v1",
+  "home": "crewing",
+  "repo": "/home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922",
+  "old_ref": "071eea0c3679c8b35bad2bd62adb2df4c3b17746",
+  "new_ref": "40e3a0633a05ec764f4852053c945a29fbc9a6b3",
+  "old_tasks": [
+    "crewing-c3b1",
+    "plugin-host",
+    "provenance",
+    "release",
+    "security-escaping-191",
+    "settings-adopt",
+    "stack-metadata",
+    "theme-default"
+  ],
+  "new_tasks": [
+    "crewing-c3b1",
+    "crewing-c3b1-metadata",
+    "plugin-host",
+    "provenance",
+    "release",
+    "security-escaping-191",
+    "settings-adopt",
+    "stack-metadata",
+    "theme-default"
+  ],
+  "missing_harnesses": [],
+  "missing_additive_task_checks": [],
+  "missing_allowed_file_patterns": [],
+  "missing_release_sensitive_paths": [],
+  "missing_protected_paths": [],
+  "status": "pass",
+  "errors": []
+}

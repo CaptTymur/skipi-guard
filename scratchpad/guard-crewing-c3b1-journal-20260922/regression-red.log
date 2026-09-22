@@ -1,0 +1,33 @@
+.....EFF...
+======================================================================
+ERROR: test_journal_exact_scope_and_all_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_journal_exact_scope_and_all_checks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/tests/test_crewing_c3b1_route.py", line 155, in test_journal_exact_scope_and_all_checks
+    self.assertEqual(config["allowed_file_patterns"][JOURNAL_TASK], [FILES[4]])
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'crewing-c3b1-journal'
+
+======================================================================
+FAIL: test_journal_incremental_hook_and_ci_execute_all_six_checks (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_journal_incremental_hook_and_ci_execute_all_six_checks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/tests/test_crewing_c3b1_route.py", line 125, in test_journal_incremental_hook_and_ci_execute_all_six_checks
+    self.assertEqual(ci_proc.returncode, 0, ci)
+AssertionError: 1 != 0 : {'schema_version': 'skipi-guard.v1', 'home': 'crewing', 'task': 'plugin-host', 'task_source': 'auto', 'task_rule': None, 'effective_tasks': ['plugin-host'], 'repo': '/home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/fixture-9gj_8do1/repo', 'base': 'f8d91a32fb3043bbc5a947ce3221b5ada17af5ce', 'head': '9429eff61a1bf3730cbd98770153c15e43dd04d3', 'sha': '9429eff', 'changed_files': ['docs/crewing-pilot-c3b1/WORKLOG.md'], 'protected_paths_touched': [], 'release_paths_touched': [], 'release_changes': False, 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'exact_file_set_missing': [], 'exact_file_set_unexpected': [], 'scope_violations': ['docs/crewing-pilot-c3b1/WORKLOG.md'], 'scope_checks': [{'task': 'plugin-host', 'files': ['docs/crewing-pilot-c3b1/WORKLOG.md'], 'allowed_file_patterns': ['dist/index.html', 'dist/plugin-host-bridge.js', 'tests/crewing_plugin_isolation_harness.mjs', 'presence-manifest.json', 'tests/crewing_presence_contract_harness.mjs', 'tests/crewing_crew_flow_demo_harness.mjs', 'tests/crewing_theme_default_harness.mjs'], 'scope_violations': ['docs/crewing-pilot-c3b1/WORKLOG.md']}], 'additive_task_checks': [], 'tests': [{'name': 'crewing_plugin_isolation', 'command': 'node tests/crewing_plugin_isolation_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'shared_host_runtime_isolation', 'command': 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_presence_contract', 'command': 'node tests/crewing_presence_contract_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}, {'name': 'crewing_crew_flow_demo', 'command': 'node tests/crewing_crew_flow_demo_harness.mjs', 'status': 'pass', 'summary': 'exit 0', 'exit_code': 0}], 'override_present': False, 'auto_bootstrap_override': False, 'comparison': 'triple-dot', 'status': 'fail', 'errors': ["changes outside allowed patterns for task 'plugin-host'"]}
+
+======================================================================
+FAIL: test_journal_missing_pilot_fails_instead_of_false_green (test_crewing_c3b1_route.CrewingC3b1RouteTests.test_journal_missing_pilot_fails_instead_of_false_green)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/tests/test_crewing_c3b1_route.py", line 147, in test_journal_missing_pilot_fails_instead_of_false_green
+    self.assertEqual(report["task"], JOURNAL_TASK)
+AssertionError: 'plugin-host' != 'crewing-c3b1-journal'
+- plugin-host
++ crewing-c3b1-journal
+
+
+----------------------------------------------------------------------
+Ran 11 tests in 5.644s
+
+FAILED (failures=2, errors=1)

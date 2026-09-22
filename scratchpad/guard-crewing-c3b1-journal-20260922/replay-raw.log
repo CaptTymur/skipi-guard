@@ -1,0 +1,220 @@
+CASE red-hook
+rc=1
+Skipi Guard skipi-guard.v1: FAIL
+home/task: crewing / plugin-host
+repo: /home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/actual-2fp0upkl/.skipi-guard-harness-wt-crewing-6bt2p5zg
+range: d6298ce9a4d5358e92884c54e73868058881871c -> f743a8e04611e1b5ae1e91a7ad33b23a3df6474b (triple-dot)
+sha: f743a8e
+changed files: 1
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 4
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+errors:
+  - changes outside allowed patterns for task 'plugin-host'
+
+
+CASE red-ci
+rc=1
+Skipi Guard skipi-guard.v1: FAIL
+home/task: crewing / plugin-host
+repo: /home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/actual-2fp0upkl/repo
+range: d6298ce9a4d5358e92884c54e73868058881871c -> f743a8e04611e1b5ae1e91a7ad33b23a3df6474b (triple-dot)
+sha: f743a8e
+changed files: 1
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 4
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+errors:
+  - changes outside allowed patterns for task 'plugin-host'
+
+
+CASE red canonical hook stdin
+refs/heads/feature/crewing-c3b1-20260922 f743a8e04611e1b5ae1e91a7ad33b23a3df6474b refs/heads/feature/crewing-c3b1-20260922 d6298ce9a4d5358e92884c54e73868058881871c
+
+CASE green-hook
+rc=0
+Skipi Guard skipi-guard.v1: PASS
+home/task: crewing / crewing-c3b1-metadata
+repo: /home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/actual-s423kzyy/.skipi-guard-harness-wt-crewing-ujjife_b
+range: d6298ce9a4d5358e92884c54e73868058881871c -> f743a8e04611e1b5ae1e91a7ad33b23a3df6474b (triple-dot)
+sha: f743a8e
+changed files: 1
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 6
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+  - crewing_c3b1_pilot: pass :: node tests/crewing_c3b1_pilot_harness.mjs
+  - crewing_csp_inline_handlers: pass :: node tests/csp_inline_handlers_harness.mjs
+
+
+CASE green-ci
+rc=0
+Skipi Guard skipi-guard.v1: PASS
+home/task: crewing / crewing-c3b1-metadata
+repo: /home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/actual-s423kzyy/repo
+range: d6298ce9a4d5358e92884c54e73868058881871c -> f743a8e04611e1b5ae1e91a7ad33b23a3df6474b (triple-dot)
+sha: f743a8e
+changed files: 1
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 6
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+  - crewing_c3b1_pilot: pass :: node tests/crewing_c3b1_pilot_harness.mjs
+  - crewing_csp_inline_handlers: pass :: node tests/csp_inline_handlers_harness.mjs
+
+
+CASE green canonical hook stdin
+refs/heads/feature/crewing-c3b1-20260922 f743a8e04611e1b5ae1e91a7ad33b23a3df6474b refs/heads/feature/crewing-c3b1-20260922 d6298ce9a4d5358e92884c54e73868058881871c
+
+CASE docs-pin-hook
+rc=0
+Skipi Guard skipi-guard.v1: PASS
+home/task: crewing / crewing-c3b1-metadata
+repo: /home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/actual-2p7fe2zj/.skipi-guard-harness-wt-crewing-0i8h6v_g
+range: d6298ce9a4d5358e92884c54e73868058881871c -> 9259e1e58eb002d33cc2e6562b147a247581b105 (triple-dot)
+sha: 9259e1e
+changed files: 2
+  - .github/workflows/skipi-guard.yml
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 6
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+  - crewing_c3b1_pilot: pass :: node tests/crewing_c3b1_pilot_harness.mjs
+  - crewing_csp_inline_handlers: pass :: node tests/csp_inline_handlers_harness.mjs
+
+
+CASE docs-pin-ci
+rc=0
+Skipi Guard skipi-guard.v1: PASS
+home/task: crewing / crewing-c3b1-metadata
+repo: /home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/actual-2p7fe2zj/repo
+range: d6298ce9a4d5358e92884c54e73868058881871c -> 9259e1e58eb002d33cc2e6562b147a247581b105 (triple-dot)
+sha: 9259e1e
+changed files: 2
+  - .github/workflows/skipi-guard.yml
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 6
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+  - crewing_c3b1_pilot: pass :: node tests/crewing_c3b1_pilot_harness.mjs
+  - crewing_csp_inline_handlers: pass :: node tests/csp_inline_handlers_harness.mjs
+
+
+CASE docs-pin canonical hook stdin
+refs/heads/feature/crewing-c3b1-20260922 9259e1e58eb002d33cc2e6562b147a247581b105 refs/heads/feature/crewing-c3b1-20260922 d6298ce9a4d5358e92884c54e73868058881871c
+
+CASE future-journal-hook
+rc=0
+Skipi Guard skipi-guard.v1: PASS
+home/task: crewing / crewing-c3b1-metadata
+repo: /home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/actual-3ymno05n/.skipi-guard-harness-wt-crewing-4os31346
+range: a06eecc88573fe9d7db19ec3a07ada727067d1b1 -> 42edcd542e5094ee563085b3a3419bb2927446bb (triple-dot)
+sha: 42edcd5
+changed files: 1
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 6
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+  - crewing_c3b1_pilot: pass :: node tests/crewing_c3b1_pilot_harness.mjs
+  - crewing_csp_inline_handlers: pass :: node tests/csp_inline_handlers_harness.mjs
+
+
+CASE future-journal-ci
+rc=0
+Skipi Guard skipi-guard.v1: PASS
+home/task: crewing / crewing-c3b1-metadata
+repo: /home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/actual-3ymno05n/repo
+range: a06eecc88573fe9d7db19ec3a07ada727067d1b1 -> 42edcd542e5094ee563085b3a3419bb2927446bb (triple-dot)
+sha: 42edcd5
+changed files: 1
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 6
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+  - crewing_c3b1_pilot: pass :: node tests/crewing_c3b1_pilot_harness.mjs
+  - crewing_csp_inline_handlers: pass :: node tests/csp_inline_handlers_harness.mjs
+
+
+CASE future-journal canonical hook stdin
+refs/heads/feature/crewing-c3b1-20260922 42edcd542e5094ee563085b3a3419bb2927446bb refs/heads/feature/crewing-c3b1-20260922 a06eecc88573fe9d7db19ec3a07ada727067d1b1
+
+CASE main-negative-hook
+rc=1
+Skipi Guard skipi-guard.v1: FAIL
+home/task: crewing / crewing-c3b1-metadata
+repo: /home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/actual-cbiefot9/.skipi-guard-harness-wt-crewing-cg5b71n2
+range: 12a7ce4c46e7b694cafc4b782b5a2b9e23e89861 -> 2e8b26292ea765e531f63b433941b1a6df41dfea (triple-dot)
+sha: 2e8b262
+changed files: 1
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 6
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+  - crewing_c3b1_pilot: fail :: node tests/crewing_c3b1_pilot_harness.mjs
+  - crewing_csp_inline_handlers: pass :: node tests/csp_inline_handlers_harness.mjs
+errors:
+  - harness failed: crewing_c3b1_pilot (node tests/crewing_c3b1_pilot_harness.mjs)
+
+
+CASE main-negative-ci
+rc=1
+Skipi Guard skipi-guard.v1: FAIL
+home/task: crewing / crewing-c3b1-metadata
+repo: /home/linux/Developer/worktrees/guard-crewing-c3b1-journal-20260922/scratchpad/guard-crewing-c3b1-journal-20260922/actual-cbiefot9/repo
+range: 12a7ce4c46e7b694cafc4b782b5a2b9e23e89861 -> 2e8b26292ea765e531f63b433941b1a6df41dfea (triple-dot)
+sha: 2e8b262
+changed files: 1
+  - docs/crewing-pilot-c3b1/WORKLOG.md
+protected touches: 0
+release changes: no
+harness commands: 6
+  - crewing_plugin_isolation: pass :: node tests/crewing_plugin_isolation_harness.mjs
+  - shared_host_runtime_isolation: pass :: node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs
+  - crewing_presence_contract: pass :: node tests/crewing_presence_contract_harness.mjs
+  - crewing_crew_flow_demo: pass :: node tests/crewing_crew_flow_demo_harness.mjs
+  - crewing_c3b1_pilot: fail :: node tests/crewing_c3b1_pilot_harness.mjs
+  - crewing_csp_inline_handlers: pass :: node tests/csp_inline_handlers_harness.mjs
+errors:
+  - harness failed: crewing_c3b1_pilot (node tests/crewing_c3b1_pilot_harness.mjs)
+
+
+CASE main-negative canonical hook stdin
+refs/heads/feature/crewing-c3b1-20260922 2e8b26292ea765e531f63b433941b1a6df41dfea refs/heads/feature/crewing-c3b1-20260922 12a7ce4c46e7b694cafc4b782b5a2b9e23e89861
