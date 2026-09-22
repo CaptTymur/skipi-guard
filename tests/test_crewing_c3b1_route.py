@@ -27,6 +27,7 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 TASK = "crewing-c3b1"
+JOURNAL_TASK = "crewing-c3b1-metadata"
 FILES = [
     "dist/index.html",
     "src-tauri/src/crewing_intake.rs",
@@ -69,9 +70,10 @@ class CrewingC3b1RouteTests(unittest.TestCase):
     def test_old_config_is_unchanged_after_removing_only_new_task(self):
         config = self.config()
         old = copy.deepcopy(config)
-        old["task_routing"] = [r for r in old["task_routing"] if r["task"] != TASK]
+        old["task_routing"] = [r for r in old["task_routing"] if r["task"] not in (TASK, JOURNAL_TASK)]
         for section in ("allowed_file_patterns", "harness_commands"):
             old[section].pop(TASK, None)
+            old[section].pop(JOURNAL_TASK, None)
         self.assertEqual(hashlib.sha256(json.dumps(old, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
                          "4f53d45cf2bfc8e08b6d172f55e97be57daa736531d2c6d9444bdfc3a47938cc")
         old_task = MODULE.resolve_task(old, FILES[:5])["task"]
@@ -97,8 +99,114 @@ class CrewingC3b1RouteTests(unittest.TestCase):
                     self.assertEqual(MODULE.resolve_task(config, list(files))["task"] == TASK, expected)
 
     @contextmanager
+    def journal_fixture(self, missing_pilot=False, pin=False, fail_command=None):
+        # The published product already contains all source files. Only the
+        # journal changes in the next push (nonzero remote SHA).
+        with self.fixture(FILES[:5]) as f:
+            repo, root, env, git, base, old_head, calls, hook, result = f
+            if missing_pilot:
+                git("rm", FILES[3])
+                git("commit", "-qm", "base without pilot")
+                old_head = git("rev-parse", "HEAD")
+            (repo / FILES[4]).write_text("incremental journal update\n")
+            git("add", FILES[4])
+            if pin:
+                workflow = repo / FILES[5]
+                workflow.parent.mkdir(parents=True, exist_ok=True)
+                workflow.write_text("guard pin update\n")
+                git("add", FILES[5])
+            git("commit", "-qm", "journal update")
+            head = git("rev-parse", "HEAD")
+            # Check the invoked local script, rather than treating harnesses
+            # as always green. Other checks are stubbed without side effects.
+            (root / "stubbin/node").write_text(
+                "#!/usr/bin/env python3\nimport json,sys\nfrom pathlib import Path\n"
+                f"with Path({str(calls)!r}).open('a') as out: out.write(json.dumps({{'args':sys.argv[1:],'cwd':str(Path.cwd())}})+'\\n')\n"
+                f"sys.exit(83 if sys.argv[1:] == [{FILES[3]!r}] and not Path({FILES[3]!r}).is_file() else (19 if sys.argv[1:] == {[fail_command] if fail_command else []!r} else 0))\n")
+            yield repo, root, env, git, old_head, head, calls, hook, result
+
+    def test_journal_incremental_hook_and_ci_execute_all_six_checks(self):
+        for pin in (False, True):
+            with self.subTest(pin=pin), self.journal_fixture(pin=pin) as f:
+                ci_proc, ci = self.invoke_ci(f, run=True)
+                self.assertEqual(ci_proc.returncode, 0, ci)
+                self.assert_calls(f)
+                f[6].unlink()
+                hook_proc, hook = self.invoke_hook(f, incremental=True)
+                self.assertEqual(hook_proc.returncode, 0, hook)
+                self.assert_calls(f)
+                for report in (ci, hook):
+                    self.assertEqual(report["changed_files"], sorted([FILES[4], FILES[5]] if pin else [FILES[4]]))
+                    self.assertEqual(report["task"], JOURNAL_TASK)
+                    self.assertEqual(report["effective_tasks"], [JOURNAL_TASK])
+                    self.assertFalse(report["override_present"])
+                    self.assertEqual(report["errors"], [])
+                    self.assertEqual([(t["name"], t["command"]) for t in report["tests"]], COMMANDS)
+                self.assertEqual(hook["push_ref"]["remote_sha"], f[4])
+                self.assertEqual(hook["push_ref"]["local_sha"], f[5])
+
+    def test_journal_missing_pilot_fails_instead_of_false_green(self):
+        with self.journal_fixture(missing_pilot=True) as f:
+            for invoke in (lambda: self.invoke_ci(f, run=True),
+                           lambda: self.invoke_hook(f, incremental=True)):
+                proc, report = invoke()
+                self.assertEqual(proc.returncode, 1, report)
+                self.assertEqual(report["task"], JOURNAL_TASK)
+                self.assert_calls(f)
+                f[6].unlink()
+                self.assertEqual([t["name"] for t in report["tests"] if t["status"] == "fail"],
+                                 ["crewing_c3b1_pilot"])
+
+    def test_journal_each_of_six_failures_rejects_incremental_hook_and_ci(self):
+        for name, command in COMMANDS:
+            with self.subTest(name=name), self.journal_fixture(fail_command=command.split(" ", 1)[1]) as f:
+                for invoke in (lambda: self.invoke_ci(f, run=True),
+                               lambda: self.invoke_hook(f, incremental=True)):
+                    proc, report = invoke()
+                    self.assertEqual(proc.returncode, 1, report)
+                    self.assertEqual(report["task"], JOURNAL_TASK)
+                    self.assert_calls(f)
+                    f[6].unlink()
+                    self.assertEqual([t["name"] for t in report["tests"] if t["status"] == "fail"], [name])
+
+    def test_journal_exact_scope_and_all_checks(self):
+        config = self.config()
+        self.assertEqual(config["allowed_file_patterns"][JOURNAL_TASK], FILES[4:])
+        self.assertEqual(config["harness_commands"][JOURNAL_TASK], config["harness_commands"][TASK])
+        self.assertEqual(MODULE.resolve_task(config, [FILES[4]])["task"], JOURNAL_TASK)
+        self.assertNotEqual(MODULE.resolve_task(config, [])["task"], JOURNAL_TASK)
+        self.assertEqual(MODULE.resolve_task(config, FILES[4:])["task"], JOURNAL_TASK)
+        self.assertNotEqual(MODULE.resolve_task(config, [FILES[5]])["task"], JOURNAL_TASK)
+        for extra in [*EXTRAS, *FILES[:4], FILES[4] + ".bak"]:
+            with self.subTest(extra=extra):
+                self.assertNotEqual(MODULE.resolve_task(config, [FILES[4], extra])["task"], JOURNAL_TASK)
+                self.assertIn(extra, MODULE.scope_check_for_task(config, JOURNAL_TASK,
+                              [FILES[4], extra])["scope_violations"])
+
+    def test_journal_real_cli_rejects_other_docs_native_and_workflows(self):
+        for extra in ["docs/other.md", "src-tauri/src/other.rs", ".github/workflows/other.yml",
+                      FILES[1], FILES[3], FILES[0]]:
+            for explicit in (False, JOURNAL_TASK):
+                with self.subTest(extra=extra, explicit=explicit), self.fixture([FILES[4], extra]) as f:
+                    proc, report = self.invoke_ci(f, explicit=explicit)
+                    self.assertEqual(proc.returncode, 1, report)
+                    self.assertFalse(report["override_present"])
+                    if explicit:
+                        self.assertIn(extra, report["scope_violations"])
+                    else:
+                        self.assertNotEqual(report["task"], JOURNAL_TASK)
+
+    def test_journal_addition_preserves_entire_previous_config(self):
+        config = self.config()
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] != JOURNAL_TASK]
+        for section in ("allowed_file_patterns", "harness_commands"):
+            config[section].pop(JOURNAL_TASK, None)
+        self.assertEqual(hashlib.sha256(json.dumps(config, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
+                         "fd7fc6f187cfb85a41c7a34a93ac17ae27a7970136d2dd13696464249eaf310c")
+
+    @contextmanager
     def fixture(self, files, fail_command=None):
-        scratch = ROOT / "scratchpad/guard-crewing-c3b1-20260922"
+        scratch = ROOT / "scratchpad/guard-crewing-c3b1-journal-20260922"
         scratch.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix="fixture-", dir=scratch) as tmp:
             root = Path(tmp)
@@ -154,16 +262,17 @@ class CrewingC3b1RouteTests(unittest.TestCase):
         output = root / "ci.json"
         cmd = [str(GUARD), "verify", "--home", "crewing", "--repo", str(repo),
                "--base", base, "--head", head, "--json", str(output)]
-        cmd += ["--task", TASK] if explicit else ["--auto-task"]
+        cmd += ["--task", explicit if isinstance(explicit, str) else TASK] if explicit else ["--auto-task"]
         if run:
             cmd.append("--run-harness")
         proc = subprocess.run(cmd, text=True, capture_output=True, env=env)
         return proc, json.loads(output.read_text())
 
-    def invoke_hook(self, fixture):
+    def invoke_hook(self, fixture, incremental=False):
         repo, root, env, git, base, head, calls, hook, result = fixture
         git("checkout", "-q", "main")
-        stdin = f"refs/heads/candidate {head} refs/heads/candidate {'0' * 40}\n"
+        remote_sha = base if incremental else "0" * 40
+        stdin = f"refs/heads/candidate {head} refs/heads/candidate {remote_sha}\n"
         proc = subprocess.run(["bash", str(hook)], input=stdin, cwd=repo,
                               text=True, capture_output=True, env=env)
         return proc, json.loads(result.read_text())
