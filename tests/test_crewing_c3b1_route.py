@@ -69,6 +69,11 @@ class CrewingC3b1RouteTests(unittest.TestCase):
 
     def test_old_config_is_unchanged_after_removing_only_new_task(self):
         config = self.config()
+        # C3b2 is independently frozen by test_crewing_c3b2_route. Strip only
+        # that additive task for the unchanged historical C3b1 hash oracle.
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] != "crewing-c3b2"]
+        for section in ("allowed_file_patterns", "harness_commands"):
+            config[section].pop("crewing-c3b2", None)
         old = copy.deepcopy(config)
         old["task_routing"] = [r for r in old["task_routing"] if r["task"] not in (TASK, JOURNAL_TASK)]
         for section in ("allowed_file_patterns", "harness_commands"):
@@ -198,6 +203,10 @@ class CrewingC3b1RouteTests(unittest.TestCase):
 
     def test_journal_addition_preserves_entire_previous_config(self):
         config = self.config()
+        # Keep the historical hash oracle unchanged after the additive C3b2.
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] != "crewing-c3b2"]
+        for section in ("allowed_file_patterns", "harness_commands"):
+            config[section].pop("crewing-c3b2", None)
         config["task_routing"] = [r for r in config["task_routing"] if r["task"] != JOURNAL_TASK]
         for section in ("allowed_file_patterns", "harness_commands"):
             config[section].pop(JOURNAL_TASK, None)

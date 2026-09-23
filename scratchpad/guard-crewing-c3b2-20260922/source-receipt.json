@@ -1,0 +1,9 @@
+{
+  "configs/homes/crewing.json": "7edf6021057702e0dd73ddf803e1781f0e190f6d3526a13b5fdd0b54fbfe5ffd",
+  "tests/test_crewing_c3b1_route.py": "ef0bb3fa8e1539f149667fabe44fd284422691fa3e492c5d774965138e1f8645",
+  "tests/test_crewing_c3b2_route.py": "04dcee463c780e7eebd1deacfa2f49b62473e66b4b18b3cade49d96ce1dbfd74",
+  "base": "b2f187b72fc4beed4a8ad5600f02e31de92e5257",
+  "old_config_deep_equal": true,
+  "proposal_sha256": "36210900edc03f763511270439f59a7f915c648164ea2348dd7d870f48a64f08",
+  "tests/test_security_escaping_191_route.py": "e1b9e6db6686f0cfa65962641ce3b867355c17822f671db07be828e688bc9691"
+}
