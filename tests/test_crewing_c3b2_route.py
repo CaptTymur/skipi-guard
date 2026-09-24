@@ -47,11 +47,19 @@ EXTRAS = ['src-tauri/src/other.rs', 'server/intake.rs', 'src-tauri/Cargo.toml',
 OLD_CONFIG_HASH = '5b99a9088dc66c9b5970d6fa9b294448dbb48810fa2304a65b3288cda3d2c1e3'
 
 
+LATER_TASKS = ('crewing-k2-modules',)
+
+
 def previous_config(config):
     old = copy.deepcopy(config)
-    old['task_routing'] = [r for r in old['task_routing'] if r['task'] != TASK]
+    # Routes merged after C3b2 are frozen by their own oracles
+    # (test_crewing_k2_modules_route.py). Subtract them too, so this hash keeps
+    # pinning the exact pre-C3b2 config instead of drifting with every addition.
+    drop = (TASK, *LATER_TASKS)
+    old['task_routing'] = [r for r in old['task_routing'] if r['task'] not in drop]
     for section in ('allowed_file_patterns', 'harness_commands'):
-        old[section].pop(TASK, None)
+        for task in drop:
+            old[section].pop(task, None)
     return old
 
 

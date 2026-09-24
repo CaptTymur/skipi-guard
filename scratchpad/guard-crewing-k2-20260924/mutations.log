@@ -1,0 +1,12 @@
+--- m1: route moved BEFORE crewing-c3b2 (precedence flipped) ---
+Ran 2 tests in 0.009s  FAILED (failures=9) 
+--- m2: presence-manifest.json added to the K2 allowlist ---
+Ran 3 tests in 0.003s  FAILED (failures=3) 
+--- m3: one of the 14 harness checks dropped ---
+Ran 1 test in 0.001s  FAILED (failures=1) 
+--- m4: unrelated byte edited outside the three added blocks ---
+Ran 1 test in 0.000s  FAILED (failures=1) 
+--- m5: require_any_of dropped (route would swallow bare dist+pin) ---
+Ran 3 tests in 0.011s  FAILED (failures=63, errors=1) 
+--- restored ---
+4fb83721e0ababcc6c327a6f9df1fdc89a3dfbb9f6a62d658087b72dd959da44  configs/homes/crewing.json

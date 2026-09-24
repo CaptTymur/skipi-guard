@@ -1226,7 +1226,8 @@ class SecurityEscapingRouteContract:
         # Keep this historical baseline intact.
         later_tasks = {"broker-map-demo-422", "broker-demo-showcase"} if self.HOME == "broker" else set()
         if self.HOME == "crewing":
-            later_tasks = {"crewing-c3b1", "crewing-c3b1-metadata", "crewing-c3b2"}
+            later_tasks = {"crewing-c3b1", "crewing-c3b1-metadata", "crewing-c3b2",
+                           "crewing-k2-modules"}
         # The security route stays first; every historical rule stays in order.
         self.assertEqual(config["task_routing"][0]["task"], ROUTE_TASK)
         self.assertEqual(

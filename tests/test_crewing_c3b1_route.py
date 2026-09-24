@@ -28,6 +28,8 @@ MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 TASK = "crewing-c3b1"
 JOURNAL_TASK = "crewing-c3b1-metadata"
+# Additive routes merged after C3b1; each is frozen by its own oracle.
+LATER_TASKS = ("crewing-c3b2", "crewing-k2-modules")
 FILES = [
     "dist/index.html",
     "src-tauri/src/crewing_intake.rs",
@@ -69,11 +71,13 @@ class CrewingC3b1RouteTests(unittest.TestCase):
 
     def test_old_config_is_unchanged_after_removing_only_new_task(self):
         config = self.config()
-        # C3b2 is independently frozen by test_crewing_c3b2_route. Strip only
-        # that additive task for the unchanged historical C3b1 hash oracle.
-        config["task_routing"] = [r for r in config["task_routing"] if r["task"] != "crewing-c3b2"]
+        # C3b2 and the later K2 route are independently frozen by
+        # test_crewing_c3b2_route / test_crewing_k2_modules_route. Strip only
+        # those additive tasks for the unchanged historical C3b1 hash oracle.
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in LATER_TASKS]
         for section in ("allowed_file_patterns", "harness_commands"):
-            config[section].pop("crewing-c3b2", None)
+            for task in LATER_TASKS:
+                config[section].pop(task, None)
         old = copy.deepcopy(config)
         old["task_routing"] = [r for r in old["task_routing"] if r["task"] not in (TASK, JOURNAL_TASK)]
         for section in ("allowed_file_patterns", "harness_commands"):
@@ -203,10 +207,11 @@ class CrewingC3b1RouteTests(unittest.TestCase):
 
     def test_journal_addition_preserves_entire_previous_config(self):
         config = self.config()
-        # Keep the historical hash oracle unchanged after the additive C3b2.
-        config["task_routing"] = [r for r in config["task_routing"] if r["task"] != "crewing-c3b2"]
+        # Keep the historical hash oracle unchanged after the additive C3b2/K2.
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in LATER_TASKS]
         for section in ("allowed_file_patterns", "harness_commands"):
-            config[section].pop("crewing-c3b2", None)
+            for task in LATER_TASKS:
+                config[section].pop(task, None)
         config["task_routing"] = [r for r in config["task_routing"] if r["task"] != JOURNAL_TASK]
         for section in ("allowed_file_patterns", "harness_commands"):
             config[section].pop(JOURNAL_TASK, None)

@@ -1,0 +1,39 @@
+{
+  "schema_version": "skipi-guard.v1",
+  "home": "crewing",
+  "repo": "/home/linux/Developer/skipi-guard/.worktrees/crewing-k2-modules-20260924",
+  "old_ref": "83f5dad8c3f6f96f44941067438110ce50ff00dd",
+  "new_ref": "72024fb8e682c2cc6f042d8b4e6b687ad102779d",
+  "old_tasks": [
+    "crewing-c3b1",
+    "crewing-c3b1-metadata",
+    "crewing-c3b2",
+    "plugin-host",
+    "provenance",
+    "release",
+    "security-escaping-191",
+    "settings-adopt",
+    "stack-metadata",
+    "theme-default"
+  ],
+  "new_tasks": [
+    "crewing-c3b1",
+    "crewing-c3b1-metadata",
+    "crewing-c3b2",
+    "crewing-k2-modules",
+    "plugin-host",
+    "provenance",
+    "release",
+    "security-escaping-191",
+    "settings-adopt",
+    "stack-metadata",
+    "theme-default"
+  ],
+  "missing_harnesses": [],
+  "missing_additive_task_checks": [],
+  "missing_allowed_file_patterns": [],
+  "missing_release_sensitive_paths": [],
+  "missing_protected_paths": [],
+  "status": "pass",
+  "errors": []
+}
