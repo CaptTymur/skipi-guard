@@ -29,7 +29,7 @@ LOADER.exec_module(MODULE)
 TASK = "crewing-c3b1"
 JOURNAL_TASK = "crewing-c3b1-metadata"
 # Additive routes merged after C3b1; each is frozen by its own oracle.
-LATER_TASKS = ("crewing-c3b2", "crewing-k2-modules")
+LATER_TASKS = ("crewing-c3b2", "crewing-k2-modules", "crewing-k21-single-screen")
 FILES = [
     "dist/index.html",
     "src-tauri/src/crewing_intake.rs",

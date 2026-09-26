@@ -47,7 +47,7 @@ EXTRAS = ['src-tauri/src/other.rs', 'server/intake.rs', 'src-tauri/Cargo.toml',
 OLD_CONFIG_HASH = '5b99a9088dc66c9b5970d6fa9b294448dbb48810fa2304a65b3288cda3d2c1e3'
 
 
-LATER_TASKS = ('crewing-k2-modules',)
+LATER_TASKS = ('crewing-k2-modules', 'crewing-k21-single-screen')
 
 
 def previous_config(config):
