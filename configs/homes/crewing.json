@@ -107,6 +107,27 @@
       ]
     },
     {
+      "name": "crewing K2.1 single screen: mail module retired, card + contact link (owner739, 2026-09-26)",
+      "task": "crewing-k21-single-screen",
+      "when_all_files_in": [
+        "dist/index.html",
+        "tests/crewing_crew_flow_demo_harness.mjs",
+        "tests/crewing_plugin_isolation_harness.mjs",
+        "tests/crewing_c3b2_candidate_harness.mjs",
+        "tests/crewing_mailbox_contract_harness.mjs",
+        "tests/crewing_mail_cv_intake_demo_harness.mjs",
+        "docs/crewing-pilot-c3b2/WORKLOG.md",
+        ".github/workflows/skipi-guard.yml",
+        "src-tauri/src/lib.rs",
+        "src-tauri/src/crewing_intake.rs",
+        "src-tauri/src/contact.rs"
+      ],
+      "require_any_of": [
+        "docs/crewing-pilot-c3b2/WORKLOG.md",
+        "src-tauri/src/contact.rs"
+      ]
+    },
+    {
       "name": "repo-meta routing",
       "task": "repo-meta",
       "when_all_files_in": [
@@ -625,6 +646,60 @@
         "name": "trial_gate_wired",
         "command": "node tests/trial_gate_wired_harness.mjs"
       }
+    ],
+    "crewing-k21-single-screen": [
+      {
+        "name": "crewing_plugin_isolation",
+        "command": "node tests/crewing_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "shared_host_runtime_isolation",
+        "command": "node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs"
+      },
+      {
+        "name": "crewing_presence_contract",
+        "command": "node tests/crewing_presence_contract_harness.mjs"
+      },
+      {
+        "name": "crewing_crew_flow_demo",
+        "command": "node tests/crewing_crew_flow_demo_harness.mjs"
+      },
+      {
+        "name": "crewing_c3b1_pilot",
+        "command": "node tests/crewing_c3b1_pilot_harness.mjs"
+      },
+      {
+        "name": "crewing_csp_inline_handlers",
+        "command": "node tests/csp_inline_handlers_harness.mjs"
+      },
+      {
+        "name": "crewing_c3b2_candidate",
+        "command": "node tests/crewing_c3b2_candidate_harness.mjs"
+      },
+      {
+        "name": "crewing_mailbox_contract",
+        "command": "node tests/crewing_mailbox_contract_harness.mjs"
+      },
+      {
+        "name": "crewing_compliance_manual_flow",
+        "command": "node tests/crewing_compliance_manual_flow_harness.mjs"
+      },
+      {
+        "name": "crewing_theme_default",
+        "command": "node tests/crewing_theme_default_harness.mjs"
+      },
+      {
+        "name": "settings5_preview_gated",
+        "command": "node tests/settings5_preview_gated_harness.mjs"
+      },
+      {
+        "name": "trial_activate_unconnected",
+        "command": "node tests/trial_activate_unconnected_harness.mjs"
+      },
+      {
+        "name": "trial_gate_wired",
+        "command": "node tests/trial_gate_wired_harness.mjs"
+      }
     ]
   },
   "additive_task_checks": [
@@ -713,6 +788,19 @@
       "tests/crewing_presence_contract_harness.mjs",
       "docs/crewing-pilot-c3b2/WORKLOG.md",
       ".github/workflows/skipi-guard.yml"
+    ],
+    "crewing-k21-single-screen": [
+      "dist/index.html",
+      "tests/crewing_crew_flow_demo_harness.mjs",
+      "tests/crewing_plugin_isolation_harness.mjs",
+      "tests/crewing_c3b2_candidate_harness.mjs",
+      "tests/crewing_mailbox_contract_harness.mjs",
+      "tests/crewing_mail_cv_intake_demo_harness.mjs",
+      "docs/crewing-pilot-c3b2/WORKLOG.md",
+      ".github/workflows/skipi-guard.yml",
+      "src-tauri/src/lib.rs",
+      "src-tauri/src/crewing_intake.rs",
+      "src-tauri/src/contact.rs"
     ]
   }
 }

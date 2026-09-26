@@ -65,6 +65,13 @@ EXTRAS = ['presence-manifest.json', 'src-tauri/src/lib.rs', 'src-tauri/Cargo.tom
 OLD_CONFIG_HASH = '7edf6021057702e0dd73ddf803e1781f0e190f6d3526a13b5fdd0b54fbfe5ffd'
 # Exact anchors of the three additive text blocks; removing them must restore
 # the pre-K2 file byte for byte (proves the change adds and never edits).
+# Same three anchors for the additive route merged after K2 (K2.1 single screen).
+LATER_BLOCKS = (
+    ('    {\n      "name": "crewing K2.1 single screen: mail module retired,'
+     ' card + contact link (owner739, 2026-09-26)",\n', '\n    },\n'),
+    (',\n    "crewing-k21-single-screen": [\n      {\n', '\n    ]'),
+    (',\n    "crewing-k21-single-screen": [\n      "dist/index.html"', '\n    ]'),
+)
 BLOCKS = (
     ('    {\n      "name": "crewing K2 Crew Flow queue + module composition routing'
      ' (owner654/658, 2026-09-24)",\n', '\n    },\n'),
@@ -73,16 +80,25 @@ BLOCKS = (
 )
 
 
+# Routes merged after K2 are frozen by their own oracles
+# (test_crewing_k21_single_screen_route.py). Subtract them structurally as well
+# as textually, so this file keeps pinning the exact pre-K2 config instead of
+# drifting with every later addition.
+LATER_TASKS = ('crewing-k21-single-screen',)
+
+
 def previous_config(config):
     old = copy.deepcopy(config)
-    old['task_routing'] = [r for r in old['task_routing'] if r['task'] != TASK]
+    drop = (TASK, *LATER_TASKS)
+    old['task_routing'] = [r for r in old['task_routing'] if r['task'] not in drop]
     for section in ('allowed_file_patterns', 'harness_commands'):
-        old[section].pop(TASK, None)
+        for task in drop:
+            old[section].pop(task, None)
     return old
 
 
 def previous_config_text(text):
-    for start, end in BLOCKS:
+    for start, end in LATER_BLOCKS + BLOCKS:
         assert text.count(start) == 1, start
         begin = text.index(start)
         stop = text.index(end, begin + len(start)) + len(end)
@@ -106,9 +122,9 @@ class CrewingK2ModulesRouteTests(unittest.TestCase):
         self.assertEqual(len(COMMANDS), 14)
         self.assertEqual(config['harness_commands'][TASK][:7], config['harness_commands'][PREVIOUS_TASK])
         self.assertFalse(MODULE.is_release_task(config, TASK))
-        self.assertEqual([r['task'] for r in config['task_routing'][:6]],
+        self.assertEqual([r['task'] for r in config['task_routing'][:7]],
                          ['security-escaping-191', 'crewing-c3b1', 'crewing-c3b1-metadata',
-                          PREVIOUS_TASK, TASK, 'repo-meta'])
+                          PREVIOUS_TASK, TASK, *LATER_TASKS, 'repo-meta'])
 
     def test_entire_old_config_preserved_byte_for_byte_and_parsed(self):
         text = CONFIG.read_text()
