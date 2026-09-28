@@ -129,6 +129,12 @@
   },
   "task_routing": [
     {
+      "name": "published compliance profiles inside Jobs (P2/S2b)",
+      "task": "jobs-profile-visibility-s2",
+      "when_all_files_in": ["dist/index.html", "src-tauri/src/commands/jobs.rs", "src-tauri/src/lib.rs", "tests/jobs_profile_visibility_harness.mjs"],
+      "require_all_of": ["src-tauri/src/commands/jobs.rs", "tests/jobs_profile_visibility_harness.mjs"]
+    },
+    {
       "name": "mobile external-url fix routing",
       "task": "mobile-external-url",
       "when_all_files_in": ["src-tauri/src/commands/vault.rs", "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt"],
@@ -885,6 +891,12 @@
     ]
   },
   "allowed_file_patterns": {
+    "jobs-profile-visibility-s2": [
+      "dist/index.html",
+      "src-tauri/src/commands/jobs.rs",
+      "src-tauri/src/lib.rs",
+      "tests/jobs_profile_visibility_harness.mjs"
+    ],
     "consent193": [
       "dist/index.html",
       "src-tauri/src/commands/account_sync.rs",
