@@ -865,7 +865,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         self.assertIn(ROUTE_TASK, config["exact_task_file_sets"])
         self.assertEqual(config["exact_task_file_sets"][ROUTE_TASK], ROUTE_FILES)
         self.assertEqual(len(config["exact_task_file_sets"][ROUTE_TASK]), 34)
-        self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192", "consent193"}), {"stack-metadata", ROUTE_TASK, BRAND_TASK, "cv-order-282", "career-pattern-302"})
+        self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192", "consent193", "jobs-profile-visibility-s2"}), {"stack-metadata", ROUTE_TASK, BRAND_TASK, "cv-order-282", "career-pattern-302"})
         self.assertTrue(config["harness_commands"][ROUTE_TASK])
         self.assertEqual(config["harness_commands"][ROUTE_TASK], ROUTE_HARNESSES)
         self.assertEqual(config["harness_commands"][ROUTE_TASK], config["harness_commands"]["stack-metadata"])
@@ -929,7 +929,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         baseline["allowed_file_patterns"]["version-bump"].append(plist)
 
         # Preserve the prior exact routing order; sync is checked separately.
-        routing = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193")]
+        routing = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2")]
         self.assertEqual(len(baseline["task_routing"]), 14)
         self.assertEqual(len(routing), 20)
         self.assertEqual(routing[:14], baseline["task_routing"])
@@ -942,7 +942,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
     def test_pre_route_config_is_preserved_byte_for_byte(self) -> None:
         config = self.load_config()
         # Remove only the independently tested sync delta from this older oracle.
-        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193")]
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2")]
         for section in ("exact_task_file_sets", "allowed_file_patterns", "harness_commands"):
             config[section].pop("one-account-sync-192", None)
             config[section].pop("consent193", None)
@@ -956,7 +956,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         baseline["allowed_file_patterns"]["version-bump"].append(plist)
         # Delta since 746bc882: the two routes of task card A0 (wave 0.4.191)
         # and the two brand-icon routes of wave 0.4.192.
-        new_tasks = {SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK, "cv-order-282", "career-pattern-302"}
+        new_tasks = {SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK, "cv-order-282", "career-pattern-302", "jobs-profile-visibility-s2"}
 
         self.assertEqual(config["home"], baseline["home"])
         self.assertEqual(config["repo"], baseline["repo"])
