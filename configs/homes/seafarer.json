@@ -440,6 +440,19 @@
       "task": "jobs-profile-visibility-s2",
       "when_all_files_in": ["dist/index.html", "src-tauri/src/commands/jobs.rs", "src-tauri/src/lib.rs", "tests/jobs_profile_visibility_harness.mjs"],
       "require_all_of": ["src-tauri/src/commands/jobs.rs", "tests/jobs_profile_visibility_harness.mjs"]
+    },
+    {
+      "name": "rank alias table of the seafarer profile (P2/R3)",
+      "task": "seafarer-rank-alias-table",
+      "when_all_files_in": [
+        "dist/index.html",
+        "src-tauri/src/profiles.rs",
+        "tests/jobs_profile_visibility_harness.mjs"
+      ],
+      "require_all_of": [
+        "src-tauri/src/profiles.rs",
+        "tests/jobs_profile_visibility_harness.mjs"
+      ]
     }
   ],
   "protected_paths": [
