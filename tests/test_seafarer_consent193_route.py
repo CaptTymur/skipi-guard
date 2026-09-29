@@ -45,10 +45,11 @@ EXTRAS = [
 
 def without_sync(config):
     config = copy.deepcopy(config)
-    config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (TASK, "jobs-profile-visibility-s2")]
+    config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (TASK, "jobs-profile-visibility-s2", "seafarer-rank-alias-table")]
     for section in ("exact_task_file_sets", "allowed_file_patterns", "harness_commands"):
         config[section].pop(TASK, None)
         config[section].pop("jobs-profile-visibility-s2", None)
+        config[section].pop("seafarer-rank-alias-table", None)
     return config
 
 
