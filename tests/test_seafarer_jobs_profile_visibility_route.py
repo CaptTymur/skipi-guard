@@ -46,6 +46,11 @@ FORBIDDEN = [
     "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt",
 ]
 
+# Routes appended AFTER this one, each with its own oracle module. They are
+# removed before the positional assertions below so this test keeps its full
+# original strength on the config as it stood when this route landed.
+LATER_ROUTES = ("seafarer-rank-alias-table",)  # P2/R3, tests/test_seafarer_rank_alias_table_route.py
+
 
 def load_config():
     return json.loads(CONFIG.read_text())
@@ -76,8 +81,10 @@ class SeafarerJobsProfileVisibilityRouteTests(unittest.TestCase):
 
     def test_route_is_appended_last_and_adds_nothing_else(self):
         config = load_config()
-        self.assertEqual(config["task_routing"][-1]["task"], TASK)
-        self.assertEqual(list(config["allowed_file_patterns"])[-1], TASK)
+        routing_of_its_era = [r for r in config["task_routing"] if r["task"] not in LATER_ROUTES]
+        allowed_of_its_era = [t for t in config["allowed_file_patterns"] if t not in LATER_ROUTES]
+        self.assertEqual(routing_of_its_era[-1]["task"], TASK)
+        self.assertEqual(allowed_of_its_era[-1], TASK)
         baseline = without_route(config)
         # The delta is this task and nothing else, in every section.
         for section in ("task_routing",):

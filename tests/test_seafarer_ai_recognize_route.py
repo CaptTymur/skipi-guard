@@ -348,7 +348,7 @@ class SeafarerAiRecognizeRouteTests(unittest.TestCase):
         # first-match: appended after the 14 historical rules, before R2.
         # Preserve the prior exact routing order; sync has its own contract suite.
         routing_tasks = [rule["task"] for rule in config["task_routing"]
-                         if rule["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2")]
+                         if rule["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table")]
         self.assertEqual(len(routing_tasks), 20)
         # …followed by the two brand-icon routes of wave 0.4.192 (2026-09-12,
         # oracle in tests/test_seafarer_brand_icons_route.py).
