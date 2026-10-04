@@ -1,15 +1,17 @@
-"""K2.1 declarative route contract: exhaustive dispatch table, ceiling, additivity.
+"""№664 person-keyed save route: exhaustive dispatch, ceiling, additivity.
 
-The route is additive: it is inserted AFTER `crewing-k2-modules` (first match
-wins), so every diff an earlier rule already owns keeps routing there, and K2.1
-only claims diffs that used to fall back to the default task. These tests prove
-dispatch, ceiling and additivity; they are not the product harness. No
-protection, override token or protected path is changed or relaxed.
+The route is additive: it is inserted AFTER `crewing-k21-single-screen` (first
+match wins), so every diff an earlier rule already owns keeps routing there, and
+this route only claims diffs that used to fall back to the default task. These
+tests prove dispatch, ceiling and additivity; they are not the product harness.
+No protection, override token or protected path is changed or relaxed.
 
-Declared surface (card D1 / OWNER 739, revision 2 R7/R8/R10): eleven paths, the
-same eleven in `allowed_file_patterns`, and thirteen harness commands — the K2
-list minus `crewing_mail_cv_intake_demo`. `crewing_mailbox_contract` stays,
-because K2.1 inverts that harness instead of deleting it.
+Declared surface (handoff HANDOFF-2026-10-03-guard-route-crewing-664.md,
+owner-authorized DECISIONS (995)): six paths, the same six in
+`allowed_file_patterns`, and the thirteen harness commands of the preceding
+crewing route, copied verbatim. `src-tauri/src/db.rs` is the marker: it appears
+in no other rule of this home, so every subset this route claims used to fall
+through to `plugin-host` and fail on scope.
 """
 from __future__ import annotations
 
@@ -29,31 +31,33 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 GUARD = ROOT / 'bin/skipi-guard'
 CONFIG = ROOT / 'configs/homes/crewing.json'
-LOADER = SourceFileLoader('guard_crewing_k21_single_screen', str(GUARD))
+LOADER = SourceFileLoader('guard_crewing_664_person', str(GUARD))
 SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 
-TASK = 'crewing-k21-single-screen'
-PREVIOUS_TASK = 'crewing-k2-modules'
+TASK = 'crewing-664-person'
+PREVIOUS_TASK = 'crewing-k21-single-screen'
 DEFAULT_TASK = 'plugin-host'
 # Every rule that precedes this one, in declared order. The literal order is the
 # oracle: moving the new rule earlier changes what these rules still own.
 EARLIER_TASKS = ('security-escaping-191', 'crewing-c3b1', 'crewing-c3b1-metadata',
-                 'crewing-c3b2', PREVIOUS_TASK)
-# The eleven declared paths, in declared order.
+                 'crewing-c3b2', 'crewing-k2-modules', PREVIOUS_TASK)
+# The six declared paths, in declared order.
 FILES = ['dist/index.html',
-         'tests/crewing_crew_flow_demo_harness.mjs',
-         'tests/crewing_plugin_isolation_harness.mjs',
-         'tests/crewing_c3b2_candidate_harness.mjs',
-         'tests/crewing_mailbox_contract_harness.mjs',
-         'tests/crewing_mail_cv_intake_demo_harness.mjs',
-         'docs/crewing-pilot-c3b2/WORKLOG.md',
-         '.github/workflows/skipi-guard.yml',
+         'src-tauri/src/db.rs',
          'src-tauri/src/lib.rs',
          'src-tauri/src/crewing_intake.rs',
-         'src-tauri/src/contact.rs']
-REQUIRE_ANY = [FILES[6], FILES[10]]
+         'tests/crewing_c3b2_candidate_harness.mjs',
+         'tests/crewing_crew_flow_demo_harness.mjs']
+MARKER = 'src-tauri/src/db.rs'
+REQUIRE_ANY = [MARKER]
+# Thirteen commands, copied verbatim from the preceding crewing route. The
+# handoff text says "16 node harnesses + cargo test"; no crewing route and no
+# guard config in this repo has ever carried a cargo command, and the two routes
+# the card names as the model carry 13 (k21) and 7 (c3b2). This list is the
+# strictest of the two models; widening it is a separate, visible edit that
+# test_thirteen_harness_commands_are_the_previous_route_verbatim will catch.
 COMMANDS = [
     ('crewing_plugin_isolation', 'node tests/crewing_plugin_isolation_harness.mjs'),
     ('shared_host_runtime_isolation', 'node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs'),
@@ -69,36 +73,43 @@ COMMANDS = [
     ('trial_activate_unconnected', 'node tests/trial_activate_unconnected_harness.mjs'),
     ('trial_gate_wired', 'node tests/trial_gate_wired_harness.mjs'),
 ]
-# Dropped from the K2 list because the demo harness reads the retired mail block
-# end to end (21/21 assertions) and is deleted by K2.1.
-DROPPED_COMMAND = 'crewing_mail_cv_intake_demo'
-# Outside the declared ceiling on purpose. presence-manifest.json is protected
-# and only the presence-only PR may touch it; the presence and C3b1 harnesses are
-# kept closed so a PR that retires a module cannot "optimise" its own contracts
-# green; Cargo/gen/android are release-sensitive; messaging.rs, signing keys and
-# foreign test/doc/workflow files were never in scope.
+# Outside the declared ceiling on purpose. presence-manifest.json is protected;
+# the guard pin and the C3b2 journal keep their own routes so this one cannot
+# bump them; the plugin/presence contract harnesses stay closed so a PR that
+# changes the receiver cannot "optimise" its own contracts green; contact.rs and
+# messaging.rs belong to K2.1 and to the security route; Cargo/gen/android are
+# release-sensitive; signing keys and foreign test/doc files were never in scope.
 EXTRAS = ['presence-manifest.json',
+          '.github/workflows/skipi-guard.yml',
+          'docs/crewing-pilot-c3b2/WORKLOG.md',
+          'tests/crewing_plugin_isolation_harness.mjs',
           'tests/crewing_presence_contract_harness.mjs',
-          'tests/crewing_c3b1_pilot_harness.mjs',
+          'src-tauri/src/contact.rs',
+          'src-tauri/src/messaging.rs',
           'src-tauri/Cargo.toml',
           'src-tauri/Cargo.lock',
           'src-tauri/gen/android/app/src/main/java/app/skipi/crewing/mobile/MainActivity.kt',
-          'src-tauri/src/messaging.rs',
           'keys/signing.pem',
           'tests/other.mjs',
-          'docs/other.md',
-          '.github/workflows/other.yml']
-# sha256 of configs/homes/crewing.json at guard main b72a59ca (pre-K2.1 bytes).
-OLD_CONFIG_HASH = '4fb83721e0ababcc6c327a6f9df1fdc89a3dfbb9f6a62d658087b72dd959da44'
+          'docs/other.md']
+# sha256 of configs/homes/crewing.json at guard main 93833fac (pre-route bytes).
+OLD_CONFIG_HASH = 'e72d4ec047eb0ced68116bb21973f616c831e6bddcde608ca4fc75b2f8451072'
 # Exact anchors of the three additive text blocks; removing them must restore the
-# pre-K2.1 file byte for byte (proves the change adds and never edits).
+# pre-route file byte for byte (proves the change adds and never edits).
 BLOCKS = (
-    ('    {\n      "name": "crewing K2.1 single screen: mail module retired,'
-     ' card + contact link (owner739, 2026-09-26)",\n', '\n    },\n'),
-    (',\n    "crewing-k21-single-screen": [\n      {\n', '\n    ]'),
-    (',\n    "crewing-k21-single-screen": [\n      "dist/index.html"', '\n    ]'),
+    ('    {\n      "name": "crewing №664 person-keyed save: receiver retires the letter-keyed row,'
+     ' mode for documents (owner995, 2026-10-04)",\n', '\n    },\n'),
+    (',\n    "crewing-664-person": [\n      {\n', '\n    ]'),
+    (',\n    "crewing-664-person": [\n      "dist/index.html"', '\n    ]'),
 )
-# Protections as accepted at b72a59ca. A route PR must not touch them at all
+# Neighbour oracles that must subtract this task, or their historical hashes stop
+# pinning the bytes they were accepted on. Dropping a pin is caught below.
+NEIGHBOUR_PINS = ('test_crewing_c3b1_route.py',
+                  'test_crewing_c3b2_route.py',
+                  'test_crewing_k2_modules_route.py',
+                  'test_crewing_k21_single_screen_route.py',
+                  'test_security_escaping_191_route.py')
+# Protections as accepted at 93833fac. A route PR must not touch them at all
 # (AGENTS.md: narrowing protected_paths needs its own PR, per path).
 PROTECTED_PATHS = {
     'backend/server/prod data': ['backend/**', 'server/**', 'api/**', 'data/prod/**', 'prod/**',
@@ -123,44 +134,28 @@ RELEASE_SENSITIVE_PATHS = {
                                       'scripts/upload*', 'scripts/*testflight*', 'scripts/*play*',
                                       '.github/workflows/*release*', '.github/workflows/*deploy*'],
 }
-# Declared outcome for all 2**11 subsets of the eleven paths: which task owns
-# how many of them. Sums to 2048; the 1480 the new route claims were all falling
-# back to the default task before it existed.
+# Declared outcome for all 2**6 subsets of the six paths: which task owns how
+# many of them. Sums to 64; the 32 this route claims are exactly the subsets
+# carrying the marker, and all 32 were falling back to the default task before.
 EXPECTED_SUBSET_COUNTS = {
-    'crewing-c3b2': 48,
-    PREVIOUS_TASK: 40,
-    TASK: 1480,
-    DEFAULT_TASK: 479,
+    'crewing-c3b2': 8,
+    'crewing-k2-modules': 4,
     'provenance': 1,
+    TASK: 32,
+    DEFAULT_TASK: 19,
 }
-
-
-# Exact anchors of the three additive text blocks of the route merged after
-# K2.1 (crewing-664-person). Routes merged later are frozen by their own oracles
-# (test_crewing_664_person_route.py); subtract them structurally as well as
-# textually, so this file keeps pinning the exact pre-K2.1 config instead of
-# drifting with every later addition.
-LATER_BLOCKS = (
-    ('    {\n      "name": "crewing \u2116664 person-keyed save: receiver retires the letter-keyed row,'
-     ' mode for documents (owner995, 2026-10-04)",\n', '\n    },\n'),
-    (',\n    "crewing-664-person": [\n      {\n', '\n    ]'),
-    (',\n    "crewing-664-person": [\n      "dist/index.html"', '\n    ]'),
-)
-LATER_TASKS = ('crewing-664-person',)
 
 
 def previous_config(config):
     old = copy.deepcopy(config)
-    drop = (TASK, *LATER_TASKS)
-    old['task_routing'] = [r for r in old['task_routing'] if r['task'] not in drop]
+    old['task_routing'] = [r for r in old['task_routing'] if r['task'] != TASK]
     for section in ('allowed_file_patterns', 'harness_commands'):
-        for task in drop:
-            old[section].pop(task, None)
+        old[section].pop(TASK, None)
     return old
 
 
 def previous_config_text(text):
-    for start, end in LATER_BLOCKS + BLOCKS:
+    for start, end in BLOCKS:
         assert text.count(start) == 1, start
         begin = text.index(start)
         stop = text.index(end, begin + len(start)) + len(end)
@@ -168,44 +163,104 @@ def previous_config_text(text):
     return text
 
 
-class CrewingK21SingleScreenRouteTests(unittest.TestCase):
+def widened(config, extra):
+    """The same route with one more path declared - the mutation to catch."""
+    bad = copy.deepcopy(config)
+    for rule in bad['task_routing']:
+        if rule['task'] == TASK:
+            rule['when_all_files_in'] = [*rule['when_all_files_in'], extra]
+    bad['allowed_file_patterns'][TASK] = [*bad['allowed_file_patterns'][TASK], extra]
+    return bad
+
+
+class Crewing664PersonRouteTests(unittest.TestCase):
     def config(self):
         return json.loads(CONFIG.read_text())
 
     # ------------------------------------------------------------------
-    # declared ceiling: eleven paths, thirteen commands, position after K2
+    # shared oracles - the positive tests and the negatives use the same code
     # ------------------------------------------------------------------
-    def test_exact_ceiling_checks_and_position_after_k2(self):
-        config = self.config()
+    def assert_declared_ceiling(self, config):
         route = [r for r in config['task_routing'] if r['task'] == TASK]
         self.assertEqual(len(route), 1)
         self.assertEqual(route[0]['when_all_files_in'], FILES)
-        self.assertEqual(len(FILES), 11)
+        self.assertEqual(len(FILES), 6)
         self.assertEqual(route[0]['require_any_of'], REQUIRE_ANY)
         self.assertNotIn('require_all_of', route[0])
         self.assertEqual(config['allowed_file_patterns'][TASK], FILES)
+
+    def assert_subset_table(self, config):
+        # The universe is read back from the config, not from the constant, so
+        # a route widened by one path produces a bigger table and this oracle
+        # reddens instead of silently testing the six paths it used to declare.
+        route = [r for r in config['task_routing'] if r['task'] == TASK][0]
+        universe = list(dict.fromkeys([*FILES, *route['when_all_files_in'],
+                                       *config['allowed_file_patterns'][TASK]]))
+        old = previous_config(config)
+        seen = Counter()
+        for size in range(len(universe) + 1):
+            for files in itertools.combinations(universe, size):
+                expected = self.expected_task(old, files)
+                self.assertEqual(MODULE.resolve_task(config, list(files))['task'], expected, files)
+                seen[expected] += 1
+        self.assertEqual(dict(seen), EXPECTED_SUBSET_COUNTS)
+        self.assertEqual(sum(seen.values()), 2 ** len(FILES))
+
+    def expected_task(self, old, files):
+        """Declared expectation, from literal data only.
+
+        Earlier rules keep everything they already owned (their literal order is
+        the oracle); of the rest, this route claims exactly the subsets carrying
+        the marker; anything else keeps its old task.
+        """
+        before = MODULE.resolve_task(old, list(files))['task']
+        if before in EARLIER_TASKS:
+            return before
+        if MARKER in files:
+            return TASK
+        return before
+
+    # ------------------------------------------------------------------
+    # declared ceiling: six paths, thirteen commands, position after K2.1
+    # ------------------------------------------------------------------
+    def test_exact_ceiling_checks_and_position_after_k21(self):
+        config = self.config()
+        self.assert_declared_ceiling(config)
         self.assertFalse(MODULE.is_release_task(config, TASK))
         self.assertEqual([r['task'] for r in config['task_routing'][:8]],
-                         [*EARLIER_TASKS, TASK, *LATER_TASKS, 'repo-meta'])
+                         [*EARLIER_TASKS, TASK, 'repo-meta'])
+        # The marker belongs to this rule alone: no other rule in the home
+        # declares db.rs, which is why nothing is taken from an earlier route.
+        other_rules = [r for r in config['task_routing'] if r['task'] != TASK]
+        for rule in other_rules:
+            self.assertNotIn(MARKER, rule.get('when_all_files_in', []), rule['task'])
+        for task, patterns in config['allowed_file_patterns'].items():
+            if task != TASK:
+                self.assertNotIn(MARKER, patterns, task)
         # presence-manifest.json stays protected and outside the ceiling.
         protected = [p for rule in config['protected_paths'] for p in rule['patterns']]
         self.assertTrue(any(MODULE.pattern_matches('presence-manifest.json', p) for p in protected))
         self.assertNotIn('presence-manifest.json', config['allowed_file_patterns'][TASK])
+        # The marker itself is neither protected nor release-sensitive.
+        self.assertFalse(any(MODULE.pattern_matches(MARKER, p) for p in protected))
+        release = [p for rule in config['release_sensitive_paths'] for p in rule['patterns']]
+        self.assertFalse(any(MODULE.pattern_matches(MARKER, p) for p in release))
 
-    def test_thirteen_harness_commands_are_k2_minus_the_retired_demo(self):
+    def test_thirteen_harness_commands_are_the_previous_route_verbatim(self):
         config = self.config()
         self.assertEqual(len(COMMANDS), 13)
         self.assertEqual([(c['name'], c['command']) for c in MODULE.configured_harnesses(config, TASK)],
                          COMMANDS)
         self.assertEqual([(c['name'], c['command']) for c in config['harness_commands'][TASK]], COMMANDS)
-        k2_commands = [(c['name'], c['command']) for c in config['harness_commands'][PREVIOUS_TASK]]
-        self.assertEqual(len(k2_commands), 14)
-        self.assertEqual([c for c in k2_commands if c[0] != DROPPED_COMMAND], COMMANDS)
+        self.assertEqual([(c['name'], c['command']) for c in config['harness_commands'][PREVIOUS_TASK]],
+                         COMMANDS)
+        # Strictly more than the default task this diff used to fall into.
+        self.assertEqual(len(config['harness_commands'][DEFAULT_TASK]), 4)
         names = [name for name, _ in COMMANDS]
-        self.assertNotIn(DROPPED_COMMAND, names)
-        # Inverted, not deleted: the mailbox contract keeps running on this route.
-        self.assertIn('crewing_mailbox_contract', names)
         self.assertEqual(len(set(names)), len(names))
+        # No command in this home runs a build toolchain at pre-push time.
+        for _, command in COMMANDS:
+            self.assertTrue(command.startswith('node '), command)
 
     # ------------------------------------------------------------------
     # additivity: the accepted config comes back byte for byte
@@ -217,12 +272,12 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
         config = self.config()
         old = previous_config(config)
         self.assertEqual(json.loads(old_text), old)
-        samples = [[], [FILES[0]], [FILES[7]], [FILES[6]], [FILES[0], FILES[2]], FILES[:3]]
+        samples = [[], [FILES[0]], [FILES[2]], [FILES[4]], [FILES[0], FILES[5]], FILES[2:4]]
         samples += [r['when_all_files_in'] for r in old['task_routing']]
         for files in samples:
             with self.subTest(files=files):
                 before = MODULE.resolve_task(old, files)
-                if before['task'] in EARLIER_TASKS or not any(p in files for p in REQUIRE_ANY):
+                if before['task'] in EARLIER_TASKS or MARKER not in files:
                     self.assertEqual(MODULE.resolve_task(config, files), before)
                 task = before['task']
                 self.assertEqual(MODULE.configured_harnesses(config, task),
@@ -252,54 +307,123 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
                                  MODULE.bootstrap_override_allowed_patterns(old, token))
 
     # ------------------------------------------------------------------
-    # exhaustive dispatch: all 2**11 subsets against a declared table
+    # exhaustive dispatch: all 2**6 subsets against a declared table
     # ------------------------------------------------------------------
-    def expected_task(self, old, files):
-        """Declared expectation, from literal data only.
-
-        Earlier rules keep everything they already owned (their literal order is
-        the oracle); of the rest, this route claims exactly the non-empty subsets
-        carrying a require_any_of marker; anything else keeps its old task.
-        """
-        before = MODULE.resolve_task(old, list(files))['task']
-        if before in EARLIER_TASKS:
-            return before
-        if files and any(path in files for path in REQUIRE_ANY):
-            return TASK
-        return before
-
-    def test_all_2048_subsets_match_the_declared_table(self):
+    def test_all_64_subsets_match_the_declared_table(self):
         config = self.config()
         old = previous_config(config)
-        seen = Counter()
+        self.assert_subset_table(config)
+        claimed = 0
         for size in range(len(FILES) + 1):
             for files in itertools.combinations(FILES, size):
-                expected = self.expected_task(old, files)
+                if MODULE.resolve_task(config, list(files))['task'] != TASK:
+                    continue
+                claimed += 1
                 with self.subTest(files=files):
-                    self.assertEqual(MODULE.resolve_task(config, list(files))['task'], expected)
-                    if expected == TASK:
-                        # Nothing is taken from an earlier rule: every diff this
-                        # route claims used to fall back to the default task.
-                        self.assertEqual(MODULE.resolve_task(old, list(files))['task'], DEFAULT_TASK)
-                        self.assertEqual(MODULE.scope_check_for_task(config, TASK, list(files))['scope_violations'],
-                                         [])
-                seen[expected] += 1
-        self.assertEqual(dict(seen), EXPECTED_SUBSET_COUNTS)
-        self.assertEqual(sum(seen.values()), 2 ** len(FILES))
+                    # Nothing is taken from an earlier rule: every diff this
+                    # route claims used to fall back to the default task.
+                    self.assertEqual(MODULE.resolve_task(old, list(files))['task'], DEFAULT_TASK)
+                    self.assertEqual(MODULE.scope_check_for_task(config, TASK, list(files))['scope_violations'],
+                                     [])
+                    self.assertIn(MARKER, files)
+        self.assertEqual(claimed, EXPECTED_SUBSET_COUNTS[TASK])
 
     def test_require_any_of_negative_and_forbidden_extras(self):
         config = self.config()
-        unmarked = [path for path in FILES if path not in REQUIRE_ANY]
-        # dist + lib.rs + guard pin carry no K2.1 marker: not this route.
-        for files in ([FILES[0], FILES[8], FILES[7]], [FILES[0]], [FILES[7]],
-                      [FILES[0], FILES[4]], unmarked):
+        unmarked = [path for path in FILES if path != MARKER]
+        # Without db.rs the diff is not this route's business.
+        for files in (unmarked, [FILES[0]], [FILES[2]], [FILES[0], FILES[2], FILES[3]],
+                      [FILES[0], FILES[4]], [FILES[5]]):
             with self.subTest(files=files):
                 self.assertNotEqual(MODULE.resolve_task(config, files)['task'], TASK)
+        # Diffs an earlier rule already owns keep routing there, marker or not.
+        self.assertEqual(MODULE.resolve_task(config, [FILES[0], FILES[2], FILES[3], FILES[4]])['task'],
+                         'crewing-c3b2')
+        self.assertEqual(MODULE.resolve_task(config, [FILES[0], FILES[5]])['task'],
+                         'crewing-k2-modules')
+        self.assertEqual(MODULE.resolve_task(config, [FILES[2]])['task'], 'provenance')
         for extra in EXTRAS:
             with self.subTest(extra=extra):
                 self.assertNotEqual(MODULE.resolve_task(config, FILES + [extra])['task'], TASK)
+                self.assertNotEqual(MODULE.resolve_task(config, [MARKER, extra])['task'], TASK)
                 self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
                 self.assertNotIn(extra, config['allowed_file_patterns'][TASK])
+
+    # ------------------------------------------------------------------
+    # negatives that must redden: widening the route, dropping a neighbour pin
+    # ------------------------------------------------------------------
+    def test_widening_the_route_by_one_path_is_caught(self):
+        config = self.config()
+        self.assert_declared_ceiling(config)
+        self.assert_subset_table(config)
+        for extra in ('src-tauri/Cargo.toml', 'presence-manifest.json', 'src-tauri/src/messaging.rs'):
+            with self.subTest(extra=extra):
+                bad = widened(config, extra)
+                # The widening is real, not cosmetic: the extra file would ride
+                # this route with no scope violation at all.
+                self.assertNotEqual(MODULE.resolve_task(config, [MARKER, extra])['task'], TASK)
+                self.assertEqual(MODULE.resolve_task(bad, [MARKER, extra])['task'], TASK)
+                self.assertEqual(MODULE.scope_check_for_task(bad, TASK, [MARKER, extra])['scope_violations'], [])
+                # And the declared oracles refuse it.
+                with self.assertRaises(AssertionError):
+                    self.assert_declared_ceiling(bad)
+                with self.assertRaises(AssertionError):
+                    self.assert_subset_table(bad)
+
+    def test_dropping_a_neighbour_pin_is_caught(self):
+        # Every neighbour oracle subtracts this task by name.
+        for name in NEIGHBOUR_PINS:
+            with self.subTest(neighbour=name):
+                self.assertIn(TASK, (ROOT / 'tests' / name).read_text(), name)
+        text = CONFIG.read_text()
+        config = self.config()
+        # Teeth, text level (test_crewing_k2_modules_route.py): drop this
+        # route's three anchors from the neighbour's subtraction and its
+        # historical hash stops reproducing the bytes it pinned.
+        k2 = self.load_neighbour('test_crewing_k2_modules_route.py')
+        self.assertEqual(hashlib.sha256(k2.previous_config_text(text).encode()).hexdigest(),
+                         k2.OLD_CONFIG_HASH)
+        kept = tuple(block for block in k2.LATER_BLOCKS if block not in BLOCKS)
+        self.assertEqual(len(kept), len(k2.LATER_BLOCKS) - len(BLOCKS))
+        with self.assertRaises(AssertionError):
+            self.strip_blocks(text, kept + k2.BLOCKS, k2.OLD_CONFIG_HASH)
+        # Teeth, structural level (test_crewing_c3b2_route.py): drop this task
+        # from LATER_TASKS and the neighbour's canonical-JSON hash breaks.
+        c3b2 = self.load_neighbour('test_crewing_c3b2_route.py')
+        self.assertIn(TASK, c3b2.LATER_TASKS)
+        self.assertEqual(self.canonical_hash(c3b2.previous_config(config)), c3b2.OLD_CONFIG_HASH)
+        thinner = self.subtract(config, (c3b2.TASK, *(t for t in c3b2.LATER_TASKS if t != TASK)))
+        self.assertNotEqual(self.canonical_hash(thinner), c3b2.OLD_CONFIG_HASH)
+
+    @staticmethod
+    def load_neighbour(name):
+        loader = SourceFileLoader('neighbour_' + name[:-3], str(ROOT / 'tests' / name))
+        spec = importlib.util.spec_from_loader(loader.name, loader)
+        module = importlib.util.module_from_spec(spec)
+        loader.exec_module(module)
+        return module
+
+    @staticmethod
+    def canonical_hash(config):
+        return hashlib.sha256(json.dumps(config, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+    @staticmethod
+    def subtract(config, tasks):
+        old = copy.deepcopy(config)
+        old['task_routing'] = [r for r in old['task_routing'] if r['task'] not in tasks]
+        for section in ('allowed_file_patterns', 'harness_commands'):
+            for task in tasks:
+                old[section].pop(task, None)
+        return old
+
+    def strip_blocks(self, text, blocks, expected_hash):
+        for start, end in blocks:
+            assert text.count(start) == 1, start
+            begin = text.index(start)
+            stop = text.index(end, begin + len(start)) + len(end)
+            text = text[:begin] + text[stop:]
+        assert hashlib.sha256(text.encode()).hexdigest() == expected_hash, 'pin broken'
+        return text
 
     # ------------------------------------------------------------------
     # real CLI: the declared diff dispatches and plans thirteen checks
@@ -320,7 +444,7 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
             dest.write_text(value)
 
         git('init', '-q', '-b', 'main')
-        git('config', 'user.name', 'K2.1 isolated fixture')
+        git('config', 'user.name', '664 isolated fixture')
         git('config', 'user.email', 'fixture@example.invalid')
         for path in FILES + EXTRAS:
             write(path, 'synthetic baseline fixture; not product acceptance\n')
@@ -328,7 +452,7 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
         git('commit', '-qm', 'synthetic published baseline')
         base = git('rev-parse', 'HEAD')
         for path in files:
-            write(path, 'Candidate step: single screen, retired mail module; synthetic only.\n')
+            write(path, 'Candidate step: person-keyed save in the receiver; synthetic only.\n')
         git('add', '-A')
         git('commit', '-qm', 'candidate increment')
         return repo, base, git('rev-parse', 'HEAD'), env
@@ -340,8 +464,8 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
         proc = subprocess.run(args, text=True, capture_output=True, env=env)
         return proc, json.loads(Path(out).read_text())
 
-    def test_real_cli_routes_the_declared_eleven_paths_and_plans_thirteen(self):
-        with tempfile.TemporaryDirectory(prefix='k21-cli-') as tmp:
+    def test_real_cli_routes_the_declared_six_paths_and_plans_thirteen(self):
+        with tempfile.TemporaryDirectory(prefix='c664-cli-') as tmp:
             repo, base, head, env = self.synthetic_repo(tmp, FILES)
             proc, report = self.run_verify(repo, base, head, env, Path(tmp) / 'ok.json')
             self.assertEqual(proc.returncode, 0, report)
@@ -359,9 +483,23 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
             self.assertEqual(report['allowed_file_patterns'], FILES)
             self.assertEqual([(t['name'], t['command']) for t in report['tests']], COMMANDS)
 
+    def test_real_cli_routes_the_s2b_diff_of_the_card(self):
+        """The exact file set the card has to push: dist + db.rs + c3b2 harness."""
+        wanted = ['dist/index.html', MARKER, 'tests/crewing_c3b2_candidate_harness.mjs']
+        with tempfile.TemporaryDirectory(prefix='c664-cli-s2b-') as tmp:
+            repo, base, head, env = self.synthetic_repo(tmp, wanted)
+            proc, report = self.run_verify(repo, base, head, env, Path(tmp) / 's2b.json')
+            self.assertEqual(proc.returncode, 0, report)
+            self.assertEqual(report['status'], 'pass')
+            self.assertEqual(report['task'], TASK)
+            self.assertEqual(report['changed_files'], sorted(wanted))
+            self.assertEqual(report['scope_violations'], [])
+            self.assertEqual(report['protected_paths_touched'], [])
+            self.assertFalse(report['override_present'])
+
     def test_real_cli_rejects_a_file_outside_the_ceiling(self):
         extra = 'src-tauri/Cargo.toml'
-        with tempfile.TemporaryDirectory(prefix='k21-cli-neg-') as tmp:
+        with tempfile.TemporaryDirectory(prefix='c664-cli-neg-') as tmp:
             repo, base, head, env = self.synthetic_repo(tmp, FILES + [extra])
             proc, report = self.run_verify(repo, base, head, env, Path(tmp) / 'auto.json')
             self.assertEqual(proc.returncode, 1, report)
@@ -385,7 +523,7 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
                                   capture_output=True).stdout.strip()
 
         git('init', '-q', '-b', 'main')
-        git('config', 'user.name', 'K2.1 superset fixture')
+        git('config', 'user.name', '664 superset fixture')
         git('config', 'user.email', 'fixture@example.invalid')
         target = repo / 'configs/homes/crewing.json'
         target.write_text(previous_config_text(CONFIG.read_text()))
@@ -404,7 +542,7 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
         return proc.returncode, json.loads(result.read_text())
 
     def test_assert_config_superset_old_to_new_passes_and_has_teeth(self):
-        with tempfile.TemporaryDirectory(prefix='k21-superset-') as tmp:
+        with tempfile.TemporaryDirectory(prefix='c664-superset-') as tmp:
             repo, old_ref, new_ref = self.superset_repo(tmp, CONFIG.read_text())
             code, payload = self.run_superset(repo, old_ref, new_ref, Path(tmp) / 'ok.json')
             self.assertEqual(code, 0, payload)
@@ -416,7 +554,7 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
             self.assertIn(TASK, payload['new_tasks'])
             self.assertNotIn(TASK, payload['old_tasks'])
             self.assertIn(PREVIOUS_TASK, payload['old_tasks'])
-        with tempfile.TemporaryDirectory(prefix='k21-superset-neg-') as tmp:
+        with tempfile.TemporaryDirectory(prefix='c664-superset-neg-') as tmp:
             weakened = json.loads(CONFIG.read_text())
             weakened['harness_commands'][PREVIOUS_TASK] = weakened['harness_commands'][PREVIOUS_TASK][:-1]
             repo, old_ref, new_ref = self.superset_repo(tmp, json.dumps(weakened, indent=2) + '\n')
