@@ -136,7 +136,9 @@
         "src-tauri/src/lib.rs",
         "src-tauri/src/crewing_intake.rs",
         "tests/crewing_c3b2_candidate_harness.mjs",
-        "tests/crewing_crew_flow_demo_harness.mjs"
+        "tests/crewing_crew_flow_demo_harness.mjs",
+        "docs/crewing-pilot-c3b2/WORKLOG.md",
+        ".github/workflows/skipi-guard.yml"
       ],
       "require_any_of": [
         "src-tauri/src/db.rs"
@@ -877,7 +879,9 @@
       "src-tauri/src/lib.rs",
       "src-tauri/src/crewing_intake.rs",
       "tests/crewing_c3b2_candidate_harness.mjs",
-      "tests/crewing_crew_flow_demo_harness.mjs"
+      "tests/crewing_crew_flow_demo_harness.mjs",
+      "docs/crewing-pilot-c3b2/WORKLOG.md",
+      ".github/workflows/skipi-guard.yml"
     ]
   }
 }
