@@ -7,11 +7,19 @@ tests prove dispatch, ceiling and additivity; they are not the product harness.
 No protection, override token or protected path is changed or relaxed.
 
 Declared surface (handoff HANDOFF-2026-10-03-guard-route-crewing-664.md,
-owner-authorized DECISIONS (995)): six paths, the same six in
-`allowed_file_patterns`, and the thirteen harness commands of the preceding
-crewing route, copied verbatim. `src-tauri/src/db.rs` is the marker: it appears
-in no other rule of this home, so every subset this route claims used to fall
-through to `plugin-host` and fail on scope.
+owner-authorized DECISIONS (995), widened by DECISIONS (996)): eight paths, the
+same eight in `allowed_file_patterns`, and the thirteen harness commands of the
+preceding crewing route, copied verbatim. `src-tauri/src/db.rs` is the marker:
+it appears in no other rule of this home, so every subset this route claims
+used to fall through to `plugin-host` and fail on scope.
+
+The widening of 2026-10-04 adds exactly two paths,
+`docs/crewing-pilot-c3b2/WORKLOG.md` and `.github/workflows/skipi-guard.yml`,
+both already declared by `crewing-k21-single-screen`: the live Crewing range
+carries them and the guard scores the whole branch against main. Nothing else
+moved - `require_any_of`, the thirteen commands, the neighbours and every
+protection line come back byte for byte once the two insertions are stripped
+(PRE_WIDEN_CONFIG_HASH).
 """
 from __future__ import annotations
 
@@ -43,13 +51,16 @@ DEFAULT_TASK = 'plugin-host'
 # oracle: moving the new rule earlier changes what these rules still own.
 EARLIER_TASKS = ('security-escaping-191', 'crewing-c3b1', 'crewing-c3b1-metadata',
                  'crewing-c3b2', 'crewing-k2-modules', PREVIOUS_TASK)
-# The six declared paths, in declared order.
+# The eight declared paths, in declared order. The last two were added by the
+# widening of 2026-10-04 (owner (996)); the first six are the accepted route.
 FILES = ['dist/index.html',
          'src-tauri/src/db.rs',
          'src-tauri/src/lib.rs',
          'src-tauri/src/crewing_intake.rs',
          'tests/crewing_c3b2_candidate_harness.mjs',
-         'tests/crewing_crew_flow_demo_harness.mjs']
+         'tests/crewing_crew_flow_demo_harness.mjs',
+         'docs/crewing-pilot-c3b2/WORKLOG.md',
+         '.github/workflows/skipi-guard.yml']
 MARKER = 'src-tauri/src/db.rs'
 REQUIRE_ANY = [MARKER]
 # Thirteen commands, copied verbatim from the preceding crewing route. The
@@ -74,14 +85,13 @@ COMMANDS = [
     ('trial_gate_wired', 'node tests/trial_gate_wired_harness.mjs'),
 ]
 # Outside the declared ceiling on purpose. presence-manifest.json is protected;
-# the guard pin and the C3b2 journal keep their own routes so this one cannot
-# bump them; the plugin/presence contract harnesses stay closed so a PR that
-# changes the receiver cannot "optimise" its own contracts green; contact.rs and
-# messaging.rs belong to K2.1 and to the security route; Cargo/gen/android are
+# the plugin/presence contract harnesses stay closed so a PR that changes the
+# receiver cannot "optimise" its own contracts green; contact.rs and messaging.rs
+# belong to K2.1 and to the security route; Cargo/gen/android are
 # release-sensitive; signing keys and foreign test/doc files were never in scope.
+# The C3b2 journal and the guard pin left this list on 2026-10-04: owner (996)
+# moved exactly those two into the route, and NEW_PATHS below pins that move.
 EXTRAS = ['presence-manifest.json',
-          '.github/workflows/skipi-guard.yml',
-          'docs/crewing-pilot-c3b2/WORKLOG.md',
           'tests/crewing_plugin_isolation_harness.mjs',
           'tests/crewing_presence_contract_harness.mjs',
           'src-tauri/src/contact.rs',
@@ -101,6 +111,32 @@ BLOCKS = (
      ' mode for documents (owner995, 2026-10-04)",\n', '\n    },\n'),
     (',\n    "crewing-664-person": [\n      {\n', '\n    ]'),
     (',\n    "crewing-664-person": [\n      "dist/index.html"', '\n    ]'),
+)
+# This PR's own delta (owner-authorized DECISIONS (996)): the route is widened by
+# exactly these two paths, in `when_all_files_in` and in `allowed_file_patterns`,
+# and by nothing else.
+NEW_PATHS = ['docs/crewing-pilot-c3b2/WORKLOG.md', '.github/workflows/skipi-guard.yml']
+# sha256 of configs/homes/crewing.json at guard main 37ff9581 (pre-widen bytes).
+PRE_WIDEN_CONFIG_HASH = 'ddcb72ce024e1ad94e2710b4ec3b50b940be36e83f315ddd9d6c5de8ef6b5207'
+# Anchored insertions. Each anchor is the six-path tail of one list, so the two
+# inserted lines are addressed uniquely even though the very same two lines also
+# appear, verbatim and at the same indent, in the K2.1 route above. Stripping
+# both must restore the accepted main byte for byte.
+WIDEN_INSERTS = (
+    ('      "when_all_files_in": [\n        "dist/index.html",\n'
+     '        "src-tauri/src/db.rs",\n        "src-tauri/src/lib.rs",\n'
+     '        "src-tauri/src/crewing_intake.rs",\n'
+     '        "tests/crewing_c3b2_candidate_harness.mjs",\n'
+     '        "tests/crewing_crew_flow_demo_harness.mjs"',
+     ',\n        "docs/crewing-pilot-c3b2/WORKLOG.md",\n'
+     '        ".github/workflows/skipi-guard.yml"'),
+    ('    "crewing-664-person": [\n      "dist/index.html",\n'
+     '      "src-tauri/src/db.rs",\n      "src-tauri/src/lib.rs",\n'
+     '      "src-tauri/src/crewing_intake.rs",\n'
+     '      "tests/crewing_c3b2_candidate_harness.mjs",\n'
+     '      "tests/crewing_crew_flow_demo_harness.mjs"',
+     ',\n      "docs/crewing-pilot-c3b2/WORKLOG.md",\n'
+     '      ".github/workflows/skipi-guard.yml"'),
 )
 # Neighbour oracles that must subtract this task, or their historical hashes stop
 # pinning the bytes they were accepted on. Dropping a pin is caught below.
@@ -134,15 +170,18 @@ RELEASE_SENSITIVE_PATHS = {
                                       'scripts/upload*', 'scripts/*testflight*', 'scripts/*play*',
                                       '.github/workflows/*release*', '.github/workflows/*deploy*'],
 }
-# Declared outcome for all 2**6 subsets of the six paths: which task owns how
-# many of them. Sums to 64; the 32 this route claims are exactly the subsets
-# carrying the marker, and all 32 were falling back to the default task before.
+# Declared outcome for all 2**8 subsets of the eight paths: which task owns how
+# many of them. Sums to 256; the 128 this route claims are exactly the subsets
+# carrying the marker, and all 128 were falling back to the default task before
+# the route existed. 96 of them were still falling back there before the
+# widening, which is this PR's whole delta (test below counts them).
 EXPECTED_SUBSET_COUNTS = {
-    'crewing-c3b2': 8,
-    'crewing-k2-modules': 4,
+    'crewing-c3b2': 48,
+    'crewing-k2-modules': 16,
+    'crewing-k21-single-screen': 24,
     'provenance': 1,
-    TASK: 32,
-    DEFAULT_TASK: 19,
+    TASK: 128,
+    DEFAULT_TASK: 39,
 }
 
 
@@ -160,6 +199,14 @@ def previous_config_text(text):
         begin = text.index(start)
         stop = text.index(end, begin + len(start)) + len(end)
         text = text[:begin] + text[stop:]
+    return text
+
+
+def pre_widen_text(text):
+    """The accepted main text: the two insertions of this PR removed."""
+    for anchor, insert in WIDEN_INSERTS:
+        assert text.count(anchor + insert) == 1, anchor[:48]
+        text = text.replace(anchor + insert, anchor)
     return text
 
 
@@ -184,7 +231,7 @@ class Crewing664PersonRouteTests(unittest.TestCase):
         route = [r for r in config['task_routing'] if r['task'] == TASK]
         self.assertEqual(len(route), 1)
         self.assertEqual(route[0]['when_all_files_in'], FILES)
-        self.assertEqual(len(FILES), 6)
+        self.assertEqual(len(FILES), 8)
         self.assertEqual(route[0]['require_any_of'], REQUIRE_ANY)
         self.assertNotIn('require_all_of', route[0])
         self.assertEqual(config['allowed_file_patterns'][TASK], FILES)
@@ -221,7 +268,7 @@ class Crewing664PersonRouteTests(unittest.TestCase):
         return before
 
     # ------------------------------------------------------------------
-    # declared ceiling: six paths, thirteen commands, position after K2.1
+    # declared ceiling: eight paths, thirteen commands, position after K2.1
     # ------------------------------------------------------------------
     def test_exact_ceiling_checks_and_position_after_k21(self):
         config = self.config()
@@ -285,6 +332,93 @@ class Crewing664PersonRouteTests(unittest.TestCase):
                 self.assertEqual(MODULE.scope_check_for_task(config, task, files),
                                  MODULE.scope_check_for_task(old, task, files))
 
+    # ------------------------------------------------------------------
+    # this PR's own delta: exactly two paths, nothing else moved
+    # ------------------------------------------------------------------
+    def test_widening_adds_exactly_two_paths_and_restores_main_byte_for_byte(self):
+        """Strip the two insertions and guard main 37ff9581 comes back exactly.
+
+        This is the only honest proof that `require_any_of`, the thirteen
+        commands, the neighbour rules, their pins and every protection line were
+        not touched while the ceiling grew: the rest of the file is identical.
+        """
+        text = CONFIG.read_text()
+        self.assertEqual(hashlib.sha256(pre_widen_text(text).encode()).hexdigest(),
+                         PRE_WIDEN_CONFIG_HASH)
+        pre = json.loads(pre_widen_text(text))
+        config = self.config()
+        route = [r for r in config['task_routing'] if r['task'] == TASK][0]
+        pre_route = [r for r in pre['task_routing'] if r['task'] == TASK][0]
+        self.assertEqual(len(pre_route['when_all_files_in']), 6)
+        self.assertEqual(route['when_all_files_in'], [*pre_route['when_all_files_in'], *NEW_PATHS])
+        self.assertEqual(config['allowed_file_patterns'][TASK],
+                         [*pre['allowed_file_patterns'][TASK], *NEW_PATHS])
+        self.assertEqual(route['require_any_of'], pre_route['require_any_of'])
+        self.assertEqual(route['name'], pre_route['name'])
+        self.assertNotIn('require_all_of', route)
+        # Everything outside this one task's two lists is identical to main.
+        for key in ('protected_paths', 'release_sensitive_paths', 'stop_lines', 'release_tasks',
+                    'default_task', 'exact_task_file_sets', 'additive_task_checks',
+                    'harness_commands'):
+            with self.subTest(key=key):
+                self.assertEqual(config[key], pre[key])
+        self.assertEqual([r for r in config['task_routing'] if r['task'] != TASK],
+                         [r for r in pre['task_routing'] if r['task'] != TASK])
+        self.assertEqual({t: v for t, v in config['allowed_file_patterns'].items() if t != TASK},
+                         {t: v for t, v in pre['allowed_file_patterns'].items() if t != TASK})
+        for include_workflow in (False, True):
+            self.assertEqual(MODULE.presence_override_allowed_patterns(config, include_workflow=include_workflow),
+                             MODULE.presence_override_allowed_patterns(pre, include_workflow=include_workflow))
+        for token in ('skipi-guard-workflow-bootstrap', 'crewing-presence-contracts-bootstrap',
+                      'crewing-theme-default-bootstrap'):
+            with self.subTest(token=token):
+                self.assertEqual(MODULE.bootstrap_override_allowed_patterns(config, token),
+                                 MODULE.bootstrap_override_allowed_patterns(pre, token))
+        # The widening is real and bounded: exactly 96 of the 256 subsets move,
+        # every one of them carries the marker, and every one came from the
+        # default task - nothing is taken from a neighbour rule.
+        moved = [files for size in range(len(FILES) + 1)
+                 for files in itertools.combinations(FILES, size)
+                 if MODULE.resolve_task(config, list(files))['task']
+                 != MODULE.resolve_task(pre, list(files))['task']]
+        self.assertEqual(len(moved), 96)
+        for files in moved:
+            with self.subTest(files=files):
+                self.assertIn(MARKER, files)
+                self.assertEqual(MODULE.resolve_task(pre, list(files))['task'], DEFAULT_TASK)
+                self.assertEqual(MODULE.resolve_task(config, list(files))['task'], TASK)
+                self.assertEqual(MODULE.scope_check_for_task(config, TASK, list(files))['scope_violations'], [])
+        # Teeth: the accepted six-path route no longer satisfies the ceiling.
+        with self.assertRaises(AssertionError):
+            self.assert_declared_ceiling(pre)
+
+    def test_the_two_new_paths_were_scope_violations_before_and_need_the_marker_now(self):
+        config = self.config()
+        pre = json.loads(pre_widen_text(CONFIG.read_text()))
+        live = sorted(FILES)  # the live Crewing range, as the guard sees it
+        before = MODULE.scope_check_for_task(pre, TASK, live)
+        self.assertEqual(sorted(before['scope_violations']), sorted(NEW_PATHS))
+        self.assertNotEqual(MODULE.resolve_task(pre, live)['task'], TASK)
+        after = MODULE.scope_check_for_task(config, TASK, live)
+        self.assertEqual(after['scope_violations'], [])
+        self.assertEqual(MODULE.resolve_task(config, live)['task'], TASK)
+        for path in NEW_PATHS:
+            with self.subTest(path=path):
+                self.assertIn(path, config['allowed_file_patterns'][TASK])
+                self.assertNotIn(path, EXTRAS)
+                # Both were already declared by the preceding route, so this
+                # widening opens no path the home had not already opened.
+                self.assertIn(path, config['allowed_file_patterns'][PREVIOUS_TASK])
+                # The marker still gates the route: neither path rides alone.
+                self.assertEqual(MODULE.resolve_task(config, [MARKER, path])['task'], TASK)
+                self.assertNotEqual(MODULE.resolve_task(config, [path])['task'], TASK)
+                self.assertNotEqual(MODULE.resolve_task(pre, [MARKER, path])['task'], TASK)
+                # Still neither protected nor release-sensitive.
+                protected = [q for rule in config['protected_paths'] for q in rule['patterns']]
+                release = [q for rule in config['release_sensitive_paths'] for q in rule['patterns']]
+                self.assertFalse(any(MODULE.pattern_matches(path, q) for q in protected))
+                self.assertFalse(any(MODULE.pattern_matches(path, q) for q in release))
+
     def test_protections_and_override_surface_are_untouched(self):
         config = self.config()
         old = previous_config(config)
@@ -307,9 +441,9 @@ class Crewing664PersonRouteTests(unittest.TestCase):
                                  MODULE.bootstrap_override_allowed_patterns(old, token))
 
     # ------------------------------------------------------------------
-    # exhaustive dispatch: all 2**6 subsets against a declared table
+    # exhaustive dispatch: all 2**8 subsets against a declared table
     # ------------------------------------------------------------------
-    def test_all_64_subsets_match_the_declared_table(self):
+    def test_all_256_subsets_match_the_declared_table(self):
         config = self.config()
         old = previous_config(config)
         self.assert_subset_table(config)
@@ -464,7 +598,8 @@ class Crewing664PersonRouteTests(unittest.TestCase):
         proc = subprocess.run(args, text=True, capture_output=True, env=env)
         return proc, json.loads(Path(out).read_text())
 
-    def test_real_cli_routes_the_declared_six_paths_and_plans_thirteen(self):
+    def test_real_cli_routes_the_declared_eight_paths_and_plans_thirteen(self):
+        """Exactly the live Crewing range eaa54c4f..d4b29952: all eight paths."""
         with tempfile.TemporaryDirectory(prefix='c664-cli-') as tmp:
             repo, base, head, env = self.synthetic_repo(tmp, FILES)
             proc, report = self.run_verify(repo, base, head, env, Path(tmp) / 'ok.json')
