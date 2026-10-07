@@ -117,6 +117,7 @@ LATER_OWNER_ROUTES_NON_RELEASE = [
     "ai-recognize-257",  # task card A0 wave 0.4.191 (OWNER (430)/(431)), 2026-09-09: ai.rs only
     "guard-pin-bump",  # wave 0.4.192, 2026-09-12: the lone .github/workflows/skipi-guard.yml pin bump, oracle in tests/test_seafarer_brand_icons_route.py
     "jobs-profile-visibility-s2",  # P2/S2b: published profiles inside Jobs
+    "seafarer-rank-alias-table",  # P2/R3: the rank alias table of the profile, oracle in tests/test_seafarer_rank_alias_table_route.py
 ]
 
 LOGIN_GATE_162B_FILES = [
@@ -319,7 +320,7 @@ class SeafarerEntryForkRouteTests(unittest.TestCase):
     def test_route_is_additive_to_pre_route_config(self) -> None:
         config = self.load_config()
         # Exclude only the independently tested sync delta from this old oracle.
-        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2")]
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table")]
         for section in ("exact_task_file_sets", "allowed_file_patterns", "harness_commands"):
             config[section].pop("one-account-sync-192", None)
             config[section].pop("consent193", None)
