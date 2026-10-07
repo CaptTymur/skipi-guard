@@ -135,16 +135,32 @@ EXPECTED_SUBSET_COUNTS = {
 }
 
 
+# Exact anchors of the three additive text blocks of the route merged after
+# K2.1 (crewing-664-person). Routes merged later are frozen by their own oracles
+# (test_crewing_664_person_route.py); subtract them structurally as well as
+# textually, so this file keeps pinning the exact pre-K2.1 config instead of
+# drifting with every later addition.
+LATER_BLOCKS = (
+    ('    {\n      "name": "crewing \u2116664 person-keyed save: receiver retires the letter-keyed row,'
+     ' mode for documents (owner995, 2026-10-04)",\n', '\n    },\n'),
+    (',\n    "crewing-664-person": [\n      {\n', '\n    ]'),
+    (',\n    "crewing-664-person": [\n      "dist/index.html"', '\n    ]'),
+)
+LATER_TASKS = ('crewing-664-person',)
+
+
 def previous_config(config):
     old = copy.deepcopy(config)
-    old['task_routing'] = [r for r in old['task_routing'] if r['task'] != TASK]
+    drop = (TASK, *LATER_TASKS)
+    old['task_routing'] = [r for r in old['task_routing'] if r['task'] not in drop]
     for section in ('allowed_file_patterns', 'harness_commands'):
-        old[section].pop(TASK, None)
+        for task in drop:
+            old[section].pop(task, None)
     return old
 
 
 def previous_config_text(text):
-    for start, end in BLOCKS:
+    for start, end in LATER_BLOCKS + BLOCKS:
         assert text.count(start) == 1, start
         begin = text.index(start)
         stop = text.index(end, begin + len(start)) + len(end)
@@ -169,8 +185,8 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
         self.assertNotIn('require_all_of', route[0])
         self.assertEqual(config['allowed_file_patterns'][TASK], FILES)
         self.assertFalse(MODULE.is_release_task(config, TASK))
-        self.assertEqual([r['task'] for r in config['task_routing'][:7]],
-                         [*EARLIER_TASKS, TASK, 'repo-meta'])
+        self.assertEqual([r['task'] for r in config['task_routing'][:8]],
+                         [*EARLIER_TASKS, TASK, *LATER_TASKS, 'repo-meta'])
         # presence-manifest.json stays protected and outside the ceiling.
         protected = [p for rule in config['protected_paths'] for p in rule['patterns']]
         self.assertTrue(any(MODULE.pattern_matches('presence-manifest.json', p) for p in protected))
