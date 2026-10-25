@@ -145,6 +145,60 @@
       ]
     },
     {
+      "name": "crewing №635 single-user native account and private store (owner1482, 2026-10-21)",
+      "task": "crewing-635-single-user",
+      "when_all_files_in": [
+        "dist/index.html",
+        "src-tauri/Cargo.lock",
+        "src-tauri/Cargo.toml",
+        "src-tauri/src/crewing_intake.rs",
+        "src-tauri/src/db.rs",
+        "src-tauri/src/lib.rs",
+        "src-tauri/src/messaging.rs",
+        "src-tauri/src/native_account.rs",
+        "src-tauri/src/native_binding.rs",
+        "src-tauri/src/native_database.rs",
+        "src-tauri/src/native_database_probe.rs",
+        "src-tauri/src/native_fresh.rs",
+        "src-tauri/src/native_keys.rs",
+        "src-tauri/src/native_lifecycle.rs",
+        "src-tauri/src/native_local_commit.rs",
+        "src-tauri/src/native_local_joint_tests.rs",
+        "src-tauri/src/native_profile.rs",
+        "src-tauri/src/native_session_record.rs",
+        "src-tauri/src/private_json.rs",
+        "src-tauri/src/private_store.rs",
+        "tests/crewing635_public_settings_harness.mjs",
+        "tests/crewing_c3b1_pilot_harness.mjs",
+        "tests/crewing_c3b2_candidate_harness.mjs",
+        "tests/crewing_compliance_manual_flow_harness.mjs",
+        "tests/crewing_crew_flow_demo_harness.mjs",
+        "tests/crewing_mailbox_contract_harness.mjs",
+        "tests/crewing_presence_contract_harness.mjs",
+        "tests/crewing_theme_default_harness.mjs",
+        "tests/fixtures/crewing_public_settings.mjs",
+        "tests/trial_activate_unconnected_harness.mjs",
+        "tests/trial_gate_wired_harness.mjs"
+      ],
+      "require_any_of": [
+        "src-tauri/src/native_account.rs",
+        "src-tauri/src/native_binding.rs",
+        "src-tauri/src/native_database.rs",
+        "src-tauri/src/native_database_probe.rs",
+        "src-tauri/src/native_fresh.rs",
+        "src-tauri/src/native_keys.rs",
+        "src-tauri/src/native_lifecycle.rs",
+        "src-tauri/src/native_local_commit.rs",
+        "src-tauri/src/native_local_joint_tests.rs",
+        "src-tauri/src/native_profile.rs",
+        "src-tauri/src/native_session_record.rs",
+        "src-tauri/src/private_json.rs",
+        "src-tauri/src/private_store.rs",
+        "tests/crewing635_public_settings_harness.mjs",
+        "tests/fixtures/crewing_public_settings.mjs"
+      ]
+    },
+    {
       "name": "repo-meta routing",
       "task": "repo-meta",
       "when_all_files_in": [
@@ -771,6 +825,84 @@
         "name": "trial_gate_wired",
         "command": "node tests/trial_gate_wired_harness.mjs"
       }
+    ],
+    "crewing-635-single-user": [
+      {
+        "name": "crewing_plugin_isolation",
+        "command": "node tests/crewing_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "shared_host_runtime_isolation",
+        "command": "node /home/linux/Developer/skipi-plugins/_host-runtime/harness/isolation-contract.mjs"
+      },
+      {
+        "name": "crewing_presence_contract",
+        "command": "node tests/crewing_presence_contract_harness.mjs"
+      },
+      {
+        "name": "crewing_crew_flow_demo",
+        "command": "node tests/crewing_crew_flow_demo_harness.mjs"
+      },
+      {
+        "name": "crewing_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "crewing_theme_default",
+        "command": "node tests/crewing_theme_default_harness.mjs"
+      },
+      {
+        "name": "crewing_csp_inline_handlers",
+        "command": "node tests/csp_inline_handlers_harness.mjs"
+      },
+      {
+        "name": "crewing_mailbox_contract",
+        "command": "node tests/crewing_mailbox_contract_harness.mjs"
+      },
+      {
+        "name": "crewing_escaping_negative",
+        "command": "node tests/crewing_escaping_negative_harness.mjs"
+      },
+      {
+        "name": "crewing_compliance_manual_flow",
+        "command": "node tests/crewing_compliance_manual_flow_harness.mjs"
+      },
+      {
+        "name": "crewing_mail_cv_intake_demo",
+        "command": "node tests/crewing_mail_cv_intake_demo_harness.mjs"
+      },
+      {
+        "name": "crewing_settings5_preview_gated",
+        "command": "node tests/settings5_preview_gated_harness.mjs"
+      },
+      {
+        "name": "crewing_trial_gate_wired",
+        "command": "node tests/trial_gate_wired_harness.mjs"
+      },
+      {
+        "name": "crewing_trial_activate_unconnected",
+        "command": "node tests/trial_activate_unconnected_harness.mjs"
+      },
+      {
+        "name": "crewing_stack_build_metadata",
+        "command": "node tests/stack_build_metadata_harness.mjs"
+      },
+      {
+        "name": "crewing_stack_verification_negative_control",
+        "command": "node tests/stack_verification_negative_control_harness.mjs"
+      },
+      {
+        "name": "crewing_c3b1_pilot",
+        "command": "node tests/crewing_c3b1_pilot_harness.mjs"
+      },
+      {
+        "name": "crewing_c3b2_candidate",
+        "command": "node tests/crewing_c3b2_candidate_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
+      }
     ]
   },
   "additive_task_checks": [
@@ -882,6 +1014,39 @@
       "tests/crewing_crew_flow_demo_harness.mjs",
       "docs/crewing-pilot-c3b2/WORKLOG.md",
       ".github/workflows/skipi-guard.yml"
+    ],
+    "crewing-635-single-user": [
+      "dist/index.html",
+      "src-tauri/Cargo.lock",
+      "src-tauri/Cargo.toml",
+      "src-tauri/src/crewing_intake.rs",
+      "src-tauri/src/db.rs",
+      "src-tauri/src/lib.rs",
+      "src-tauri/src/messaging.rs",
+      "src-tauri/src/native_account.rs",
+      "src-tauri/src/native_binding.rs",
+      "src-tauri/src/native_database.rs",
+      "src-tauri/src/native_database_probe.rs",
+      "src-tauri/src/native_fresh.rs",
+      "src-tauri/src/native_keys.rs",
+      "src-tauri/src/native_lifecycle.rs",
+      "src-tauri/src/native_local_commit.rs",
+      "src-tauri/src/native_local_joint_tests.rs",
+      "src-tauri/src/native_profile.rs",
+      "src-tauri/src/native_session_record.rs",
+      "src-tauri/src/private_json.rs",
+      "src-tauri/src/private_store.rs",
+      "tests/crewing635_public_settings_harness.mjs",
+      "tests/crewing_c3b1_pilot_harness.mjs",
+      "tests/crewing_c3b2_candidate_harness.mjs",
+      "tests/crewing_compliance_manual_flow_harness.mjs",
+      "tests/crewing_crew_flow_demo_harness.mjs",
+      "tests/crewing_mailbox_contract_harness.mjs",
+      "tests/crewing_presence_contract_harness.mjs",
+      "tests/crewing_theme_default_harness.mjs",
+      "tests/fixtures/crewing_public_settings.mjs",
+      "tests/trial_activate_unconnected_harness.mjs",
+      "tests/trial_gate_wired_harness.mjs"
     ]
   }
 }
