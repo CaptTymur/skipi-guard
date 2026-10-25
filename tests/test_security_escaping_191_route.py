@@ -1228,7 +1228,7 @@ class SecurityEscapingRouteContract:
         if self.HOME == "crewing":
             later_tasks = {"crewing-c3b1", "crewing-c3b1-metadata", "crewing-c3b2",
                            "crewing-k2-modules", "crewing-k21-single-screen",
-                           "crewing-664-person"}
+                           "crewing-664-person", "crewing-635-single-user"}
         # The security route stays first; every historical rule stays in order.
         self.assertEqual(config["task_routing"][0]["task"], ROUTE_TASK)
         self.assertEqual(

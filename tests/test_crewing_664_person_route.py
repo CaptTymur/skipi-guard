@@ -185,16 +185,43 @@ EXPECTED_SUBSET_COUNTS = {
 }
 
 
+# №635 arrived after this route, so this previously-last link now subtracts it,
+# exactly as K2.1 was upgraded when this route arrived.
+LATER_TASKS = ('crewing-635-single-user',)
+LATER_BLOCKS = (
+    ('    {\n      "name": "crewing №635 single-user native account and private store (owner1482, 2026-10-21)",\n', '\n    },\n'),
+    (',\n    "crewing-635-single-user": [\n      {\n', '\n    ]'),
+    (',\n    "crewing-635-single-user": [\n      "dist/index.html"', '\n    ]'),
+)
+
+
+def drop_later(config):
+    """The live config with routes that arrived AFTER this one removed.
+
+    The widening proof compares this route against the accepted main bytes, so the
+    comparison object must be the config as it was when this route was last - not
+    the live file, which now also carries later routes.
+    """
+    old = copy.deepcopy(config)
+    old['task_routing'] = [r for r in old['task_routing'] if r['task'] not in LATER_TASKS]
+    for section in ('allowed_file_patterns', 'harness_commands'):
+        for task in LATER_TASKS:
+            old[section].pop(task, None)
+    return old
+
+
 def previous_config(config):
     old = copy.deepcopy(config)
-    old['task_routing'] = [r for r in old['task_routing'] if r['task'] != TASK]
+    drop = (TASK, *LATER_TASKS)
+    old['task_routing'] = [r for r in old['task_routing'] if r['task'] not in drop]
     for section in ('allowed_file_patterns', 'harness_commands'):
-        old[section].pop(TASK, None)
+        for task in drop:
+            old[section].pop(task, None)
     return old
 
 
 def previous_config_text(text):
-    for start, end in BLOCKS:
+    for start, end in LATER_BLOCKS + BLOCKS:
         assert text.count(start) == 1, start
         begin = text.index(start)
         stop = text.index(end, begin + len(start)) + len(end)
@@ -203,7 +230,12 @@ def previous_config_text(text):
 
 
 def pre_widen_text(text):
-    """The accepted main text: the two insertions of this PR removed."""
+    """The accepted main text: later routes removed, then this PR's two insertions."""
+    for start, end in LATER_BLOCKS:
+        assert text.count(start) == 1, start
+        begin = text.index(start)
+        stop = text.index(end, begin + len(start)) + len(end)
+        text = text[:begin] + text[stop:]
     for anchor, insert in WIDEN_INSERTS:
         assert text.count(anchor + insert) == 1, anchor[:48]
         text = text.replace(anchor + insert, anchor)
@@ -218,6 +250,129 @@ def widened(config, extra):
             rule['when_all_files_in'] = [*rule['when_all_files_in'], extra]
     bad['allowed_file_patterns'][TASK] = [*bad['allowed_file_patterns'][TASK], extra]
     return bad
+
+
+# ---------------------------------------------------------------------------
+# marker ownership: a later route may COVER the marker, it may not TAKE it
+# ---------------------------------------------------------------------------
+def is_literal(pattern):
+    """A pattern that names exactly one path: no glob character, no `/**` tail."""
+    return not any(ch in pattern for ch in '*?[') and not pattern.endswith('/**')
+
+
+def covers(patterns, path):
+    return any(MODULE.pattern_matches(path, p) for p in patterns)
+
+
+def overlaps(left, right):
+    """Pairs that match in EITHER direction. pattern_matches is asymmetric
+    (path, pattern), so a glob on either side is caught whichever side it is on."""
+    return [(a, b) for a in left for b in right
+            if MODULE.pattern_matches(a, b) or MODULE.pattern_matches(b, a)]
+
+
+
+def refusals(config, files):
+    """(task, refusal reasons, harness count) verify() would produce without a token."""
+    task = MODULE.resolve_task(config, files)['task']
+    reasons = []
+    if MODULE.classify_paths(files, config['protected_paths'], 'p'):
+        reasons.append('protected')
+    if (MODULE.classify_paths(files, config['release_sensitive_paths'], 'r')
+            and not MODULE.is_release_task(config, task)):
+        reasons.append('release-sensitive')
+    additive = MODULE.additive_task_checks(config, task, files)
+    scope = MODULE.scope_check_for_task(config, task, files,
+                                        MODULE.effective_allowed_patterns(config, task, additive))
+    if scope and scope['scope_violations']:
+        reasons.append('scope')
+    harnesses = [h for t in [task, *(a['task'] for a in additive)]
+                 for h in MODULE.configured_harnesses(config, t)]
+    return task, reasons, len(MODULE.unique_harnesses(harnesses))
+
+
+def _rule_index(config, task):
+    return [i for i, r in enumerate(config['task_routing']) if r['task'] == task][0]
+
+
+def _add_rule(config, task, ceiling, gate, allowed, commands, position=None):
+    rule = {'name': 'mutation ' + task, 'task': task, 'when_all_files_in': ceiling}
+    if gate is not None:
+        rule['require_any_of'] = gate
+    config['task_routing'].insert(len(config['task_routing']) if position is None else position, rule)
+    if allowed is not None:
+        config['allowed_file_patterns'][task] = allowed
+    if commands is not None:
+        config['harness_commands'][task] = commands
+
+
+_PERSON = 'src-tauri/src/person.rs'
+_CONTACT = 'src-tauri/src/contact.rs'
+_PAIR = [MARKER, _PERSON]
+_WIDE = ['src-tauri/**', 'dist/**', 'tests/**', 'docs/**', '.github/**']
+_THIRTEEN = [{'name': n, 'command': c} for n, c in COMMANDS]
+_NOOP = [{'name': 'noop', 'command': 'node -e 0'}]
+
+
+def _m9(config):
+    _add_rule(config, 'crewing-dup', _WIDE, None, None, None, position=_rule_index(config, TASK))
+    _add_rule(config, 'crewing-dup', _PAIR, [_PERSON], _PAIR, _THIRTEEN)
+
+
+def _m10(config):
+    config['harness_commands'][TASK] = list(_NOOP)
+    _add_rule(config, 'crewing-late', _PAIR, [_PERSON], _PAIR, list(_NOOP))
+
+
+def _m12(config):
+    own = config['task_routing'][_rule_index(config, TASK)]
+    own['when_all_files_in'] = [p for p in own['when_all_files_in']
+                                if not p.startswith('src-tauri/src/')] + ['src-tauri/src/**']
+    _add_rule(config, 'crewing-late', _PAIR, [_PERSON], _PAIR, _THIRTEEN)
+
+
+def _later_rule(config):
+    return config['task_routing'][_rule_index(config, LATER_TASKS[0])]
+
+
+# (name, mutation). M-numbers are the supervisor's (audits 2026-10-22); the rest
+# are the same families applied to the live later route itself.
+CAPTURE_MUTATIONS = (
+    ('M1 late rule, disjoint gate, no harnesses',
+     lambda c: _add_rule(c, 'crewing-late', _PAIR, [_PERSON], _PAIR, [])),
+    ('M2 marker only in the default task allowlist',
+     lambda c: c['allowed_file_patterns'][DEFAULT_TASK].append(MARKER)),
+    ('M3 glob gate that semantically matches the marker',
+     lambda c: _add_rule(c, 'crewing-late', _PAIR, ['src-tauri/src/*.rs'], _PAIR, _THIRTEEN)),
+    ('M4 glob ceiling covering the marker without naming it',
+     lambda c: _add_rule(c, 'crewing-late', ['src-tauri/src/**'], [_PERSON], ['src-tauri/src/**'], _THIRTEEN)),
+    ('M6 one no-op harness',
+     lambda c: _add_rule(c, 'crewing-late', _PAIR, [_PERSON], _PAIR, list(_NOOP))),
+    ('M7 thirteen commands, wide glob scope, gate owned by K2.1',
+     lambda c: _add_rule(c, 'crewing-wide', _WIDE, [_CONTACT], _WIDE, _THIRTEEN)),
+    ('M8 the same under a release name',
+     lambda c: _add_rule(c, 'crewing-635-release', _WIDE, [_CONTACT], _WIDE, _THIRTEEN)),
+    ('M9 two rules under one task name, the early one without a gate', _m9),
+    ('M10 etalon shifted to one command', _m10),
+    ('M11 thirteen names, gutted commands',
+     lambda c: _add_rule(c, 'crewing-late', _PAIR, [_PERSON], _PAIR,
+                         [{'name': n, 'command': 'node -e 0'} for n, _ in COMMANDS])),
+    ('M12 glob in this route\'s own ceiling, literal gate inside it', _m12),
+    ('later route: allowlist wider than its ceiling',
+     lambda c: c['allowed_file_patterns'][LATER_TASKS[0]].append(_CONTACT)),
+    ('later route: gate names a path K2.1 owns',
+     lambda c: _later_rule(c)['require_any_of'].append(_CONTACT)),
+    ('later route: listed in release_tasks',
+     lambda c: c['release_tasks'].append(LATER_TASKS[0])),
+    ('later route: one of the thirteen commands dropped',
+     lambda c: c['harness_commands'].__setitem__(
+         LATER_TASKS[0], [e for e in c['harness_commands'][LATER_TASKS[0]]
+                          if e['command'] != COMMANDS[-1][1]])),
+    ('later route: moved before this route',
+     lambda c: c['task_routing'].insert(_rule_index(c, TASK),
+                                        c['task_routing'].pop(_rule_index(c, LATER_TASKS[0])))),
+)
+
 
 
 class Crewing664PersonRouteTests(unittest.TestCase):
@@ -267,6 +422,82 @@ class Crewing664PersonRouteTests(unittest.TestCase):
             return TASK
         return before
 
+
+    def assert_nothing_is_taken_from_this_route(self, config):
+        """Every rule and every allowlist of this home that covers MARKER, other
+        than this route's own, converts guaranteed failures only and checks at
+        least as much as this route does.
+
+        Selection is by `pattern_matches` on both surfaces (a glob ceiling covers
+        the marker without containing the string), and by RULE POSITION, never by
+        a dict keyed on task name (a duplicate name would hide the winning rule).
+        The etalon of thirteen commands is the literal COMMANDS of this file, and
+        commands are compared by their bytes, because this home gives one command
+        two names (settings5/trial_* carry a crewing_ alias).
+
+        Five assertions per covering rule R of task T:
+          1. position - R comes after this route, so first-match-wins leaves every
+             diff this route matched where it was;
+          2. gate - R has a non-empty, literal `require_any_of`, disjoint from this
+             ceiling in both match directions, and absent from every other rule and
+             allowlist of the home: every diff R claims carries a path no task could
+             accept before, i.e. it used to fail;
+          3. checks - T's harness commands include all thirteen of this route;
+          4. scope - T's allowlist and R's ceiling are literal, finite and equal,
+             so the width of T is exactly its declared list;
+          5. release - T is not a release task, by name or by list, so listing a
+             release-sensitive path in T refuses it exactly as before.
+        """
+        routing = config['task_routing']
+        own = [i for i, r in enumerate(routing) if r['task'] == TASK]
+        self.assertEqual(len(own), 1, own)
+        own_rule = routing[own[0]]
+        own_ceiling = own_rule['when_all_files_in']
+        for pattern in own_ceiling:
+            self.assertTrue(is_literal(pattern), ('own ceiling is literal', pattern))
+        covering_rules = [(i, r) for i, r in enumerate(routing)
+                          if r['task'] != TASK and covers(r.get('when_all_files_in', []), MARKER)]
+        covering_tasks = sorted({t for t, patterns in config['allowed_file_patterns'].items()
+                                 if t != TASK and covers(patterns, MARKER)}
+                                | {r['task'] for _, r in covering_rules})
+        etalon = {command for _, command in COMMANDS}
+        for task in covering_tasks:
+            rules = [(i, r) for i, r in enumerate(routing) if r['task'] == task]
+            self.assertTrue(rules, (task, 'covers the marker in an allowlist but has no routing rule'))
+            self.assertNotEqual(task, config['default_task'], (task, 'the default task covers the marker'))
+            # 5. release
+            self.assertFalse(MODULE.is_release_task(config, task), (task, 'is a release task'))
+            self.assertNotIn(task, config.get('release_tasks', []))
+            self.assertNotIn(task, config.get('exact_task_file_sets', {}))
+            # 3. checks, by command bytes against the literal etalon
+            commands = {c['command'] for c in config.get('harness_commands', {}).get(task, [])}
+            self.assertEqual(sorted(etalon - commands), [], (task, 'misses commands of this route'))
+            # 4. scope
+            allowed = config['allowed_file_patterns'].get(task, [])
+            self.assertTrue(allowed, (task, 'has no allowlist'))
+            for pattern in allowed:
+                self.assertTrue(is_literal(pattern), (task, 'allowlist is not literal', pattern))
+            foreign_rules = [p for r in routing if r['task'] != task for p in r.get('when_all_files_in', [])]
+            foreign_allow = [p for t, ps in config['allowed_file_patterns'].items() if t != task for p in ps]
+            for index, rule in rules:
+                # 1. position
+                self.assertGreater(index, own[0], (task, 'rule precedes this route', index))
+                ceiling = rule.get('when_all_files_in', [])
+                for pattern in ceiling:
+                    self.assertTrue(is_literal(pattern), (task, 'ceiling is not literal', pattern))
+                self.assertEqual(sorted(set(ceiling)), sorted(set(allowed)), (task, 'allowlist != ceiling'))
+                # 2. gate
+                gate = rule.get('require_any_of', [])
+                self.assertTrue(gate, (task, 'covers the marker with no require_any_of'))
+                for pattern in gate:
+                    self.assertTrue(is_literal(pattern), (task, 'gate is not literal', pattern))
+                self.assertEqual(overlaps(gate, FILES), [], (task, 'gate overlaps this ceiling'))
+                self.assertEqual(overlaps(gate, own_ceiling), [], (task, 'gate overlaps the live ceiling'))
+                self.assertEqual(overlaps(gate, foreign_rules + foreign_allow), [],
+                                 (task, 'gate is owned elsewhere in the home'))
+                self.assertTrue(set(gate) <= set(ceiling), (task, 'gate outside its own ceiling'))
+        return covering_tasks
+
     # ------------------------------------------------------------------
     # declared ceiling: eight paths, thirteen commands, position after K2.1
     # ------------------------------------------------------------------
@@ -274,16 +505,11 @@ class Crewing664PersonRouteTests(unittest.TestCase):
         config = self.config()
         self.assert_declared_ceiling(config)
         self.assertFalse(MODULE.is_release_task(config, TASK))
-        self.assertEqual([r['task'] for r in config['task_routing'][:8]],
-                         [*EARLIER_TASKS, TASK, 'repo-meta'])
-        # The marker belongs to this rule alone: no other rule in the home
-        # declares db.rs, which is why nothing is taken from an earlier route.
-        other_rules = [r for r in config['task_routing'] if r['task'] != TASK]
-        for rule in other_rules:
-            self.assertNotIn(MARKER, rule.get('when_all_files_in', []), rule['task'])
-        for task, patterns in config['allowed_file_patterns'].items():
-            if task != TASK:
-                self.assertNotIn(MARKER, patterns, task)
+        self.assertEqual([r['task'] for r in config['task_routing'][:9]],
+                         [*EARLIER_TASKS, TASK, *LATER_TASKS, 'repo-meta'])
+        # Nothing is taken from this route by any later rule that also covers
+        # the marker: five assertions, each with its own mutation negative below.
+        self.assert_nothing_is_taken_from_this_route(config)
         # presence-manifest.json stays protected and outside the ceiling.
         protected = [p for rule in config['protected_paths'] for p in rule['patterns']]
         self.assertTrue(any(MODULE.pattern_matches('presence-manifest.json', p) for p in protected))
@@ -361,10 +587,11 @@ class Crewing664PersonRouteTests(unittest.TestCase):
                     'default_task', 'exact_task_file_sets', 'additive_task_checks',
                     'harness_commands'):
             with self.subTest(key=key):
-                self.assertEqual(config[key], pre[key])
-        self.assertEqual([r for r in config['task_routing'] if r['task'] != TASK],
+                self.assertEqual(drop_later(config)[key], pre[key])
+        self.assertEqual([r for r in drop_later(config)['task_routing'] if r['task'] != TASK],
                          [r for r in pre['task_routing'] if r['task'] != TASK])
-        self.assertEqual({t: v for t, v in config['allowed_file_patterns'].items() if t != TASK},
+        self.assertEqual({t: v for t, v in drop_later(config)['allowed_file_patterns'].items()
+                          if t != TASK},
                          {t: v for t, v in pre['allowed_file_patterns'].items() if t != TASK})
         for include_workflow in (False, True):
             self.assertEqual(MODULE.presence_override_allowed_patterns(config, include_workflow=include_workflow),
@@ -482,6 +709,68 @@ class Crewing664PersonRouteTests(unittest.TestCase):
                 self.assertNotEqual(MODULE.resolve_task(config, [MARKER, extra])['task'], TASK)
                 self.assertIn(extra, MODULE.scope_check_for_task(config, TASK, FILES + [extra])['scope_violations'])
                 self.assertNotIn(extra, config['allowed_file_patterns'][TASK])
+
+
+    # ------------------------------------------------------------------
+    # negatives that must redden: sixteen ways a later route could take the marker
+    # ------------------------------------------------------------------
+    def test_the_live_config_exercises_the_ownership_predicate(self):
+        """Positive control: the predicate selects exactly the №635 route on the live
+        config, so every assertion in it runs on main and is not an assert(true)."""
+        config = self.config()
+        self.assertEqual(self.assert_nothing_is_taken_from_this_route(config), list(LATER_TASKS))
+        # And on the config without later routes it selects nothing: the marker
+        # was this route's alone, which is what the two old string checks said.
+        self.assertEqual(self.assert_nothing_is_taken_from_this_route(drop_later(config)), [])
+
+    def test_marker_capture_mutations_are_caught(self):
+        """Each mutation passed the supervisor's three cures (audits of 2026-10-22,
+        M1-M12) or the previous pair of string checks; each must redden here. The
+        mutations are built on the live config, so a mutation the predicate stops
+        catching is a red test, not a silent gap."""
+        config = self.config()
+        for name, mutate in CAPTURE_MUTATIONS:
+            with self.subTest(mutation=name):
+                bad = copy.deepcopy(config)
+                mutate(bad)
+                with self.assertRaises(AssertionError):
+                    self.assert_nothing_is_taken_from_this_route(bad)
+
+    def test_additive_checks_cannot_widen_a_non_release_covering_task(self):
+        """Mechanism left unmeasured by (1571): additive_task_checks widen
+        `effective_allowed_patterns` only for release tasks, and assertion 5 pins
+        every covering task non-release. Measured: an additive rule aimed at the
+        covering task changes no refusal and only adds harnesses."""
+        config = self.config()
+        bad = copy.deepcopy(config)
+        bad['additive_task_checks'].append({'name': 'probe', 'task': DEFAULT_TASK,
+                                            'when_tasks': list(LATER_TASKS), 'patterns': ['dist/**']})
+        self.assert_nothing_is_taken_from_this_route(bad)
+        later = [r for r in config['task_routing'] if r['task'] in LATER_TASKS]
+        for files in ([MARKER], [MARKER, 'src-tauri/src/contact.rs'], [MARKER, 'src-tauri/Cargo.toml'],
+                      *[r['when_all_files_in'] for r in later]):
+            with self.subTest(files=files):
+                before, after = refusals(config, files), refusals(bad, files)
+                self.assertEqual(before[:2], after[:2])
+                self.assertGreaterEqual(after[2], before[2])
+
+    def test_a_presence_pattern_in_a_later_route_is_caught_by_the_override_oracle(self):
+        """Mechanism left unmeasured by (1571): presence_override_allowed_patterns
+        collects every allowlist pattern containing `presence`. A later route adding
+        one widens the presence override token; the override-surface oracle of this
+        file reddens on it (config against previous_config)."""
+        config = self.config()
+        bad = copy.deepcopy(config)
+        for rule in bad['task_routing']:
+            if rule['task'] in LATER_TASKS:
+                rule['when_all_files_in'].append('tests/presence_probe.mjs')
+        for task in LATER_TASKS:
+            bad['allowed_file_patterns'][task].append('tests/presence_probe.mjs')
+        self.assertNotEqual(MODULE.presence_override_allowed_patterns(bad, include_workflow=True),
+                            MODULE.presence_override_allowed_patterns(previous_config(bad), include_workflow=True))
+        # and the live later routes add nothing to that surface
+        self.assertEqual(MODULE.presence_override_allowed_patterns(config, include_workflow=True),
+                         MODULE.presence_override_allowed_patterns(previous_config(config), include_workflow=True))
 
     # ------------------------------------------------------------------
     # negatives that must redden: widening the route, dropping a neighbour pin
