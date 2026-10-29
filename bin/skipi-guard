@@ -274,6 +274,70 @@ def exact_file_set_check(config: dict[str, Any], task: str, files: list[str]) ->
     }
 
 
+def version_pinning_harnesses(config: dict[str, Any], exact_task: str) -> dict[str, str]:
+    """Harness commands of `exact_task` whose script is itself a member of its own file set.
+
+    An `exact_task_file_sets` entry declares files that may only move together. A
+    harness script listed INSIDE that set is therefore the one that pins the other
+    members -- it is bumped in the same diff it validates. Derived from the coupling
+    the config declares, not from any task or harness name.
+    """
+    members = [str(m) for m in config.get("exact_task_file_sets", {}).get(exact_task, [])]
+    pins: dict[str, str] = {}
+    for harness in unique_harnesses(configured_harnesses(config, exact_task)):
+        command = str(harness.get("command", ""))
+        try:
+            tokens = shlex.split(command)
+        except ValueError:
+            tokens = command.split()
+        script = next((t for t in tokens if t.endswith((".mjs", ".js", ".py", ".sh"))), None)
+        if script and any(pattern_matches(script, member) for member in members):
+            pins[command] = str(harness.get("name", "unnamed"))
+    return pins
+
+
+def unpinned_version_moves(
+    config: dict[str, Any],
+    changed_files: list[str],
+    resolved_harnesses: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Version-bearing members of an exact set moving without that set's pinning harness.
+
+    The exact door carries its pinning harness by construction, so a diff that goes
+    through it is validated. Every other door that may carry the same version-bearing
+    files -- a non-exact release task inherits them through `release_sensitive_paths`
+    without listing them -- would otherwise move the version while the harness that
+    pins it never runs, and the pin silently falls behind (SKI 2026-10-15/19).
+    """
+    release_rules = config.get("release_sensitive_paths", [])
+    resolved = {str(h.get("command", "")) for h in resolved_harnesses}
+    findings: list[dict[str, Any]] = []
+    for exact_task in sorted(config.get("exact_task_file_sets", {})):
+        pins = version_pinning_harnesses(config, exact_task)
+        if not pins:
+            continue
+        members = [str(m) for m in config.get("exact_task_file_sets", {}).get(exact_task, [])]
+        version_members = [
+            member for member in members if classify_paths([member], release_rules, "r")
+        ]
+        moved = [
+            file_path
+            for file_path in changed_files
+            if any(pattern_matches(file_path, member) for member in version_members)
+        ]
+        missing = sorted(pin for pin in pins if pin not in resolved)
+        if moved and missing:
+            findings.append(
+                {
+                    "exact_task": exact_task,
+                    "moved_version_paths": moved,
+                    "missing_harnesses": missing,
+                    "pin_names": {command: pins[command] for command in missing},
+                }
+            )
+    return findings
+
+
 def effective_allowed_patterns(
     config: dict[str, Any],
     task: str,
@@ -539,6 +603,15 @@ def verify(args: argparse.Namespace) -> int:
         harnesses.extend(configured_harnesses(config, effective_task))
     if is_release_task(config, task) and not unique_harnesses(harnesses):
         errors.append(f"release task '{task}' requires harness_commands")
+    # A version-bearing diff must be CHECKED by the harness that pins the version,
+    # whichever door it came through. The remedy is to run that harness, not to
+    # refuse the diff: the four-file "canonical version-bump routing" rule is a
+    # deliberate route in five homes, so its classification is left untouched and
+    # the stale pin is what fails the push.
+    unpinned = unpinned_version_moves(config, changed_files, unique_harnesses(harnesses))
+    for finding in unpinned:
+        for command in finding["missing_harnesses"]:
+            harnesses.append({"name": finding["pin_names"][command], "command": command})
     tests, test_errors = run_harness_commands(repo, unique_harnesses(harnesses), args.run_harness)
     errors.extend(test_errors)
 
@@ -557,6 +630,7 @@ def verify(args: argparse.Namespace) -> int:
         "protected_paths_touched": protected_paths_touched,
         "release_paths_touched": release_touches,
         "release_changes": release_changes,
+        "unpinned_version_moves": unpinned,
         "allowed_file_patterns": allowed_patterns,
         "exact_file_set_missing": exact_file_set_missing,
         "exact_file_set_unexpected": exact_file_set_unexpected,
