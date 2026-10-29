@@ -22,12 +22,21 @@ route inherits it by the cumulative-superset rule that
 sound and is NOT flagged here. What is flagged is a harness enrolled in a route
 that cannot deliver it.
 
-Measured on main d8f57ccf (configs/homes/crewing.json blob 2e6b605c), 2026-10-29,
-over all eight home configs with the real `configured_harnesses` resolution:
-4 undeliverable (below), 12 sound forward references, 8 commands with no script
-token. `KNOWN_DEBT` may only SHRINK -- `test_known_debt_has_no_stale_entry`
-fails if an entry is delivered and left behind, so the list cannot rot into a
-blanket waiver.
+Presence is resolved against each home's DEFAULT REF (`origin/HEAD`, else main,
+else master) with `git cat-file -e`, never against the working tree: a home
+checkout sits on whatever branch its last task left it on. Measured 2026-10-29,
+4 of the 8 checkouts were NOT on their default branch (broker on
+feat/map-msi-layer-revendor, seafarer on a fix branch, landing and server on
+master while `main` does not resolve), and reading their trees reports files as
+missing that are present on main. Absolute script paths stay a filesystem check
+-- they point outside the home.
+
+Measured on guard main d8f57ccf (configs/homes/crewing.json blob 2e6b605c),
+2026-10-29, over all eight home configs with the real `configured_harnesses`
+resolution: 1 undeliverable (below), 2 sound forward references, 8 commands with
+no script token. `KNOWN_DEBT` may only SHRINK --
+`test_known_debt_has_no_stale_entry` fails if an entry is delivered and left
+behind, so the list cannot rot into a blanket waiver.
 
 CI checks out only skipi-guard, so the two fleet-state tests skip where a home
 checkout is absent. The detector itself is exercised unconditionally against
@@ -40,6 +49,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import shlex
+import subprocess
 import tempfile
 import unittest
 from importlib.machinery import SourceFileLoader
@@ -62,18 +72,12 @@ SCRIPT_SUFFIXES = (".mjs", ".js", ".py", ".sh")
 # undelivered, and the route's allowlist does not let that route create it.
 KNOWN_DEBT = frozenset(
     {
-        # skipi-broker: three harnesses inherited into the escaping route whose
-        # own delivery routes are `stack-metadata` / `broker-map-demo-422`.
-        ("broker", "security-escaping-191", "broker_map_msi_module_pin",
-         "tests/map_msi_module_pin_harness.mjs"),
-        ("broker", "security-escaping-191", "broker_stack_build_metadata",
-         "tests/stack_build_metadata_harness.mjs"),
-        ("broker", "security-escaping-191", "broker_stack_verification_negative_control",
-         "tests/stack_verification_negative_control_harness.mjs"),
         # skipi-crewing: BACKLOG No179 negatives harness, owner-authorized
-        # 2026-09-04 and never written; route 635 inherits it (cumulative
-        # superset) but its allowlist cannot deliver it. Discharged by the home
-        # authoring the file on `security-escaping-191`, not by dropping it.
+        # 2026-09-04 (66f063a) and never written -- absent from every crewing
+        # ref. Route 635 inherits it by the cumulative-superset rule, but 635's
+        # allowlist cannot deliver it, so 635 is fail-closed for any content.
+        # Discharged by the home authoring the file on `security-escaping-191`,
+        # whose allowlist permits exactly that, not by dropping the command.
         ("crewing", "crewing-635-single-user", "crewing_escaping_negative",
          "tests/crewing_escaping_negative_harness.mjs"),
     }
@@ -92,8 +96,44 @@ def script_of(command: str) -> str | None:
     return next((t for t in tokens if t.endswith(SCRIPT_SUFFIXES)), None)
 
 
-def undeliverable_harnesses(config: dict[str, Any], repo: Path) -> set[tuple[str, str, str, str]]:
-    """Harness commands whose script neither exists nor can be added on that route."""
+def default_ref(repo: Path) -> str | None:
+    """The home's default branch: origin/HEAD, else main, else master."""
+    head = subprocess.run(
+        ["git", "-C", str(repo), "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD"],
+        capture_output=True, text=True,
+    )
+    if head.returncode == 0 and head.stdout.strip():
+        return head.stdout.strip().split("refs/remotes/", 1)[-1]
+    for candidate in ("main", "master"):
+        probe = subprocess.run(
+            ["git", "-C", str(repo), "rev-parse", "--verify", "--quiet", candidate],
+            capture_output=True, text=True,
+        )
+        if probe.returncode == 0:
+            return candidate
+    return None
+
+
+def tracked_in_ref(repo: Path, ref: str, path: str) -> bool:
+    """Is `path` in the tree of `ref`? Never consults the working tree."""
+    return subprocess.run(
+        ["git", "-C", str(repo), "cat-file", "-e", f"{ref}:{path}"],
+        capture_output=True, text=True,
+    ).returncode == 0
+
+
+def undeliverable_harnesses(
+    config: dict[str, Any], repo: Path, ref: str | None = None
+) -> set[tuple[str, str, str, str]]:
+    """Harness commands whose script neither exists nor can be added on that route.
+
+    Repo-relative scripts are resolved in `ref`'s tree (the home's default branch
+    when not given), because a checkout's working tree reflects whatever branch
+    the last task left behind. Absolute paths point outside the home and stay a
+    filesystem check.
+    """
+    if ref is None:
+        ref = default_ref(repo)
     home = str(config.get("home", ""))
     allowed = {
         str(task): set(str(p) for p in patterns)
@@ -108,8 +148,10 @@ def undeliverable_harnesses(config: dict[str, Any], repo: Path) -> set[tuple[str
             if script is None:
                 continue
             path = Path(script)
-            target = path if path.is_absolute() else repo / path
-            if target.exists():
+            if path.is_absolute():
+                if path.exists():
+                    continue
+            elif ref is not None and tracked_in_ref(repo, ref, script):
                 continue
             if not path.is_absolute() and script in allowed.get(task, set()):
                 continue  # sound forward reference: this route may deliver it
@@ -126,12 +168,19 @@ def home_configs() -> list[tuple[Path, dict[str, Any]]]:
 
 
 def fixture_home(tmp: Path, scripts: tuple[str, ...] = ()) -> Path:
-    """A minimal home checkout: a .git marker plus the named scripts."""
-    (tmp / ".git").mkdir(parents=True, exist_ok=True)
+    """A minimal home checkout: a real git repo whose default branch holds `scripts`."""
+    run = lambda *a: subprocess.run(
+        ["git", "-C", str(tmp), *a], capture_output=True, text=True, check=True
+    )
+    run("init", "-q", "-b", "main", ".")
+    run("config", "user.email", "fixture@local")
+    run("config", "user.name", "fixture")
     for script in scripts:
         target = tmp / script
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text("// fixture\n", encoding="utf-8")
+    run("add", "-A")
+    run("commit", "-q", "--allow-empty", "-m", "fixture")
     return tmp
 
 
@@ -199,6 +248,31 @@ class HarnessCommandTargets(unittest.TestCase):
                 "a harness inherited into a release task must be resolved like the hook does",
             )
 
+    def test_presence_follows_the_ref_not_the_working_tree(self):
+        """Regression: the first cut of this check read the working tree.
+
+        A home checkout sits on whatever branch its last task left it on, so a
+        script committed on the default branch but absent from the current
+        worktree is present, and a script sitting only in the worktree is not.
+        Measured 2026-10-29, 4 of 8 home checkouts were off their default
+        branch, which mis-reported broker and seafarer harnesses as missing.
+        """
+        with tempfile.TemporaryDirectory() as raw:
+            repo = fixture_home(Path(raw), ("tests/committed_harness.mjs",))
+            config = fixture_config("node tests/committed_harness.mjs", [])
+
+            # committed on main, then removed from the worktree -> still present
+            (repo / "tests/committed_harness.mjs").unlink()
+            self.assertEqual(undeliverable_harnesses(config, repo), set())
+
+            # present ONLY in the worktree, never committed -> not deliverable
+            stray = repo / "tests/stray_harness.mjs"
+            stray.write_text("// fixture\n", encoding="utf-8")
+            self.assertEqual(
+                undeliverable_harnesses(fixture_config("node tests/stray_harness.mjs", []), repo),
+                {("fixture", "a-route", "probe", "tests/stray_harness.mjs")},
+            )
+
     def test_absolute_script_paths_are_resolved_as_written(self):
         with tempfile.TemporaryDirectory() as raw:
             repo = fixture_home(Path(raw))
@@ -225,7 +299,11 @@ class FleetHarnessTargets(unittest.TestCase):
             if not (repo / ".git").exists():
                 skipped.append(f"{path.stem} ({repo})")
                 continue
-            found |= undeliverable_harnesses(config, repo)
+            ref = default_ref(repo)
+            if ref is None:
+                skipped.append(f"{path.stem} (no default ref)")
+                continue
+            found |= undeliverable_harnesses(config, repo, ref)
         return found, skipped
 
     def test_no_route_gains_an_undeliverable_harness_command(self):
