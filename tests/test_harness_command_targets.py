@@ -31,10 +31,17 @@ master while `main` does not resolve), and reading their trees reports files as
 missing that are present on main. Absolute script paths stay a filesystem check
 -- they point outside the home.
 
-Measured on guard main d8f57ccf (configs/homes/crewing.json blob 2e6b605c),
-2026-10-29, over all eight home configs with the real `configured_harnesses`
-resolution: 1 undeliverable (below), 2 sound forward references, 8 commands with
-no script token. `KNOWN_DEBT` may only SHRINK --
+A script is also counted as present when it sits on ANY pushed ref of the home,
+not only on the default ref: that is direct evidence a push can provide it, and a
+checkout's refs lag routinely. Only a script on NO ref is a violation -- the
+shape the original finding had.
+
+Measured 2026-10-30 over all eight home configs with the real
+`configured_harnesses` resolution: **0 undeliverable**, so `KNOWN_DEBT` is empty.
+Its one entry (`crewing/crewing-635-single-user` -> `crewing_escaping_negative`)
+was discharged by the crewing home authoring the harness, merged to crewing main
+`64b016a0` (PR skipi-crewing #77, 2026-10-30T06:04:03Z) -- the fix this file
+predicted, in the home rather than in the guard. `KNOWN_DEBT` may only SHRINK --
 `test_known_debt_has_no_stale_entry` fails if an entry is delivered and left
 behind, so the list cannot rot into a blanket waiver.
 
@@ -70,18 +77,7 @@ SCRIPT_SUFFIXES = (".mjs", ".js", ".py", ".sh")
 # Each entry is a blocked route, not a tolerated one. Origin of both groups is
 # the same: a harness was enrolled into a route's suite while the file was still
 # undelivered, and the route's allowlist does not let that route create it.
-KNOWN_DEBT = frozenset(
-    {
-        # skipi-crewing: BACKLOG No179 negatives harness, owner-authorized
-        # 2026-09-04 (66f063a) and never written -- absent from every crewing
-        # ref. Route 635 inherits it by the cumulative-superset rule, but 635's
-        # allowlist cannot deliver it, so 635 is fail-closed for any content.
-        # Discharged by the home authoring the file on `security-escaping-191`,
-        # whose allowlist permits exactly that, not by dropping the command.
-        ("crewing", "crewing-635-single-user", "crewing_escaping_negative",
-         "tests/crewing_escaping_negative_harness.mjs"),
-    }
-)
+KNOWN_DEBT: frozenset[tuple[str, str, str, str]] = frozenset()
 
 # Commands that run a suite runner rather than a file; nothing to resolve.
 NO_SCRIPT_TOKEN = frozenset({"npm test", "pytest"})
@@ -104,7 +100,7 @@ def default_ref(repo: Path) -> str | None:
     )
     if head.returncode == 0 and head.stdout.strip():
         return head.stdout.strip().split("refs/remotes/", 1)[-1]
-    for candidate in ("main", "master"):
+    for candidate in ("origin/main", "origin/master", "main", "master"):
         probe = subprocess.run(
             ["git", "-C", str(repo), "rev-parse", "--verify", "--quiet", candidate],
             capture_output=True, text=True,
@@ -120,6 +116,30 @@ def tracked_in_ref(repo: Path, ref: str, path: str) -> bool:
         ["git", "-C", str(repo), "cat-file", "-e", f"{ref}:{path}"],
         capture_output=True, text=True,
     ).returncode == 0
+
+
+def pushed_refs(repo: Path) -> list[str]:
+    proc = subprocess.run(
+        ["git", "-C", str(repo), "for-each-ref", "--format=%(refname)", "refs/remotes/"],
+        capture_output=True, text=True,
+    )
+    return [line for line in proc.stdout.splitlines() if line.strip()]
+
+
+def delivered_anywhere(repo: Path, path: str) -> bool:
+    """Does `path` exist on ANY pushed ref of the home?
+
+    The property this file pins is "no push on that route can provide this script".
+    A script sitting on a pushed ref is direct evidence that a push CAN provide it,
+    so it is not a violation even when our default-branch ref has not caught up --
+    and a checkout's refs lag routinely (crewing's `main` was two merges behind
+    while the harness was already on the remote's main). Resolving only the default
+    ref makes the gate's own suite red on a stale checkout, which is a worse
+    failure than the one it reports. A genuinely undelivered harness is absent from
+    EVERY ref and is still caught: pinned by
+    test_a_script_on_no_ref_at_all_is_still_a_violation.
+    """
+    return any(tracked_in_ref(repo, ref, path) for ref in pushed_refs(repo))
 
 
 def undeliverable_harnesses(
@@ -151,7 +171,9 @@ def undeliverable_harnesses(
             if path.is_absolute():
                 if path.exists():
                     continue
-            elif ref is not None and tracked_in_ref(repo, ref, script):
+            elif ref is not None and (
+                tracked_in_ref(repo, ref, script) or delivered_anywhere(repo, script)
+            ):
                 continue
             if not path.is_absolute() and script in allowed.get(task, set()):
                 continue  # sound forward reference: this route may deliver it
@@ -271,6 +293,54 @@ class HarnessCommandTargets(unittest.TestCase):
             self.assertEqual(
                 undeliverable_harnesses(fixture_config("node tests/stray_harness.mjs", []), repo),
                 {("fixture", "a-route", "probe", "tests/stray_harness.mjs")},
+            )
+
+    def test_a_script_on_no_ref_at_all_is_still_a_violation(self):
+        """The loosening must not swallow the original defect.
+
+        `crewing_escaping_negative` was absent from EVERY crewing ref when it was
+        found (2026-10-29: `git log --all --diff-filter=A` empty). That shape must
+        stay a violation even though a script on a pushed ref no longer is.
+        """
+        with tempfile.TemporaryDirectory() as raw:
+            repo = fixture_home(Path(raw))
+            self.assertEqual([], pushed_refs(repo), "fixture has no pushed refs")
+            self.assertFalse(delivered_anywhere(repo, "tests/ghost_harness.mjs"))
+            self.assertEqual(
+                undeliverable_harnesses(
+                    fixture_config("node tests/ghost_harness.mjs", []), repo
+                ),
+                {("fixture", "a-route", "probe", "tests/ghost_harness.mjs")},
+            )
+
+    def test_a_script_on_a_pushed_ref_is_delivered_even_if_the_default_ref_lags(self):
+        """Positive control for the rule above, in the same window."""
+        run = lambda repo, *a: subprocess.run(
+            ["git", "-C", str(repo), *a], capture_output=True, text=True, check=True
+        )
+        with tempfile.TemporaryDirectory() as raw:
+            repo = fixture_home(Path(raw))
+            # a side branch carrying the script, published as a remote-tracking ref,
+            # while the default ref never sees it
+            run(repo, "checkout", "-q", "-b", "side")
+            (repo / "tests").mkdir(parents=True, exist_ok=True)
+            (repo / "tests/late_harness.mjs").write_text("// late\n", encoding="utf-8")
+            run(repo, "add", "-A")
+            run(repo, "commit", "-q", "-m", "late harness")
+            side = run(repo, "rev-parse", "HEAD").stdout.strip()
+            run(repo, "update-ref", "refs/remotes/origin/side", side)
+            run(repo, "checkout", "-q", "main")
+
+            self.assertFalse(
+                tracked_in_ref(repo, "main", "tests/late_harness.mjs"),
+                "the default ref must NOT carry it, or the test proves nothing",
+            )
+            self.assertTrue(delivered_anywhere(repo, "tests/late_harness.mjs"))
+            self.assertEqual(
+                set(),
+                undeliverable_harnesses(
+                    fixture_config("node tests/late_harness.mjs", []), repo
+                ),
             )
 
     def test_absolute_script_paths_are_resolved_as_written(self):
