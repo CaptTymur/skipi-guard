@@ -31,10 +31,12 @@ master while `main` does not resolve), and reading their trees reports files as
 missing that are present on main. Absolute script paths stay a filesystem check
 -- they point outside the home.
 
-A script is also counted as present when it sits on ANY pushed ref of the home,
-not only on the default ref: that is direct evidence a push can provide it, and a
-checkout's refs lag routinely. Only a script on NO ref is a violation -- the
-shape the original finding had.
+Presence is resolved on the default ref ALONE -- a script on some other branch is
+not delivered (manager's decision 2026-10-30: a lagging local checkout is machine
+hygiene, not a property of the home, and is cured by `git fetch` in that
+checkout). So the two fleet tests below require the home checkouts to be FETCHED;
+on a stale checkout they report a harness as missing that the remote's default
+branch already carries.
 
 Measured 2026-10-30 over all eight home configs with the real
 `configured_harnesses` resolution: **0 undeliverable**, so `KNOWN_DEBT` is empty.
@@ -118,30 +120,6 @@ def tracked_in_ref(repo: Path, ref: str, path: str) -> bool:
     ).returncode == 0
 
 
-def pushed_refs(repo: Path) -> list[str]:
-    proc = subprocess.run(
-        ["git", "-C", str(repo), "for-each-ref", "--format=%(refname)", "refs/remotes/"],
-        capture_output=True, text=True,
-    )
-    return [line for line in proc.stdout.splitlines() if line.strip()]
-
-
-def delivered_anywhere(repo: Path, path: str) -> bool:
-    """Does `path` exist on ANY pushed ref of the home?
-
-    The property this file pins is "no push on that route can provide this script".
-    A script sitting on a pushed ref is direct evidence that a push CAN provide it,
-    so it is not a violation even when our default-branch ref has not caught up --
-    and a checkout's refs lag routinely (crewing's `main` was two merges behind
-    while the harness was already on the remote's main). Resolving only the default
-    ref makes the gate's own suite red on a stale checkout, which is a worse
-    failure than the one it reports. A genuinely undelivered harness is absent from
-    EVERY ref and is still caught: pinned by
-    test_a_script_on_no_ref_at_all_is_still_a_violation.
-    """
-    return any(tracked_in_ref(repo, ref, path) for ref in pushed_refs(repo))
-
-
 def undeliverable_harnesses(
     config: dict[str, Any], repo: Path, ref: str | None = None
 ) -> set[tuple[str, str, str, str]]:
@@ -171,9 +149,7 @@ def undeliverable_harnesses(
             if path.is_absolute():
                 if path.exists():
                     continue
-            elif ref is not None and (
-                tracked_in_ref(repo, ref, script) or delivered_anywhere(repo, script)
-            ):
+            elif ref is not None and tracked_in_ref(repo, ref, script):
                 continue
             if not path.is_absolute() and script in allowed.get(task, set()):
                 continue  # sound forward reference: this route may deliver it
@@ -296,51 +272,31 @@ class HarnessCommandTargets(unittest.TestCase):
             )
 
     def test_a_script_on_no_ref_at_all_is_still_a_violation(self):
-        """The loosening must not swallow the original defect.
+        """The shape the original finding had, documented so it stays caught.
 
         `crewing_escaping_negative` was absent from EVERY crewing ref when it was
-        found (2026-10-29: `git log --all --diff-filter=A` empty). That shape must
-        stay a violation even though a script on a pushed ref no longer is.
+        found (2026-10-29: `git log --all --diff-filter=A` empty, no path matching
+        `escap` ever added). The assertion below first establishes that no ref of
+        the fixture carries the script, so the case is the real one and not merely
+        "missing from the default branch".
         """
         with tempfile.TemporaryDirectory() as raw:
             repo = fixture_home(Path(raw))
-            self.assertEqual([], pushed_refs(repo), "fixture has no pushed refs")
-            self.assertFalse(delivered_anywhere(repo, "tests/ghost_harness.mjs"))
+            refs = subprocess.run(
+                ["git", "-C", str(repo), "for-each-ref", "--format=%(refname)"],
+                capture_output=True, text=True,
+            ).stdout.split()
+            self.assertTrue(refs, "the fixture must have at least one ref")
+            for ref in refs:
+                self.assertFalse(
+                    tracked_in_ref(repo, ref, "tests/ghost_harness.mjs"),
+                    f"{ref} unexpectedly carries the script",
+                )
             self.assertEqual(
                 undeliverable_harnesses(
                     fixture_config("node tests/ghost_harness.mjs", []), repo
                 ),
                 {("fixture", "a-route", "probe", "tests/ghost_harness.mjs")},
-            )
-
-    def test_a_script_on_a_pushed_ref_is_delivered_even_if_the_default_ref_lags(self):
-        """Positive control for the rule above, in the same window."""
-        run = lambda repo, *a: subprocess.run(
-            ["git", "-C", str(repo), *a], capture_output=True, text=True, check=True
-        )
-        with tempfile.TemporaryDirectory() as raw:
-            repo = fixture_home(Path(raw))
-            # a side branch carrying the script, published as a remote-tracking ref,
-            # while the default ref never sees it
-            run(repo, "checkout", "-q", "-b", "side")
-            (repo / "tests").mkdir(parents=True, exist_ok=True)
-            (repo / "tests/late_harness.mjs").write_text("// late\n", encoding="utf-8")
-            run(repo, "add", "-A")
-            run(repo, "commit", "-q", "-m", "late harness")
-            side = run(repo, "rev-parse", "HEAD").stdout.strip()
-            run(repo, "update-ref", "refs/remotes/origin/side", side)
-            run(repo, "checkout", "-q", "main")
-
-            self.assertFalse(
-                tracked_in_ref(repo, "main", "tests/late_harness.mjs"),
-                "the default ref must NOT carry it, or the test proves nothing",
-            )
-            self.assertTrue(delivered_anywhere(repo, "tests/late_harness.mjs"))
-            self.assertEqual(
-                set(),
-                undeliverable_harnesses(
-                    fixture_config("node tests/late_harness.mjs", []), repo
-                ),
             )
 
     def test_absolute_script_paths_are_resolved_as_written(self):
