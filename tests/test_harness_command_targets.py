@@ -31,10 +31,19 @@ master while `main` does not resolve), and reading their trees reports files as
 missing that are present on main. Absolute script paths stay a filesystem check
 -- they point outside the home.
 
-Measured on guard main d8f57ccf (configs/homes/crewing.json blob 2e6b605c),
-2026-10-29, over all eight home configs with the real `configured_harnesses`
-resolution: 1 undeliverable (below), 2 sound forward references, 8 commands with
-no script token. `KNOWN_DEBT` may only SHRINK --
+Presence is resolved on the default ref ALONE -- a script on some other branch is
+not delivered (manager's decision 2026-10-30: a lagging local checkout is machine
+hygiene, not a property of the home, and is cured by `git fetch` in that
+checkout). So the two fleet tests below require the home checkouts to be FETCHED;
+on a stale checkout they report a harness as missing that the remote's default
+branch already carries.
+
+Measured 2026-10-30 over all eight home configs with the real
+`configured_harnesses` resolution: **0 undeliverable**, so `KNOWN_DEBT` is empty.
+Its one entry (`crewing/crewing-635-single-user` -> `crewing_escaping_negative`)
+was discharged by the crewing home authoring the harness, merged to crewing main
+`64b016a0` (PR skipi-crewing #77, 2026-10-30T06:04:03Z) -- the fix this file
+predicted, in the home rather than in the guard. `KNOWN_DEBT` may only SHRINK --
 `test_known_debt_has_no_stale_entry` fails if an entry is delivered and left
 behind, so the list cannot rot into a blanket waiver.
 
@@ -70,18 +79,7 @@ SCRIPT_SUFFIXES = (".mjs", ".js", ".py", ".sh")
 # Each entry is a blocked route, not a tolerated one. Origin of both groups is
 # the same: a harness was enrolled into a route's suite while the file was still
 # undelivered, and the route's allowlist does not let that route create it.
-KNOWN_DEBT = frozenset(
-    {
-        # skipi-crewing: BACKLOG No179 negatives harness, owner-authorized
-        # 2026-09-04 (66f063a) and never written -- absent from every crewing
-        # ref. Route 635 inherits it by the cumulative-superset rule, but 635's
-        # allowlist cannot deliver it, so 635 is fail-closed for any content.
-        # Discharged by the home authoring the file on `security-escaping-191`,
-        # whose allowlist permits exactly that, not by dropping the command.
-        ("crewing", "crewing-635-single-user", "crewing_escaping_negative",
-         "tests/crewing_escaping_negative_harness.mjs"),
-    }
-)
+KNOWN_DEBT: frozenset[tuple[str, str, str, str]] = frozenset()
 
 # Commands that run a suite runner rather than a file; nothing to resolve.
 NO_SCRIPT_TOKEN = frozenset({"npm test", "pytest"})
@@ -97,21 +95,31 @@ def script_of(command: str) -> str | None:
 
 
 def default_ref(repo: Path) -> str | None:
-    """The home's default branch: origin/HEAD, else main, else master."""
+    """The home's default branch, or None when it cannot be determined offline.
+
+    `origin/HEAD` is the authoritative answer. Without it, exactly one of
+    `origin/main`/`origin/master` is unambiguous. When BOTH resolve there is no
+    offline way to tell which is trunk, so this returns None rather than guessing:
+    skipi-server carries both (`origin/master` 2667039 is its trunk, `origin/main`
+    1f3c61d diverges) and guessing `origin/main` reported four of its harnesses as
+    missing when they sit on `origin/master`. A local branch is never used -- it is
+    whatever the last task left checked out, and routinely behind.
+    """
     head = subprocess.run(
         ["git", "-C", str(repo), "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD"],
         capture_output=True, text=True,
     )
     if head.returncode == 0 and head.stdout.strip():
         return head.stdout.strip().split("refs/remotes/", 1)[-1]
-    for candidate in ("main", "master"):
-        probe = subprocess.run(
+    resolving = [
+        candidate
+        for candidate in ("origin/main", "origin/master")
+        if subprocess.run(
             ["git", "-C", str(repo), "rev-parse", "--verify", "--quiet", candidate],
             capture_output=True, text=True,
-        )
-        if probe.returncode == 0:
-            return candidate
-    return None
+        ).returncode == 0
+    ]
+    return resolving[0] if len(resolving) == 1 else None
 
 
 def tracked_in_ref(repo: Path, ref: str, path: str) -> bool:
@@ -167,8 +175,13 @@ def home_configs() -> list[tuple[Path, dict[str, Any]]]:
     return out
 
 
-def fixture_home(tmp: Path, scripts: tuple[str, ...] = ()) -> Path:
-    """A minimal home checkout: a real git repo whose default branch holds `scripts`."""
+def fixture_home(tmp: Path, scripts: tuple[str, ...] = (), published: bool = True) -> Path:
+    """A minimal home checkout: a real git repo whose default branch holds `scripts`.
+
+    `published` mirrors a clone by giving the repo an `origin/main` remote-tracking
+    ref, which is what `default_ref` reads. Pass False for the case of a checkout
+    with no remote-tracking refs at all.
+    """
     run = lambda *a: subprocess.run(
         ["git", "-C", str(tmp), *a], capture_output=True, text=True, check=True
     )
@@ -181,6 +194,8 @@ def fixture_home(tmp: Path, scripts: tuple[str, ...] = ()) -> Path:
         target.write_text("// fixture\n", encoding="utf-8")
     run("add", "-A")
     run("commit", "-q", "--allow-empty", "-m", "fixture")
+    if published:
+        run("update-ref", "refs/remotes/origin/main", run("rev-parse", "HEAD").stdout.strip())
     return tmp
 
 
@@ -260,8 +275,9 @@ class HarnessCommandTargets(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             repo = fixture_home(Path(raw), ("tests/committed_harness.mjs",))
             config = fixture_config("node tests/committed_harness.mjs", [])
+            self.assertEqual("origin/main", default_ref(repo))
 
-            # committed on main, then removed from the worktree -> still present
+            # on the default ref, then removed from the worktree -> still present
             (repo / "tests/committed_harness.mjs").unlink()
             self.assertEqual(undeliverable_harnesses(config, repo), set())
 
@@ -271,6 +287,68 @@ class HarnessCommandTargets(unittest.TestCase):
             self.assertEqual(
                 undeliverable_harnesses(fixture_config("node tests/stray_harness.mjs", []), repo),
                 {("fixture", "a-route", "probe", "tests/stray_harness.mjs")},
+            )
+
+    def test_default_ref_refuses_to_guess_between_main_and_master(self):
+        """Regression: preferring origin/main blindly mis-read skipi-server.
+
+        That home carries both `origin/master` (trunk, with the file) and a
+        divergent `origin/main` (without it), and no `origin/HEAD`. Guessing
+        `origin/main` reported four of its harnesses as undeliverable. With both
+        present and no `origin/HEAD` the honest answer is "cannot tell offline".
+        """
+        run = lambda repo, *a: subprocess.run(
+            ["git", "-C", str(repo), *a], capture_output=True, text=True, check=True
+        )
+        with tempfile.TemporaryDirectory() as raw:
+            repo = fixture_home(Path(raw), published=False)
+            sha = run(repo, "rev-parse", "HEAD").stdout.strip()
+
+            # exactly one remote-tracking candidate -> unambiguous
+            run(repo, "update-ref", "refs/remotes/origin/master", sha)
+            self.assertEqual("origin/master", default_ref(repo))
+
+            # both candidates, no origin/HEAD -> refuse to guess
+            run(repo, "update-ref", "refs/remotes/origin/main", sha)
+            self.assertIsNone(default_ref(repo))
+
+            # origin/HEAD is authoritative and settles it
+            run(repo, "symbolic-ref", "refs/remotes/origin/HEAD",
+                "refs/remotes/origin/master")
+            self.assertEqual("origin/master", default_ref(repo))
+
+    def test_a_local_branch_is_never_used_as_the_default_ref(self):
+        """A checkout's own branch is not evidence about the home."""
+        with tempfile.TemporaryDirectory() as raw:
+            repo = fixture_home(Path(raw), published=False)
+            self.assertIsNone(default_ref(repo), "a local branch is not evidence")
+
+    def test_a_script_on_no_ref_at_all_is_still_a_violation(self):
+        """The shape the original finding had, documented so it stays caught.
+
+        `crewing_escaping_negative` was absent from EVERY crewing ref when it was
+        found (2026-10-29: `git log --all --diff-filter=A` empty, no path matching
+        `escap` ever added). The assertion below first establishes that no ref of
+        the fixture carries the script, so the case is the real one and not merely
+        "missing from the default branch".
+        """
+        with tempfile.TemporaryDirectory() as raw:
+            repo = fixture_home(Path(raw))
+            refs = subprocess.run(
+                ["git", "-C", str(repo), "for-each-ref", "--format=%(refname)"],
+                capture_output=True, text=True,
+            ).stdout.split()
+            self.assertTrue(refs, "the fixture must have at least one ref")
+            for ref in refs:
+                self.assertFalse(
+                    tracked_in_ref(repo, ref, "tests/ghost_harness.mjs"),
+                    f"{ref} unexpectedly carries the script",
+                )
+            self.assertEqual(
+                undeliverable_harnesses(
+                    fixture_config("node tests/ghost_harness.mjs", []), repo
+                ),
+                {("fixture", "a-route", "probe", "tests/ghost_harness.mjs")},
             )
 
     def test_absolute_script_paths_are_resolved_as_written(self):
@@ -291,25 +369,31 @@ class HarnessCommandTargets(unittest.TestCase):
 class FleetHarnessTargets(unittest.TestCase):
     """State of the eight home configs; needs the home checkouts on disk."""
 
-    def measured(self) -> tuple[set[tuple[str, str, str, str]], list[str]]:
+    def measured(self) -> tuple[set[tuple[str, str, str, str]], list[str], set[str]]:
+        """Findings, the homes that could not be measured, and the homes that could."""
         found: set[tuple[str, str, str, str]] = set()
         skipped: list[str] = []
+        covered: set[str] = set()
         for path, config in home_configs():
             repo = Path(str(config.get("repo", ""))).expanduser()
             if not (repo / ".git").exists():
-                skipped.append(f"{path.stem} ({repo})")
+                skipped.append(f"{path.stem}: no checkout at {repo}")
                 continue
             ref = default_ref(repo)
             if ref is None:
-                skipped.append(f"{path.stem} (no default ref)")
+                skipped.append(
+                    f"{path.stem}: cannot determine the default branch offline; "
+                    "set it with `git remote set-head origin -a`"
+                )
                 continue
+            covered.add(str(config.get("home", path.stem)))
             found |= undeliverable_harnesses(config, repo, ref)
-        return found, skipped
+        return found, skipped, covered
 
     def test_no_route_gains_an_undeliverable_harness_command(self):
-        found, skipped = self.measured()
-        if skipped and not found:
-            self.skipTest(f"home checkouts absent: {', '.join(skipped)}")
+        found, skipped, covered = self.measured()
+        if not covered:
+            self.skipTest("no home could be measured: " + "; ".join(skipped))
         new = found - KNOWN_DEBT
         self.assertEqual(
             set(),
@@ -321,10 +405,12 @@ class FleetHarnessTargets(unittest.TestCase):
 
     def test_known_debt_has_no_stale_entry(self):
         """Delivering a harness must shrink KNOWN_DEBT, so it cannot become a blanket waiver."""
-        found, skipped = self.measured()
-        if skipped:
-            self.skipTest(f"home checkouts absent: {', '.join(skipped)}")
-        stale = KNOWN_DEBT - found
+        found, skipped, covered = self.measured()
+        if not covered:
+            self.skipTest("no home could be measured: " + "; ".join(skipped))
+        # Judge only entries whose home was actually measured: an unmeasurable home
+        # must not retire the ratchet for the others.
+        stale = {entry for entry in KNOWN_DEBT if entry[0] in covered} - found
         self.assertEqual(
             set(),
             stale,
