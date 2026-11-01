@@ -249,6 +249,159 @@ def rule_patterns(rules: list[dict[str, Any]]) -> list[str]:
     return patterns
 
 
+CARGO_MANIFEST_NAME = "Cargo.toml"
+CARGO_LOCK_NAME = "Cargo.lock"
+
+
+def file_at_ref(repo: Path, ref: str, path: str) -> str | None:
+    proc = run(["git", "-C", str(repo), "show", f"{ref}:{path}"])
+    return proc.stdout if proc.returncode == 0 else None
+
+
+def toml_string_value(line: str, key: str) -> str | None:
+    """`key = "value"` on one line, or None when this line is not that key."""
+    stripped = line.strip()
+    if not stripped.startswith(key):
+        return None
+    rest = stripped[len(key):].lstrip()
+    if not rest.startswith("="):
+        return None
+    value = rest[1:].strip()
+    if value[:1] in ("'", '"') and len(value) >= 2:
+        quote = value[0]
+        end = value.find(quote, 1)
+        if end > 0:
+            return value[1:end]
+    return None
+
+
+def cargo_manifest_identity(text: str) -> tuple[str | None, str | None]:
+    """(name, version) of the manifest's own `[package]` table."""
+    name: str | None = None
+    version: str | None = None
+    in_package = False
+    for raw in text.splitlines():
+        stripped = raw.strip()
+        if stripped.startswith("#"):
+            continue
+        if stripped.startswith("["):
+            in_package = stripped == "[package]"
+            continue
+        if not in_package:
+            continue
+        if name is None:
+            name = toml_string_value(stripped, "name")
+        if version is None:
+            version = toml_string_value(stripped, "version")
+    return name, version
+
+
+def cargo_lock_version_of(text: str, package_name: str) -> str | None:
+    """Version of the `[[package]]` entry named `package_name`."""
+    entry: dict[str, str] = {}
+    in_entry = False
+    for raw in text.splitlines():
+        stripped = raw.strip()
+        if stripped.startswith("["):
+            in_entry = stripped == "[[package]]"
+            entry = {}
+            continue
+        if not in_entry:
+            continue
+        for key in ("name", "version"):
+            value = toml_string_value(stripped, key)
+            if value is not None:
+                entry[key] = value
+        if entry.get("name") == package_name and "version" in entry:
+            return entry["version"]
+    return None
+
+
+def cargo_touch_is_release(
+    repo: Path, before_ref: str, head_ref: str, path: str
+) -> tuple[bool, str]:
+    """Does this Cargo touch move the package identity? (is_release, reason).
+
+    BACKLOG No877, owner GO 2026-11-01: a `[dependencies]` delta at an unchanged
+    `[package].version` is not a release class, so a non-release task may carry a
+    new dependency while a version bump still goes only through a release door.
+    Every branch that cannot be read or parsed answers True -- a gate may not go
+    quiet on an unknown.
+    """
+    base_name = path.rsplit("/", 1)[-1]
+    if base_name == CARGO_MANIFEST_NAME:
+        before = file_at_ref(repo, before_ref, path)
+        after = file_at_ref(repo, head_ref, path)
+        if before is None or after is None:
+            return True, "manifest added or removed"
+        before_name, before_version = cargo_manifest_identity(before)
+        after_name, after_version = cargo_manifest_identity(after)
+        if None in (before_version, after_version) or None in (before_name, after_name):
+            return True, "cannot read [package] name/version"
+        if before_version != after_version:
+            return True, f"[package].version {before_version} -> {after_version}"
+        if before_name != after_name:
+            return True, f"[package].name {before_name} -> {after_name}"
+        return False, f"dependency delta at [package].version {after_version}"
+    if base_name == CARGO_LOCK_NAME:
+        parent = path.rsplit("/", 1)[0] if "/" in path else ""
+        manifest = f"{parent}/{CARGO_MANIFEST_NAME}" if parent else CARGO_MANIFEST_NAME
+        # The root identity is read at HEAD only: if the manifest at head cannot be
+        # read, nothing about this lock can be judged, and inferring the crate name
+        # from the old state would be guessing on the very file that changed.
+        manifest_text = file_at_ref(repo, head_ref, manifest)
+        root_name = cargo_manifest_identity(manifest_text)[0] if manifest_text is not None else None
+        if not root_name:
+            return True, f"cannot read the root package name from {manifest}"
+        before = file_at_ref(repo, before_ref, path)
+        after = file_at_ref(repo, head_ref, path)
+        if before is None or after is None:
+            return True, "lock added or removed"
+        before_version = cargo_lock_version_of(before, root_name)
+        after_version = cargo_lock_version_of(after, root_name)
+        if before_version is None or after_version is None:
+            return True, f"cannot read the locked version of '{root_name}'"
+        if before_version != after_version:
+            return True, f"locked {root_name} {before_version} -> {after_version}"
+        return False, f"dependency delta at locked {root_name} {after_version}"
+    return True, "not a cargo manifest or lock"
+
+
+def diff_base_commit(repo: Path, base: str, head: str, comparison: str) -> str:
+    """The ref the diff is actually taken from, so content is read at the same point."""
+    if comparison == "triple-dot":
+        proc = run(["git", "-C", str(repo), "merge-base", base, head])
+        if proc.returncode == 0 and proc.stdout.strip():
+            return proc.stdout.strip()
+    return base
+
+
+def split_cargo_dependency_touches(
+    repo: Path, before_ref: str, head_ref: str, touches: list[dict[str, str]]
+) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    """Separate release-sensitive touches that are only a dependency delta.
+
+    A path may match several rules, so each path is judged once and all of its
+    touches follow that verdict.
+    """
+    verdicts: dict[str, tuple[bool, str]] = {}
+    kept: list[dict[str, str]] = []
+    dependency_only: list[dict[str, str]] = []
+    for touch in touches:
+        path = str(touch.get("path", ""))
+        if path.rsplit("/", 1)[-1] not in (CARGO_MANIFEST_NAME, CARGO_LOCK_NAME):
+            kept.append(touch)
+            continue
+        if path not in verdicts:
+            verdicts[path] = cargo_touch_is_release(repo, before_ref, head_ref, path)
+        is_release, reason = verdicts[path]
+        if is_release:
+            kept.append(touch)
+        else:
+            dependency_only.append({**touch, "reason": reason})
+    return kept, dependency_only
+
+
 def exact_file_set_check(config: dict[str, Any], task: str, files: list[str]) -> dict[str, Any] | None:
     expected_patterns = [
         str(pattern)
@@ -565,6 +718,17 @@ def verify(args: argparse.Namespace) -> int:
 
     protected_touches = classify_paths(changed_files, config.get("protected_paths", []), "protected")
     release_touches = classify_paths(changed_files, config.get("release_sensitive_paths", []), "release-sensitive")
+    # No877: a Cargo dependency delta at an unchanged package identity is an
+    # ordinary scope path of the task, not a release touch. protected_paths is
+    # deliberately untouched -- only the release-sensitive classification moves.
+    cargo_dependency_touches: list[dict[str, str]] = []
+    if release_touches:
+        release_touches, cargo_dependency_touches = split_cargo_dependency_touches(
+            repo,
+            diff_base_commit(repo, args.base, args.head, comparison),
+            args.head,
+            release_touches,
+        )
     protected_paths_touched = protected_touches + release_touches
     release_changes = bool(release_touches)
 
@@ -629,6 +793,7 @@ def verify(args: argparse.Namespace) -> int:
         "changed_files": changed_files,
         "protected_paths_touched": protected_paths_touched,
         "release_paths_touched": release_touches,
+        "cargo_dependency_touches": cargo_dependency_touches,
         "release_changes": release_changes,
         "unpinned_version_moves": unpinned,
         "allowed_file_patterns": allowed_patterns,
