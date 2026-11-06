@@ -141,6 +141,9 @@ EXPECTED_SUBSET_COUNTS = {
 # textually, so this file keeps pinning the exact pre-K2.1 config instead of
 # drifting with every later addition.
 LATER_BLOCKS = (
+    ('    {\n      "name": "crewing records routing: reports/ and scratchpad/ text records'
+     ' (BACKLOG skipi-ops \u2116975, 2026-11-06)",\n', '\n    },\n'),
+    (',\n    "crewing-records": [\n      "reports/*.json"', '\n    ]'),
     ('    {\n      "name": "crewing №635 single-user native account and private store (owner1482, 2026-10-21)",\n', '\n    },\n'),
     (',\n    "crewing-635-single-user": [\n      {\n', '\n    ]'),
     (',\n    "crewing-635-single-user": [\n      "dist/index.html"', '\n    ]'),
@@ -150,7 +153,7 @@ LATER_BLOCKS = (
     (',\n    "crewing-664-person": [\n      "dist/index.html"', '\n    ]'),
 )
 LATER_TASKS = ('crewing-664-person',
-               'crewing-635-single-user')
+               'crewing-635-single-user', 'crewing-records')
 
 
 def previous_config(config):
@@ -189,7 +192,7 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
         self.assertNotIn('require_all_of', route[0])
         self.assertEqual(config['allowed_file_patterns'][TASK], FILES)
         self.assertFalse(MODULE.is_release_task(config, TASK))
-        self.assertEqual([r['task'] for r in config['task_routing'][:9]],
+        self.assertEqual([r['task'] for r in config['task_routing'][:10]],
                          [*EARLIER_TASKS, TASK, *LATER_TASKS, 'repo-meta'])
         # presence-manifest.json stays protected and outside the ceiling.
         protected = [p for rule in config['protected_paths'] for p in rule['patterns']]

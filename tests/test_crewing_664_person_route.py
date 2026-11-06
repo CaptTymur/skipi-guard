@@ -187,8 +187,17 @@ EXPECTED_SUBSET_COUNTS = {
 
 # №635 arrived after this route, so this previously-last link now subtracts it,
 # exactly as K2.1 was upgraded when this route arrived.
-LATER_TASKS = ('crewing-635-single-user',)
+LATER_TASKS = ('crewing-635-single-user', 'crewing-records')
+# The subset of LATER_TASKS whose rule or allowlist COVERS this route's marker,
+# i.e. the routes the ownership predicate below has to judge. Until 2026-11-06
+# this was all of LATER_TASKS; `crewing-records` (BACKLOG skipi-ops №975) is the
+# first later route that cannot cover it - it is text-only under reports/ and
+# scratchpad/ - so the two lists parted company and are now declared apart.
+MARKER_COVERING_LATER_TASKS = ('crewing-635-single-user',)
 LATER_BLOCKS = (
+    ('    {\n      "name": "crewing records routing: reports/ and scratchpad/ text records'
+     ' (BACKLOG skipi-ops \u2116975, 2026-11-06)",\n', '\n    },\n'),
+    (',\n    "crewing-records": [\n      "reports/*.json"', '\n    ]'),
     ('    {\n      "name": "crewing №635 single-user native account and private store (owner1482, 2026-10-21)",\n', '\n    },\n'),
     (',\n    "crewing-635-single-user": [\n      {\n', '\n    ]'),
     (',\n    "crewing-635-single-user": [\n      "dist/index.html"', '\n    ]'),
@@ -505,7 +514,7 @@ class Crewing664PersonRouteTests(unittest.TestCase):
         config = self.config()
         self.assert_declared_ceiling(config)
         self.assertFalse(MODULE.is_release_task(config, TASK))
-        self.assertEqual([r['task'] for r in config['task_routing'][:9]],
+        self.assertEqual([r['task'] for r in config['task_routing'][:10]],
                          [*EARLIER_TASKS, TASK, *LATER_TASKS, 'repo-meta'])
         # Nothing is taken from this route by any later rule that also covers
         # the marker: five assertions, each with its own mutation negative below.
@@ -715,10 +724,23 @@ class Crewing664PersonRouteTests(unittest.TestCase):
     # negatives that must redden: sixteen ways a later route could take the marker
     # ------------------------------------------------------------------
     def test_the_live_config_exercises_the_ownership_predicate(self):
-        """Positive control: the predicate selects exactly the №635 route on the live
-        config, so every assertion in it runs on main and is not an assert(true)."""
+        """Positive control: the predicate selects exactly the later routes that
+        COVER this route's marker, so every assertion in it runs on main and is
+        not an assert(true).
+
+        The complement is asserted NOT to cover the marker, so neither list can
+        rot: a later route that starts covering `src-tauri/src/db.rs` must either
+        be added to MARKER_COVERING_LATER_TASKS and face the five assertions, or
+        redden here.
+        """
         config = self.config()
-        self.assertEqual(self.assert_nothing_is_taken_from_this_route(config), list(LATER_TASKS))
+        self.assertEqual(self.assert_nothing_is_taken_from_this_route(config),
+                         list(MARKER_COVERING_LATER_TASKS))
+        for task in LATER_TASKS:
+            covered = covers(config['allowed_file_patterns'].get(task, []), MARKER) or any(
+                covers(rule.get('when_all_files_in', []), MARKER)
+                for rule in config['task_routing'] if rule['task'] == task)
+            self.assertEqual(covered, task in MARKER_COVERING_LATER_TASKS, task)
         # And on the config without later routes it selects nothing: the marker
         # was this route's alone, which is what the two old string checks said.
         self.assertEqual(self.assert_nothing_is_taken_from_this_route(drop_later(config)), [])
