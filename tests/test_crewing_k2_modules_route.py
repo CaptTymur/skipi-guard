@@ -67,6 +67,9 @@ OLD_CONFIG_HASH = '7edf6021057702e0dd73ddf803e1781f0e190f6d3526a13b5fdd0b54fbfe5
 # the pre-K2 file byte for byte (proves the change adds and never edits).
 # Same three anchors for the additive route merged after K2 (K2.1 single screen).
 LATER_BLOCKS = (
+    ('    {\n      "name": "crewing records routing: reports/ and scratchpad/ text records'
+     ' (BACKLOG skipi-ops \u2116975, 2026-11-06)",\n', '\n    },\n'),
+    (',\n    "crewing-records": [\n      "reports/*.json"', '\n    ]'),
     ('    {\n      "name": "crewing №635 single-user native account and private store (owner1482, 2026-10-21)",\n', '\n    },\n'),
     (',\n    "crewing-635-single-user": [\n      {\n', '\n    ]'),
     (',\n    "crewing-635-single-user": [\n      "dist/index.html"', '\n    ]'),
@@ -92,7 +95,7 @@ BLOCKS = (
 # as textually, so this file keeps pinning the exact pre-K2 config instead of
 # drifting with every later addition.
 LATER_TASKS = ('crewing-k21-single-screen', 'crewing-664-person',
-               'crewing-635-single-user')
+               'crewing-635-single-user', 'crewing-records')
 
 
 def previous_config(config):
@@ -130,7 +133,7 @@ class CrewingK2ModulesRouteTests(unittest.TestCase):
         self.assertEqual(len(COMMANDS), 14)
         self.assertEqual(config['harness_commands'][TASK][:7], config['harness_commands'][PREVIOUS_TASK])
         self.assertFalse(MODULE.is_release_task(config, TASK))
-        self.assertEqual([r['task'] for r in config['task_routing'][:9]],
+        self.assertEqual([r['task'] for r in config['task_routing'][:10]],
                          ['security-escaping-191', 'crewing-c3b1', 'crewing-c3b1-metadata',
                           PREVIOUS_TASK, TASK, *LATER_TASKS, 'repo-meta'])
 

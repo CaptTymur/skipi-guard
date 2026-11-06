@@ -199,6 +199,18 @@
       ]
     },
     {
+      "name": "crewing records routing: reports/ and scratchpad/ text records (BACKLOG skipi-ops №975, 2026-11-06)",
+      "task": "crewing-records",
+      "when_all_files_in": [
+        "reports/*.json",
+        "reports/*.md",
+        "reports/*.txt",
+        "scratchpad/*.json",
+        "scratchpad/*.md",
+        "scratchpad/*.txt"
+      ]
+    },
+    {
       "name": "repo-meta routing",
       "task": "repo-meta",
       "when_all_files_in": [
@@ -1047,6 +1059,14 @@
       "tests/fixtures/crewing_public_settings.mjs",
       "tests/trial_activate_unconnected_harness.mjs",
       "tests/trial_gate_wired_harness.mjs"
+    ],
+    "crewing-records": [
+      "reports/*.json",
+      "reports/*.md",
+      "reports/*.txt",
+      "scratchpad/*.json",
+      "scratchpad/*.md",
+      "scratchpad/*.txt"
     ]
   }
 }

@@ -36,6 +36,7 @@ remain refused for this non-release task (owner choice O3, 2026-10-21).
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import itertools
 import json
@@ -181,10 +182,20 @@ BLOCKS = (
     (',\n    "%s": [\n      {\n' % TASK, '\n    ]'),
     (',\n    "%s": [\n      "dist/index.html"' % TASK, '\n    ]'),
 )
+# `crewing-records` arrived after this route, so this previously-last link now
+# subtracts it, exactly as №664 was upgraded when this route arrived. Two blocks,
+# not three: a records-only push runs no harness, so the route has no
+# `harness_commands` entry (the `repo-meta` precedent for a text-only route).
+LATER_TASKS = ('crewing-records',)
+LATER_BLOCKS = (
+    ('    {\n      "name": "crewing records routing: reports/ and scratchpad/ text records'
+     ' (BACKLOG skipi-ops \u2116975, 2026-11-06)",\n', '\n    },\n'),
+    (',\n    "crewing-records": [\n      "reports/*.json"', '\n    ]'),
+)
 
 
 def previous_config_text(text: str) -> str:
-    for start, end in BLOCKS:
+    for start, end in LATER_BLOCKS + BLOCKS:
         assert text.count(start) == 1, start
         begin = text.index(start)
         stop = text.index(end, begin + len(start)) + len(end)
@@ -302,19 +313,32 @@ class Crewing635SingleUserRouteTests(unittest.TestCase):
         design and it was wrong here, behaviourally equivalent but inconsistent
         with the mechanism the house uses to restore its own history."""
         tasks = [r['task'] for r in self.new['task_routing']]
-        self.assertEqual(len(tasks), len(self.old['task_routing']) + 1)
+        self.assertEqual(len(tasks), len(self.old['task_routing']) + 1 + len(LATER_TASKS))
         self.assertEqual(tasks.index(TASK), 7)
         self.assertEqual(tasks[6], 'crewing-664-person')
-        self.assertEqual(tasks[8], 'repo-meta')
-        self.assertEqual([r for r in self.new['task_routing'] if r['task'] != TASK],
+        self.assertEqual(tasks[8:8 + len(LATER_TASKS)], list(LATER_TASKS))
+        self.assertEqual(tasks[8 + len(LATER_TASKS)], 'repo-meta')
+        self.assertEqual([r for r in self.new['task_routing']
+                          if r['task'] != TASK and r['task'] not in LATER_TASKS],
                          self.old['task_routing'])
 
     def test_stripping_the_insertions_restores_the_old_config_exactly(self):
+        drop = (TASK, *LATER_TASKS)
         stripped = copy.deepcopy(self.new)
-        stripped['task_routing'] = [r for r in stripped['task_routing'] if r['task'] != TASK]
-        del stripped['allowed_file_patterns'][TASK]
-        del stripped['harness_commands'][TASK]
+        stripped['task_routing'] = [r for r in stripped['task_routing']
+                                    if r['task'] not in drop]
+        for section in ('allowed_file_patterns', 'harness_commands'):
+            for task in drop:
+                stripped[section].pop(task, None)
         self.assertEqual(stripped, self.old)
+        # OLD_CONFIG_HASH was declared with this file and never read. It has
+        # content now that a later route sits between this one and `repo-meta`:
+        # it proves LATER_BLOCKS + BLOCKS still reproduce the pre-635 BYTES, so
+        # neither insertion edited a line it did not add.
+        self.assertEqual(
+            hashlib.sha256(previous_config_text(
+                CONFIG.read_text(encoding='utf-8')).encode()).hexdigest(),
+            OLD_CONFIG_HASH)
 
     def test_every_existing_rule_still_owns_its_own_declared_set(self):
         for rule in self.old['task_routing']:
@@ -369,8 +393,38 @@ class Crewing635SingleUserRouteTests(unittest.TestCase):
             self.assertGreaterEqual(len(scope['scope_violations']), 20, foreign)
 
     def test_scratchpad_machinery_can_never_ride_along(self):
+        """Amended 2026-11-06 (BACKLOG skipi-ops №975, route `crewing-records`).
+
+        The original form asserted that NO pattern anywhere in the config matches
+        a scratchpad path. That was true by accident of there being no records
+        route at all, and it is stronger than the property this test is named for.
+        `crewing-records` now gives reports/ and scratchpad/ TEXT records a route
+        of their own, so seven of these twelve paths (.md/.json) are matched there.
+
+        Riding along is what stays impossible, and is now checked directly: no
+        scratchpad path is in THIS route's ceiling, none is matched by any pattern
+        THIS route resolves, and a diff mixing one with the №635 set still falls
+        to the default task and fails on scope - `when_all_files_in` means a
+        records route can only ever own a records-ONLY push.
+        """
+        route_patterns = set(self.new['allowed_file_patterns'][TASK])
+        for rule in self.new['task_routing']:
+            if rule['task'] == TASK:
+                for key in ('when_all_files_in', 'require_any_of', 'require_all_of'):
+                    route_patterns.update(rule.get(key, []))
         for path in SCRATCHPAD:
             self.assertNotIn(path, CEILING)
+            self.assertEqual(
+                [p for p in sorted(route_patterns) if MODULE.pattern_matches(path, p)], [], path)
+            mixed = sorted([*CEILING, path])
+            self.assertEqual(
+                MODULE.resolve_task(self.new, mixed)['task'], self.new['default_task'], path)
+            self.assertIn('scope', refusal_reasons(self.new, mixed), path)
+        # The five .py paths stay unmatched by the WHOLE config: the records route
+        # is text-only, so agent machinery still has no door anywhere in crewing.
+        machinery = [p for p in SCRATCHPAD if p.endswith('.py')]
+        self.assertEqual(len(machinery), 5)
+        for path in machinery:
             self.assertEqual(
                 [p for p in every_pattern(self.new) if MODULE.pattern_matches(path, p)], [], path)
 
