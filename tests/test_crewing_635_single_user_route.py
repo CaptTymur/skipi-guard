@@ -62,6 +62,18 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 
+
+# BACKLOG skipi-ops No.1920 (2026-11-16): ten tasks that admit `dist/index.html` gained the
+# `crewing635_public_settings` harness command. That is a LATER block for this file -- subtract
+# it first, or the historical hash below stops pinning the bytes it was accepted on. Pinned
+# from the other side by
+# tests/test_crewing_always_set_1920.py::test_every_neighbour_oracle_subtracts_the_always_set.
+_ALWAYS_LOADER = SourceFileLoader('always_set_1920_for_635_single_user',
+                                  str(ROOT / 'tests' / 'test_crewing_always_set_1920.py'))
+_ALWAYS_SPEC = importlib.util.spec_from_loader(_ALWAYS_LOADER.name, _ALWAYS_LOADER)
+ALWAYS_SET = importlib.util.module_from_spec(_ALWAYS_SPEC)
+_ALWAYS_LOADER.exec_module(ALWAYS_SET)
+
 TASK = 'crewing-635-single-user'
 RULE_NAME = 'crewing №635 single-user native account and private store (owner1482, 2026-10-21)'
 
@@ -195,6 +207,7 @@ LATER_BLOCKS = (
 
 
 def previous_config_text(text: str) -> str:
+    text = ALWAYS_SET.strip_always_set(text)
     for start, end in LATER_BLOCKS + BLOCKS:
         assert text.count(start) == 1, start
         begin = text.index(start)
@@ -256,7 +269,8 @@ def refusal_reasons(config: dict, files: list[str]) -> list[str]:
 class Crewing635SingleUserRouteTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.new = json.loads(CONFIG.read_text(encoding='utf-8'))
+        cls.new = ALWAYS_SET.strip_always_set_config(
+            json.loads(CONFIG.read_text(encoding='utf-8')))
         cls.old = old_config()
 
     # -- 1. dispatch ----------------------------------------------------------

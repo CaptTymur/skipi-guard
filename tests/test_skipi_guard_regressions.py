@@ -433,6 +433,9 @@ class SkipiGuardRegressionTests(unittest.TestCase):
                 "shared_host_runtime_isolation",
                 "crewing_presence_contract",
                 "crewing_crew_flow_demo",
+                # No.1920: the default task carries the invoke oracle too -- it is the
+                # twelfth door to dist/index.html and the busiest one.
+                "crewing635_public_settings",
             },
         )
 

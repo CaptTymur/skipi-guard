@@ -191,6 +191,7 @@ CREWING_HARNESSES = [
         "name": "crewing_stack_verification_negative_control",
         "command": "node tests/stack_verification_negative_control_harness.mjs",
     },
+    {"name": "crewing635_public_settings", "command": "node tests/crewing635_public_settings_harness.mjs"},
 ]
 CREWING_EXISTING_ROUTES = [
     {
@@ -979,6 +980,12 @@ class SecurityEscapingRouteContract:
             {"name": name, "command": command}
             for name, command in self.PRE_ROUTE["harness_commands"][DEFAULT_TASK]
         ]
+        if self.HOME == "crewing":
+            # No.1920: every crewing task that admits dist/index.html plans the invoke
+            # oracle, the default task included -- that is the whole point of the change.
+            expected_harnesses.append(
+                {"name": "crewing635_public_settings",
+                 "command": "node tests/crewing635_public_settings_harness.mjs"})
         if self.HOME == "broker":
             expected_harnesses.extend([
                 {"name": "broker_map_contract", "command": "node tests/map_contract_harness.mjs"},
@@ -1242,9 +1249,15 @@ class SecurityEscapingRouteContract:
              if task != ROUTE_TASK and task not in later_tasks},
             pre["allowed_file_patterns"],
         )
+        # No.1920 (crewing): ten tasks that admit dist/index.html gained the invoke
+        # oracle. That is a later change, like the later ROUTES above, so it is
+        # subtracted here -- this oracle keeps pinning the pre-route surface, and the
+        # obligation itself is pinned by tests/test_crewing_always_set_1920.py.
         self.assertEqual(
             {
-                task: [[entry["name"], entry["command"]] for entry in entries]
+                task: [[entry["name"], entry["command"]]
+                       for entry in entries if entry["name"] != "crewing635_public_settings"
+                       or task == "crewing-635-single-user"]
                 for task, entries in config["harness_commands"].items()
                 if task != ROUTE_TASK and task not in later_tasks
             },
@@ -1341,7 +1354,7 @@ class CrewingSecurityEscapingRouteTests(SecurityEscapingRouteContract, unittest.
     HARNESSES = CREWING_HARNESSES
     EXISTING_ROUTES = CREWING_EXISTING_ROUTES
     PRE_ROUTE = CREWING_PRE_ROUTE
-    EXPECTED_HARNESS_COUNT = 16
+    EXPECTED_HARNESS_COUNT = 17
     # Green on the home's live main 12a7ce4c.
     GUARDED_READERS = {
         "src-tauri/src/messaging.rs": ["crewing_crew_flow_demo_harness.mjs"],

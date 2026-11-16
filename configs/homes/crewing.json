@@ -428,6 +428,10 @@
       {
         "name": "crewing_crew_flow_demo",
         "command": "node tests/crewing_crew_flow_demo_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
       }
     ],
     "release": [
@@ -474,6 +478,10 @@
       {
         "name": "crewing_crew_flow_demo",
         "command": "node tests/crewing_crew_flow_demo_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
       }
     ],
     "theme-default": [
@@ -496,6 +504,10 @@
       {
         "name": "crewing_crew_flow_demo",
         "command": "node tests/crewing_crew_flow_demo_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
       }
     ],
     "stack-metadata": [
@@ -522,6 +534,10 @@
       {
         "name": "crewing_build_provenance",
         "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
       }
     ],
     "security-escaping-191": [
@@ -588,6 +604,10 @@
       {
         "name": "crewing_stack_verification_negative_control",
         "command": "node tests/stack_verification_negative_control_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
       }
     ],
     "crewing-c3b1": [
@@ -614,6 +634,10 @@
       {
         "name": "crewing_csp_inline_handlers",
         "command": "node tests/csp_inline_handlers_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
       }
     ],
     "crewing-c3b1-metadata": [
@@ -670,6 +694,10 @@
       {
         "name": "crewing_c3b2_candidate",
         "command": "node tests/crewing_c3b2_candidate_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
       }
     ],
     "crewing-k2-modules": [
@@ -728,6 +756,10 @@
       {
         "name": "trial_gate_wired",
         "command": "node tests/trial_gate_wired_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
       }
     ],
     "crewing-k21-single-screen": [
@@ -782,6 +814,10 @@
       {
         "name": "trial_gate_wired",
         "command": "node tests/trial_gate_wired_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
       }
     ],
     "crewing-664-person": [
@@ -836,6 +872,10 @@
       {
         "name": "trial_gate_wired",
         "command": "node tests/trial_gate_wired_harness.mjs"
+      },
+      {
+        "name": "crewing635_public_settings",
+        "command": "node tests/crewing635_public_settings_harness.mjs"
       }
     ],
     "crewing-635-single-user": [

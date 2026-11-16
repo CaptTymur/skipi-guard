@@ -94,6 +94,9 @@ class CrewingStackMetadataRouteTests(unittest.TestCase):
             "tests/crewing_presence_contract_harness.mjs": "process.exit(0);\n",
             "tests/crewing_crew_flow_demo_harness.mjs": "process.exit(0);\n",
             "tests/crewing_theme_default_harness.mjs": "process.exit(0);\n",
+            # No.1920: stack-metadata plans the invoke oracle as well; the fixture
+            # stubs it like every other harness of the route.
+            "tests/crewing635_public_settings_harness.mjs": "process.exit(0);\n",
             "presence-manifest.json": '{"contracts":[]}\n',
         }
         self.commit_updates(repo, "seed crewing Stage 4 fixture", seed)
@@ -375,6 +378,9 @@ class CrewingStackMetadataRouteTests(unittest.TestCase):
                 "crewing_presence_contract",
                 "crewing_crew_flow_demo",
                 "crewing_build_provenance",
+                # No.1920: stack-metadata admits dist/index.html, so it plans the invoke
+                # oracle like every other door to the page. Still CI-safe: relative path.
+                "crewing635_public_settings",
             ],
         )
 
