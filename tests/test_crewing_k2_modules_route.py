@@ -28,6 +28,18 @@ LOADER = SourceFileLoader('guard_crewing_k2_modules', str(GUARD))
 SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
+
+
+# BACKLOG skipi-ops No.1920 (2026-11-16): ten tasks that admit `dist/index.html` gained the
+# `crewing635_public_settings` harness command. That is a LATER block for this file -- subtract
+# it first, or the historical hash below stops pinning the bytes it was accepted on. Pinned
+# from the other side by
+# tests/test_crewing_always_set_1920.py::test_every_neighbour_oracle_subtracts_the_always_set.
+_ALWAYS_LOADER = SourceFileLoader('always_set_1920_for_k2_modules',
+                                  str(ROOT / 'tests' / 'test_crewing_always_set_1920.py'))
+_ALWAYS_SPEC = importlib.util.spec_from_loader(_ALWAYS_LOADER.name, _ALWAYS_LOADER)
+ALWAYS_SET = importlib.util.module_from_spec(_ALWAYS_SPEC)
+_ALWAYS_LOADER.exec_module(ALWAYS_SET)
 TASK = 'crewing-k2-modules'
 PREVIOUS_TASK = 'crewing-c3b2'
 FILES = ['dist/index.html',
@@ -89,6 +101,11 @@ BLOCKS = (
     (',\n    "crewing-k2-modules": [\n      "dist/index.html"', '\n    ]'),
 )
 
+# No.1920: the live config plans one harness more than this route's own historic set --
+# `crewing635_public_settings`, which every task admitting `dist/index.html` now resolves.
+# COMMANDS keeps pinning this route verbatim; PLANNED is what the real CLI reports.
+PLANNED = COMMANDS + [(ALWAYS_SET.HARNESS_NAME, 'node ' + ALWAYS_SET.HARNESS_SCRIPT)]
+
 
 # Routes merged after K2 are frozen by their own oracles
 # (test_crewing_k21_single_screen_route.py). Subtract them structurally as well
@@ -109,6 +126,7 @@ def previous_config(config):
 
 
 def previous_config_text(text):
+    text = ALWAYS_SET.strip_always_set(text)
     for start, end in LATER_BLOCKS + BLOCKS:
         assert text.count(start) == 1, start
         begin = text.index(start)
@@ -119,7 +137,7 @@ def previous_config_text(text):
 
 class CrewingK2ModulesRouteTests(unittest.TestCase):
     def config(self):
-        return json.loads(CONFIG.read_text())
+        return ALWAYS_SET.strip_always_set_config(json.loads(CONFIG.read_text()))
 
     def test_exact_ceiling_checks_and_position_after_c3b2(self):
         config = self.config()
@@ -221,7 +239,7 @@ class CrewingK2ModulesRouteTests(unittest.TestCase):
             git('init', '-q', '-b', 'main')
             git('config', 'user.name', 'K2 isolated fixture')
             git('config', 'user.email', 'fixture@example.invalid')
-            for path in FILES + [cmd.split(' ', 1)[1] for _, cmd in COMMANDS if not cmd.split(' ', 1)[1].startswith('/')]:
+            for path in FILES + [cmd.split(' ', 1)[1] for _, cmd in PLANNED if not cmd.split(' ', 1)[1].startswith('/')]:
                 if path != FILES[1] or not missing:
                     write(path, 'synthetic baseline fixture; not product acceptance\n')
             git('add', '-A')
@@ -284,9 +302,9 @@ class CrewingK2ModulesRouteTests(unittest.TestCase):
         self.assertEqual(report['task'], TASK)
         self.assertEqual(report['effective_tasks'], [TASK])
         self.assertFalse(report['override_present'])
-        self.assertEqual([(t['name'], t['command']) for t in report['tests']], COMMANDS)
+        self.assertEqual([(t['name'], t['command']) for t in report['tests']], PLANNED)
         calls = [json.loads(line) for line in f['calls'].read_text().splitlines()]
-        self.assertEqual([c['args'] for c in calls], [[cmd.split(' ', 1)[1]] for _, cmd in COMMANDS])
+        self.assertEqual([c['args'] for c in calls], [[cmd.split(' ', 1)[1]] for _, cmd in PLANNED])
         self.assertTrue(all(c['head'] == f['head'] for c in calls))
         if hook:
             self.assertTrue(all(Path(c['cwd']) != f['repo'] for c in calls))
@@ -388,7 +406,10 @@ class CrewingK2ModulesRouteTests(unittest.TestCase):
             self.assertNotIn(TASK, payload['old_tasks'])
         with tempfile.TemporaryDirectory(prefix='k2-superset-neg-') as tmp:
             weakened = json.loads(CONFIG.read_text())
-            weakened['harness_commands'][PREVIOUS_TASK] = weakened['harness_commands'][PREVIOUS_TASK][:-1]
+            # Drop the FIRST entry, not the last: since No.1920 the last one is
+            # `crewing635_public_settings`, which the old ref does not have, so removing
+            # it would not be a removal at all and the teeth would bite nothing.
+            weakened['harness_commands'][PREVIOUS_TASK] = weakened['harness_commands'][PREVIOUS_TASK][1:]
             repo, old_ref, new_ref = self.superset_repo(tmp, json.dumps(weakened, indent=2) + '\n')
             code, payload = self.run_superset(repo, old_ref, new_ref, Path(tmp) / 'bad.json')
             self.assertEqual(code, 1, payload)

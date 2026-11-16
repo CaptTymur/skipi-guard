@@ -34,6 +34,18 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 
+
+# BACKLOG skipi-ops No.1920 (2026-11-16): ten tasks that admit `dist/index.html` gained the
+# `crewing635_public_settings` harness command. That is a LATER block for this file -- subtract
+# it first, or the historical hash below stops pinning the bytes it was accepted on. Pinned
+# from the other side by
+# tests/test_crewing_always_set_1920.py::test_every_neighbour_oracle_subtracts_the_always_set.
+_ALWAYS_LOADER = SourceFileLoader('always_set_1920_for_k21_single_screen',
+                                  str(ROOT / 'tests' / 'test_crewing_always_set_1920.py'))
+_ALWAYS_SPEC = importlib.util.spec_from_loader(_ALWAYS_LOADER.name, _ALWAYS_LOADER)
+ALWAYS_SET = importlib.util.module_from_spec(_ALWAYS_SPEC)
+_ALWAYS_LOADER.exec_module(ALWAYS_SET)
+
 TASK = 'crewing-k21-single-screen'
 PREVIOUS_TASK = 'crewing-k2-modules'
 DEFAULT_TASK = 'plugin-host'
@@ -134,6 +146,11 @@ EXPECTED_SUBSET_COUNTS = {
     'provenance': 1,
 }
 
+# No.1920: the live config plans one harness more than this route's own historic set --
+# `crewing635_public_settings`, which every task admitting `dist/index.html` now resolves.
+# COMMANDS keeps pinning this route verbatim; PLANNED is what the real CLI reports.
+PLANNED = COMMANDS + [(ALWAYS_SET.HARNESS_NAME, 'node ' + ALWAYS_SET.HARNESS_SCRIPT)]
+
 
 # Exact anchors of the three additive text blocks of the route merged after
 # K2.1 (crewing-664-person). Routes merged later are frozen by their own oracles
@@ -167,6 +184,7 @@ def previous_config(config):
 
 
 def previous_config_text(text):
+    text = ALWAYS_SET.strip_always_set(text)
     for start, end in LATER_BLOCKS + BLOCKS:
         assert text.count(start) == 1, start
         begin = text.index(start)
@@ -177,7 +195,7 @@ def previous_config_text(text):
 
 class CrewingK21SingleScreenRouteTests(unittest.TestCase):
     def config(self):
-        return json.loads(CONFIG.read_text())
+        return ALWAYS_SET.strip_always_set_config(json.loads(CONFIG.read_text()))
 
     # ------------------------------------------------------------------
     # declared ceiling: eleven paths, thirteen commands, position after K2
@@ -364,7 +382,7 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
             self.assertEqual(report['protected_paths_touched'], [])
             self.assertEqual(report['release_paths_touched'], [])
             self.assertEqual(report['allowed_file_patterns'], FILES)
-            self.assertEqual([(t['name'], t['command']) for t in report['tests']], COMMANDS)
+            self.assertEqual([(t['name'], t['command']) for t in report['tests']], PLANNED)
 
     def test_real_cli_rejects_a_file_outside_the_ceiling(self):
         extra = 'src-tauri/Cargo.toml'
@@ -425,7 +443,10 @@ class CrewingK21SingleScreenRouteTests(unittest.TestCase):
             self.assertIn(PREVIOUS_TASK, payload['old_tasks'])
         with tempfile.TemporaryDirectory(prefix='k21-superset-neg-') as tmp:
             weakened = json.loads(CONFIG.read_text())
-            weakened['harness_commands'][PREVIOUS_TASK] = weakened['harness_commands'][PREVIOUS_TASK][:-1]
+            # Drop the FIRST entry, not the last: since No.1920 the last one is
+            # `crewing635_public_settings`, which the old ref does not have, so removing
+            # it would not be a removal at all and the teeth would bite nothing.
+            weakened['harness_commands'][PREVIOUS_TASK] = weakened['harness_commands'][PREVIOUS_TASK][1:]
             repo, old_ref, new_ref = self.superset_repo(tmp, json.dumps(weakened, indent=2) + '\n')
             code, payload = self.run_superset(repo, old_ref, new_ref, Path(tmp) / 'bad.json')
             self.assertEqual(code, 1, payload)

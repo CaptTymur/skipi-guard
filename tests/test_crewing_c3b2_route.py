@@ -26,6 +26,16 @@ LOADER = SourceFileLoader('guard_crewing_c3b2', str(GUARD))
 SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
+
+
+# BACKLOG skipi-ops No.1920 (2026-11-16): ten tasks that admit `dist/index.html` gained the
+# `crewing635_public_settings` harness command. This file keeps pinning its own route, so it
+# subtracts that change from the config it reads and expects it in what the real CLI plans.
+_ALWAYS_LOADER = SourceFileLoader('always_set_1920_for_c3b2',
+                                  str(ROOT / 'tests' / 'test_crewing_always_set_1920.py'))
+_ALWAYS_SPEC = importlib.util.spec_from_loader(_ALWAYS_LOADER.name, _ALWAYS_LOADER)
+ALWAYS_SET = importlib.util.module_from_spec(_ALWAYS_SPEC)
+_ALWAYS_LOADER.exec_module(ALWAYS_SET)
 TASK = 'crewing-c3b2'
 FILES = ['dist/index.html', 'src-tauri/src/crewing_intake.rs', 'src-tauri/src/lib.rs',
          'tests/crewing_c3b2_candidate_harness.mjs', 'docs/crewing-pilot-c3b2/WORKLOG.md',
@@ -45,6 +55,9 @@ EXTRAS = ['src-tauri/src/other.rs', 'server/intake.rs', 'src-tauri/Cargo.toml',
           'dist/latest.json', '.github/workflows/other.yml',
           'tests/crewing_c3b1_pilot_harness.mjs', 'docs/crewing-pilot-c3b1/WORKLOG.md']
 OLD_CONFIG_HASH = '5b99a9088dc66c9b5970d6fa9b294448dbb48810fa2304a65b3288cda3d2c1e3'
+
+# The live config plans one harness more than this route's own set (No.1920).
+PLANNED = COMMANDS + [(ALWAYS_SET.HARNESS_NAME, 'node ' + ALWAYS_SET.HARNESS_SCRIPT)]
 
 
 LATER_TASKS = ('crewing-k2-modules', 'crewing-k21-single-screen', 'crewing-664-person',
@@ -66,7 +79,7 @@ def previous_config(config):
 
 class CrewingC3b2RouteTests(unittest.TestCase):
     def config(self):
-        return json.loads(CONFIG.read_text())
+        return ALWAYS_SET.strip_always_set_config(json.loads(CONFIG.read_text()))
 
     def test_exact_ceiling_checks_and_order(self):
         config = self.config()
@@ -128,7 +141,7 @@ class CrewingC3b2RouteTests(unittest.TestCase):
             git('init', '-q', '-b', 'main')
             git('config', 'user.name', 'C3b2 isolated fixture')
             git('config', 'user.email', 'fixture@example.invalid')
-            for path in FILES + [cmd.split(' ', 1)[1] for _, cmd in COMMANDS if not cmd.split(' ', 1)[1].startswith('/')]:
+            for path in FILES + [cmd.split(' ', 1)[1] for _, cmd in PLANNED if not cmd.split(' ', 1)[1].startswith('/')]:
                 if path != FILES[3] or not missing:
                     write(path, 'synthetic baseline fixture; not product acceptance\n')
             git('add', '-A')
@@ -193,9 +206,9 @@ class CrewingC3b2RouteTests(unittest.TestCase):
         self.assertEqual(report['task'], TASK)
         self.assertEqual(report['effective_tasks'], [TASK])
         self.assertFalse(report['override_present'])
-        self.assertEqual([(t['name'], t['command']) for t in report['tests']], COMMANDS)
+        self.assertEqual([(t['name'], t['command']) for t in report['tests']], PLANNED)
         calls = [json.loads(line) for line in f['calls'].read_text().splitlines()]
-        self.assertEqual([c['args'] for c in calls], [[cmd.split(' ', 1)[1]] for _, cmd in COMMANDS])
+        self.assertEqual([c['args'] for c in calls], [[cmd.split(' ', 1)[1]] for _, cmd in PLANNED])
         self.assertTrue(all(c['head'] == f['head'] for c in calls))
         if hook:
             self.assertTrue(all(Path(c['cwd']) != f['repo'] for c in calls))

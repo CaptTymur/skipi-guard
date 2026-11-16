@@ -26,6 +26,16 @@ LOADER = SourceFileLoader("guard_crewing_c3b1", str(GUARD))
 SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
+
+
+# BACKLOG skipi-ops No.1920 (2026-11-16): ten tasks that admit `dist/index.html` gained the
+# `crewing635_public_settings` harness command. This file keeps pinning its own route, so it
+# subtracts that change from the config it reads and expects it in what the real CLI plans.
+_ALWAYS_LOADER = SourceFileLoader('always_set_1920_for_c3b1',
+                                  str(ROOT / 'tests' / 'test_crewing_always_set_1920.py'))
+_ALWAYS_SPEC = importlib.util.spec_from_loader(_ALWAYS_LOADER.name, _ALWAYS_LOADER)
+ALWAYS_SET = importlib.util.module_from_spec(_ALWAYS_SPEC)
+_ALWAYS_LOADER.exec_module(ALWAYS_SET)
 TASK = "crewing-c3b1"
 JOURNAL_TASK = "crewing-c3b1-metadata"
 # Additive routes merged after C3b1; each is frozen by its own oracle.
@@ -57,10 +67,13 @@ COMMANDS = [
     ("crewing_csp_inline_handlers", "node tests/csp_inline_handlers_harness.mjs"),
 ]
 
+# The live config plans one harness more than this route's own set (No.1920).
+PLANNED = COMMANDS + [(ALWAYS_SET.HARNESS_NAME, 'node ' + ALWAYS_SET.HARNESS_SCRIPT)]
+
 
 class CrewingC3b1RouteTests(unittest.TestCase):
     def config(self):
-        return json.loads(CONFIG.read_text())
+        return ALWAYS_SET.strip_always_set_config(json.loads(CONFIG.read_text()))
 
     def test_candidate_routes_and_preserves_all_six_checks(self):
         config = self.config()
@@ -142,11 +155,11 @@ class CrewingC3b1RouteTests(unittest.TestCase):
             with self.subTest(pin=pin), self.journal_fixture(pin=pin) as f:
                 ci_proc, ci = self.invoke_ci(f, run=True)
                 self.assertEqual(ci_proc.returncode, 0, ci)
-                self.assert_calls(f)
+                self.assert_calls(f, COMMANDS)
                 f[6].unlink()
                 hook_proc, hook = self.invoke_hook(f, incremental=True)
                 self.assertEqual(hook_proc.returncode, 0, hook)
-                self.assert_calls(f)
+                self.assert_calls(f, COMMANDS)
                 for report in (ci, hook):
                     self.assertEqual(report["changed_files"], sorted([FILES[4], FILES[5]] if pin else [FILES[4]]))
                     self.assertEqual(report["task"], JOURNAL_TASK)
@@ -164,7 +177,7 @@ class CrewingC3b1RouteTests(unittest.TestCase):
                 proc, report = invoke()
                 self.assertEqual(proc.returncode, 1, report)
                 self.assertEqual(report["task"], JOURNAL_TASK)
-                self.assert_calls(f)
+                self.assert_calls(f, COMMANDS)
                 f[6].unlink()
                 self.assertEqual([t["name"] for t in report["tests"] if t["status"] == "fail"],
                                  ["crewing_c3b1_pilot"])
@@ -177,7 +190,7 @@ class CrewingC3b1RouteTests(unittest.TestCase):
                     proc, report = invoke()
                     self.assertEqual(proc.returncode, 1, report)
                     self.assertEqual(report["task"], JOURNAL_TASK)
-                    self.assert_calls(f)
+                    self.assert_calls(f, COMMANDS)
                     f[6].unlink()
                     self.assertEqual([t["name"] for t in report["tests"] if t["status"] == "fail"], [name])
 
@@ -294,9 +307,16 @@ class CrewingC3b1RouteTests(unittest.TestCase):
                               text=True, capture_output=True, env=env)
         return proc, json.loads(result.read_text())
 
-    def assert_calls(self, fixture):
+    def assert_calls(self, fixture, expected=None):
+        """`expected` defaults to this route's plan; the journal route has its own.
+
+        No.1920 added `crewing635_public_settings` to every task that admits
+        `dist/index.html`. This route admits the page, `crewing-c3b1-metadata` does not,
+        so the journal fixtures still plan exactly COMMANDS.
+        """
         calls = [json.loads(line) for line in fixture[6].read_text().splitlines()]
-        self.assertEqual([c["args"] for c in calls], [[cmd.split(" ", 1)[1]] for _, cmd in COMMANDS])
+        self.assertEqual([c["args"] for c in calls],
+                         [[cmd.split(" ", 1)[1]] for _, cmd in (expected or PLANNED)])
         return calls
 
     def test_real_cli_each_missing_required_or_any_does_not_route(self):
@@ -339,7 +359,7 @@ class CrewingC3b1RouteTests(unittest.TestCase):
                     self.assertEqual(report["effective_tasks"], [TASK])
                     self.assertEqual(report["errors"], [])
                     self.assertFalse(report["override_present"])
-                    self.assertEqual([(t["name"], t["command"]) for t in report["tests"]], COMMANDS)
+                    self.assertEqual([(t["name"], t["command"]) for t in report["tests"]], PLANNED)
                     self.assertTrue(all(t["status"] == "pass" for t in report["tests"]))
                 self.assertEqual(hook["push_ref"]["local_sha"], f[5])
                 self.assertEqual(len(f[3]("worktree", "list", "--porcelain").split("worktree ")) - 1, 1)
