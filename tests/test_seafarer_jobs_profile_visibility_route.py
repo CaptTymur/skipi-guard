@@ -49,7 +49,10 @@ FORBIDDEN = [
 # Routes appended AFTER this one, each with its own oracle module. They are
 # removed before the positional assertions below so this test keeps its full
 # original strength on the config as it stood when this route landed.
-LATER_ROUTES = ("seafarer-rank-alias-table",)  # P2/R3, tests/test_seafarer_rank_alias_table_route.py
+LATER_ROUTES = (
+    "seafarer-rank-alias-table",  # P2/R3, tests/test_seafarer_rank_alias_table_route.py
+    "plugins-unbundle",  # 24.11.2026, tests/test_seafarer_plugins_unbundle_route.py
+)
 
 
 def load_config():

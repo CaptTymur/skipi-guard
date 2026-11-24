@@ -453,6 +453,13 @@
         "src-tauri/src/profiles.rs",
         "tests/jobs_profile_visibility_harness.mjs"
       ]
+    },
+    {
+      "name": "seafarer ships no bundled plugins (owner 24.11.2026)",
+      "task": "plugins-unbundle",
+      "when_all_files_in": ["dist/index.html", "dist/plugin-host-ui.js", "dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-loader.js", "dist/plugin-remote-boot.js", "src-tauri/src/commands/account_sync.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/commands/profile.rs", "src-tauri/src/lib.rs", "tests/bundled_plugin_isolation_harness.mjs", "presence-manifest.json", "tests/seafarer_presence_contract_harness.mjs", "tests/seafarer_theme_default_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs", "tests/plugin_remote_over_bundled_harness.mjs", "tests/account_profile_sync_harness.mjs", "dist/plugins/**", "tests/fixtures/plugins/**"],
+      "require_any_of": ["dist/plugins/**"],
+      "require_all_of": ["dist/index.html", "tests/bundled_plugin_isolation_harness.mjs"]
     }
   ],
   "protected_paths": [
@@ -925,6 +932,28 @@
       {"name": "seafarer_stack_verification_negative_control", "command": "node tests/stack_verification_negative_control_harness.mjs"},
       {"name": "seafarer_login_gate_first_screen", "command": "node tests/login_gate_first_screen_harness.mjs"},
       {"name": "seafarer_jobs_profile_visibility", "command": "node tests/jobs_profile_visibility_harness.mjs"}
+    ],
+    "plugins-unbundle": [
+      {
+        "name": "seafarer_bundled_plugin_isolation",
+        "command": "node tests/bundled_plugin_isolation_harness.mjs"
+      },
+      {
+        "name": "seafarer_build_provenance",
+        "command": "node tests/build_provenance_harness.mjs"
+      },
+      {
+        "name": "seafarer_presence_contract",
+        "command": "node tests/seafarer_presence_contract_harness.mjs"
+      },
+      {
+        "name": "seafarer_theme_default",
+        "command": "node tests/seafarer_theme_default_harness.mjs"
+      },
+      {
+        "name": "seafarer_remote_prod_delivery_config",
+        "command": "node tests/remote_prod_delivery_config_harness.mjs"
+      }
     ]
   },
   "allowed_file_patterns": {
@@ -1070,6 +1099,27 @@
       "dist/index.html",
       "src-tauri/src/profiles.rs",
       "tests/jobs_profile_visibility_harness.mjs"
+    ],
+    "plugins-unbundle": [
+      "dist/index.html",
+      "dist/plugin-host-ui.js",
+      "dist/plugin-host-bridge.js",
+      "dist/plugin-host-config.js",
+      "dist/plugin-loader.js",
+      "dist/plugin-remote-boot.js",
+      "src-tauri/src/commands/account_sync.rs",
+      "src-tauri/src/commands/mod.rs",
+      "src-tauri/src/commands/profile.rs",
+      "src-tauri/src/lib.rs",
+      "tests/bundled_plugin_isolation_harness.mjs",
+      "presence-manifest.json",
+      "tests/seafarer_presence_contract_harness.mjs",
+      "tests/seafarer_theme_default_harness.mjs",
+      "tests/remote_prod_delivery_config_harness.mjs",
+      "tests/plugin_remote_over_bundled_harness.mjs",
+      "tests/account_profile_sync_harness.mjs",
+      "dist/plugins/**",
+      "tests/fixtures/plugins/**"
     ]
   }
 }

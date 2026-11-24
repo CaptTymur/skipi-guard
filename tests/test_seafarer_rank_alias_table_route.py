@@ -57,6 +57,8 @@ FORBIDDEN = [
 def load_config():
     return json.loads(CONFIG.read_text())
 
+LATER_ROUTES = ("plugins-unbundle",)  # 24.11.2026, tests/test_seafarer_plugins_unbundle_route.py
+
 
 def without_route(config):
     """The config as it was before this route, to prove the route is the delta."""
@@ -83,13 +85,16 @@ class SeafarerRankAliasTableRouteTests(unittest.TestCase):
 
     def test_route_is_appended_last_and_adds_nothing_else(self):
         config = load_config()
-        self.assertEqual(config["task_routing"][-1]["task"], TASK)
-        self.assertEqual(list(config["allowed_file_patterns"])[-1], TASK)
-        self.assertEqual(list(config["harness_commands"])[-1], TASK)
+        # Routes added after this one are excluded from «last» (same convention as LATER_ROUTES in
+        # tests/test_seafarer_jobs_profile_visibility_route.py); each has its own oracle.
+        routing_of_its_era = [r for r in config["task_routing"] if r["task"] not in LATER_ROUTES]
+        self.assertEqual(routing_of_its_era[-1]["task"], TASK)
+        self.assertEqual([t for t in config["allowed_file_patterns"] if t not in LATER_ROUTES][-1], TASK)
+        self.assertEqual([t for t in config["harness_commands"] if t not in LATER_ROUTES][-1], TASK)
         baseline = without_route(config)
         # The delta is this task and nothing else, in every section.
         self.assertEqual(len(config["task_routing"]) - len(baseline["task_routing"]), 1)
-        self.assertEqual(config["task_routing"][:-1], baseline["task_routing"])
+        self.assertEqual(routing_of_its_era[:-1], [r for r in baseline["task_routing"] if r["task"] not in LATER_ROUTES])
         for section in ("allowed_file_patterns", "harness_commands"):
             self.assertEqual(set(config[section]) - set(baseline[section]), {TASK})
         # The route joins neither the exact-set contract nor the release tasks:
