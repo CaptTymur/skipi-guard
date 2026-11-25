@@ -86,7 +86,7 @@ class SeafarerCvRoutesTests(unittest.TestCase):
         config = self.load_config()
         # New sync route is checked independently; preserve the exact prior 20.
         tasks = [rule["task"] for rule in config["task_routing"]
-                 if rule["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019")]
+                 if rule["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020")]
         self.assertEqual(len(tasks), 20)
         self.assertEqual(tasks[-2:], list(ROUTES))
         for task, target in ROUTES.items():
@@ -99,10 +99,10 @@ class SeafarerCvRoutesTests(unittest.TestCase):
 
     def test_retained_config_matches_reviewed_baseline(self):
         config = self.load_config()
-        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (*ROUTES, "one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019")]
-        config["release_tasks"] = [t for t in config["release_tasks"] if t != "plugin-motion-019"]  # 25.11.2026: the motion route is a release task (src-tauri/gen/**), oracle in tests/test_seafarer_plugin_motion_route.py
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (*ROUTES, "one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020")]
+        config["release_tasks"] = [t for t in config["release_tasks"] if t not in ("plugin-motion-019", "plugin-capabilities-020")]  # 25.11.2026: the motion route is a release task (src-tauri/gen/**), oracle in tests/test_seafarer_plugin_motion_route.py
         for section in ("allowed_file_patterns", "exact_task_file_sets", "harness_commands"):
-            for task in (*ROUTES, "one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019"):
+            for task in (*ROUTES, "one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020"):
                 config[section].pop(task, None)
         # OWNER 2026-09-13, №273 adds this one literal in two version-bump
         # positions. Validate their exact shape before restoring this test's
