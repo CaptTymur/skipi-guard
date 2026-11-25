@@ -183,7 +183,10 @@ class UnpinnedVersionMoves(unittest.TestCase):
                 else:
                     self.assertTrue(found, f"{home}/{task} can move {carries} without the pin")
                     closed += 1
-        self.assertEqual(16, closed, "the measured radius of open doors changed")
+        # 17 since 25.11.2026: seafarer `plugin-motion-019` is a release task (it carries
+        # src-tauri/gen/**), so a version-bearing file pushed through it is reported like the
+        # 16 doors measured 2026-10-29. Its own file list holds no version-bearing file.
+        self.assertEqual(17, closed, "the measured radius of open doors changed")
 
     def test_a_diff_with_no_version_bearing_path_is_never_flagged(self):
         config = home_config("crewing")

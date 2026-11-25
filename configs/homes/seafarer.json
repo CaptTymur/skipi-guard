@@ -9,7 +9,7 @@
     "no pairing/QR/camera bridge changes",
     "no Play/TestFlight/upload/deploy"
   ],
-  "release_tasks": ["release", "release-infra", "build-release", "stack-metadata", "mobile-external-url", "login-gate-first-162b", "entry-fork-187", "mobile-ime-inset", "version-bump", "native-share", "ios-apple-project-265b", "brand-icons"],
+  "release_tasks": ["release", "release-infra", "build-release", "stack-metadata", "mobile-external-url", "login-gate-first-162b", "entry-fork-187", "mobile-ime-inset", "version-bump", "native-share", "ios-apple-project-265b", "brand-icons", "plugin-motion-019"],
   "default_task": "plugin-host",
   "exact_task_file_sets": {
     "consent193": [
@@ -484,6 +484,12 @@
       "task": "crew-compliance-018d",
       "when_all_files_in": ["dist/index.html", "src-tauri/src/commands/crewing_compliance.rs", "src-tauri/src/commands/crewing.rs", "src-tauri/src/commands/crewing_intake.rs", "src-tauri/src/commands/crewing_contact.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/lib.rs", "tests/role_modules_harness.mjs", "tests/no_dead_tauri_invoke_harness.mjs", "src-tauri/src/commands/app_login.rs", "src-tauri/src/commands/account_sync.rs", "src-tauri/src/commands/vault.rs"],
       "require_all_of": ["dist/index.html", "src-tauri/src/commands/crewing_compliance.rs", "tests/role_modules_harness.mjs"]
+    },
+    {
+      "name": "plugins get motion sensors and keep-awake through the host — runtime 1.2 (owner 25.11.2026, marine-clinometer #2)",
+      "task": "plugin-motion-019",
+      "when_all_files_in": ["dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-remote-boot.js", "src-tauri/src/commands/motion.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/lib.rs", "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt", "src-tauri/gen/apple/skipi_iOS/Info.plist", "tests/bundled_plugin_isolation_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs"],
+      "require_all_of": ["dist/plugin-remote-boot.js", "src-tauri/src/commands/motion.rs", "tests/remote_prod_delivery_config_harness.mjs"]
     }
   ],
   "protected_paths": [
@@ -1016,6 +1022,14 @@
       {"name": "seafarer_login_gate_first_screen", "command": "node tests/login_gate_first_screen_harness.mjs"},
       {"name": "seafarer_role_modules", "command": "node tests/role_modules_harness.mjs"},
       {"name": "seafarer_no_dead_tauri_invoke", "command": "node tests/no_dead_tauri_invoke_harness.mjs"}
+    ],
+    "plugin-motion-019": [
+      {"name": "seafarer_bundled_plugin_isolation", "command": "node tests/bundled_plugin_isolation_harness.mjs"},
+      {"name": "seafarer_build_provenance", "command": "node tests/build_provenance_harness.mjs"},
+      {"name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs"},
+      {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
+      {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"},
+      {"name": "seafarer_no_dead_tauri_invoke", "command": "node tests/no_dead_tauri_invoke_harness.mjs"}
     ]
   },
   "allowed_file_patterns": {
@@ -1226,6 +1240,18 @@
       "src-tauri/src/commands/app_login.rs",
       "src-tauri/src/commands/account_sync.rs",
       "src-tauri/src/commands/vault.rs"
+    ],
+    "plugin-motion-019": [
+      "dist/plugin-host-bridge.js",
+      "dist/plugin-host-config.js",
+      "dist/plugin-remote-boot.js",
+      "src-tauri/src/commands/motion.rs",
+      "src-tauri/src/commands/mod.rs",
+      "src-tauri/src/lib.rs",
+      "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt",
+      "src-tauri/gen/apple/skipi_iOS/Info.plist",
+      "tests/bundled_plugin_isolation_harness.mjs",
+      "tests/remote_prod_delivery_config_harness.mjs"
     ]
   }
 }
