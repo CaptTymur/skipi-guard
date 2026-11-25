@@ -466,6 +466,12 @@
       "task": "role-modules-018",
       "when_all_files_in": ["dist/index.html", "src-tauri/src/commands/app_login.rs", "src-tauri/src/commands/account_sync.rs", "src-tauri/src/commands/vault.rs", "tests/role_modules_harness.mjs"],
       "require_all_of": ["dist/index.html", "src-tauri/src/commands/app_login.rs", "tests/role_modules_harness.mjs"]
+    },
+    {
+      "name": "crewing role: live Crew Flow through the one Skipi sign-in (owner 25.11.2026, case 208)",
+      "task": "crew-flow-018b",
+      "when_all_files_in": ["dist/index.html", "src-tauri/src/commands/crewing.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/lib.rs", "tests/role_modules_harness.mjs", "src-tauri/src/commands/app_login.rs", "src-tauri/src/commands/account_sync.rs", "src-tauri/src/commands/vault.rs"],
+      "require_all_of": ["dist/index.html", "src-tauri/src/commands/crewing.rs", "tests/role_modules_harness.mjs"]
     }
   ],
   "protected_paths": [
@@ -969,6 +975,15 @@
       {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"},
       {"name": "seafarer_login_gate_first_screen", "command": "node tests/login_gate_first_screen_harness.mjs"},
       {"name": "seafarer_role_modules", "command": "node tests/role_modules_harness.mjs"}
+    ],
+    "crew-flow-018b": [
+      {"name": "seafarer_bundled_plugin_isolation", "command": "node tests/bundled_plugin_isolation_harness.mjs"},
+      {"name": "seafarer_build_provenance", "command": "node tests/build_provenance_harness.mjs"},
+      {"name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs"},
+      {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
+      {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"},
+      {"name": "seafarer_login_gate_first_screen", "command": "node tests/login_gate_first_screen_harness.mjs"},
+      {"name": "seafarer_role_modules", "command": "node tests/role_modules_harness.mjs"}
     ]
   },
   "allowed_file_patterns": {
@@ -1142,6 +1157,16 @@
       "src-tauri/src/commands/account_sync.rs",
       "src-tauri/src/commands/vault.rs",
       "tests/role_modules_harness.mjs"
+    ],
+    "crew-flow-018b": [
+      "dist/index.html",
+      "src-tauri/src/commands/crewing.rs",
+      "src-tauri/src/commands/mod.rs",
+      "src-tauri/src/lib.rs",
+      "tests/role_modules_harness.mjs",
+      "src-tauri/src/commands/app_login.rs",
+      "src-tauri/src/commands/account_sync.rs",
+      "src-tauri/src/commands/vault.rs"
     ]
   }
 }

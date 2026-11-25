@@ -53,6 +53,7 @@ LATER_ROUTES = (
     "seafarer-rank-alias-table",  # P2/R3, tests/test_seafarer_rank_alias_table_route.py
     "plugins-unbundle",  # 24.11.2026, tests/test_seafarer_plugins_unbundle_route.py
     "role-modules-018",  # 25.11.2026: one app, modules by account role, oracle in tests/test_seafarer_role_modules_route.py
+    "crew-flow-018b",  # 25.11.2026: crewing live Crew Flow, oracle in tests/test_seafarer_crew_flow_route.py
 )
 
 
