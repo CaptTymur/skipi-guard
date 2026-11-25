@@ -122,6 +122,7 @@ LATER_OWNER_ROUTES_NON_RELEASE = [
     "role-modules-018",  # 25.11.2026: one app, modules by account role, oracle in tests/test_seafarer_role_modules_route.py
     "crew-flow-018b",  # 25.11.2026: crewing live Crew Flow, oracle in tests/test_seafarer_crew_flow_route.py
     "crew-pilot-modules-018c",  # 25.11.2026: crewing pilot modules, oracle in tests/test_seafarer_crew_pilot_modules_route.py
+    "crew-compliance-018d",  # 25.11.2026: crewing Compliance Profile, oracle in tests/test_seafarer_crew_compliance_route.py
 ]
 
 LOGIN_GATE_162B_FILES = [
@@ -324,7 +325,7 @@ class SeafarerEntryForkRouteTests(unittest.TestCase):
     def test_route_is_additive_to_pre_route_config(self) -> None:
         config = self.load_config()
         # Exclude only the independently tested sync delta from this old oracle.
-        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c")]
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d")]
         for section in ("exact_task_file_sets", "allowed_file_patterns", "harness_commands"):
             config[section].pop("one-account-sync-192", None)
             config[section].pop("consent193", None)

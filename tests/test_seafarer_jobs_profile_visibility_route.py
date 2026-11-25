@@ -55,6 +55,7 @@ LATER_ROUTES = (
     "role-modules-018",  # 25.11.2026: one app, modules by account role, oracle in tests/test_seafarer_role_modules_route.py
     "crew-flow-018b",  # 25.11.2026: crewing live Crew Flow, oracle in tests/test_seafarer_crew_flow_route.py
     "crew-pilot-modules-018c",  # 25.11.2026: crewing pilot modules, oracle in tests/test_seafarer_crew_pilot_modules_route.py
+    "crew-compliance-018d",  # 25.11.2026: crewing Compliance Profile, oracle in tests/test_seafarer_crew_compliance_route.py
 )
 
 

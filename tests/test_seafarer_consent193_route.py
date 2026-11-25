@@ -45,7 +45,7 @@ EXTRAS = [
 
 def without_sync(config):
     config = copy.deepcopy(config)
-    config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (TASK, "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c")]
+    config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (TASK, "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d")]
     for section in ("exact_task_file_sets", "allowed_file_patterns", "harness_commands"):
         config[section].pop(TASK, None)
         config[section].pop("jobs-profile-visibility-s2", None)
@@ -54,6 +54,7 @@ def without_sync(config):
         config[section].pop("role-modules-018", None)
         config[section].pop("crew-flow-018b", None)
         config[section].pop("crew-pilot-modules-018c", None)
+        config[section].pop("crew-compliance-018d", None)
     return config
 
 
