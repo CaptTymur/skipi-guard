@@ -58,6 +58,7 @@ LATER_ROUTES = (
     "crew-compliance-018d",  # 25.11.2026: crewing Compliance Profile, oracle in tests/test_seafarer_crew_compliance_route.py
     "plugin-motion-019",  # 25.11.2026: plugin motion sensors, oracle in tests/test_seafarer_plugin_motion_route.py
     "plugin-capabilities-020",  # 25.11.2026: plugin device capabilities, oracle in tests/test_seafarer_plugin_capabilities_route.py
+    "plugin-reviews-021",  # 25.11.2026: plugin ratings and reviews, oracle in tests/test_seafarer_plugin_reviews_route.py
 )
 
 
