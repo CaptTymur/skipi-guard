@@ -29,6 +29,7 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 TASK = "plugin-motion-019"
+LATER = ("plugin-capabilities-020",)  # 25.11.2026, oracle in tests/test_seafarer_plugin_capabilities_route.py
 CORE = ["dist/plugin-remote-boot.js", "src-tauri/src/commands/motion.rs", "tests/remote_prod_delivery_config_harness.mjs"]
 ANDROID = "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt"
 PLIST = "src-tauri/gen/apple/skipi_iOS/Info.plist"
@@ -80,7 +81,8 @@ class SeafarerPluginMotionRouteTests(unittest.TestCase):
 
     def test_release_task_because_of_the_generated_mobile_sources_and_no_exact_set(self):
         self.assertEqual(self.config["release_tasks"].count(TASK), 1)
-        self.assertEqual(self.config["release_tasks"][-1], TASK)
+        # later release tasks are appended after it (plugin-capabilities-020)
+        self.assertEqual([t for t in self.config["release_tasks"] if t not in LATER][-1], TASK)
         self.assertNotIn(TASK, self.config.get("exact_task_file_sets", {}))
 
     def test_neighbour_routes_keep_their_diffs(self):
@@ -96,9 +98,9 @@ class SeafarerPluginMotionRouteTests(unittest.TestCase):
             self.assertIn(needed, commands)
 
     def test_appended_last(self):
-        self.assertEqual(self.config["task_routing"][-1]["task"], TASK)
-        self.assertEqual(list(self.config["allowed_file_patterns"])[-1], TASK)
-        self.assertEqual(list(self.config["harness_commands"])[-1], TASK)
+        self.assertEqual([r["task"] for r in self.config["task_routing"] if r["task"] not in LATER][-1], TASK)
+        self.assertEqual([t for t in self.config["allowed_file_patterns"] if t not in LATER][-1], TASK)
+        self.assertEqual([t for t in self.config["harness_commands"] if t not in LATER][-1], TASK)
 
 
 if __name__ == "__main__":

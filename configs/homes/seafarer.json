@@ -9,7 +9,7 @@
     "no pairing/QR/camera bridge changes",
     "no Play/TestFlight/upload/deploy"
   ],
-  "release_tasks": ["release", "release-infra", "build-release", "stack-metadata", "mobile-external-url", "login-gate-first-162b", "entry-fork-187", "mobile-ime-inset", "version-bump", "native-share", "ios-apple-project-265b", "brand-icons", "plugin-motion-019"],
+  "release_tasks": ["release", "release-infra", "build-release", "stack-metadata", "mobile-external-url", "login-gate-first-162b", "entry-fork-187", "mobile-ime-inset", "version-bump", "native-share", "ios-apple-project-265b", "brand-icons", "plugin-motion-019", "plugin-capabilities-020"],
   "default_task": "plugin-host",
   "exact_task_file_sets": {
     "consent193": [
@@ -490,6 +490,12 @@
       "task": "plugin-motion-019",
       "when_all_files_in": ["dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-remote-boot.js", "src-tauri/src/commands/motion.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/lib.rs", "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt", "src-tauri/gen/apple/skipi_iOS/Info.plist", "tests/bundled_plugin_isolation_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs"],
       "require_all_of": ["dist/plugin-remote-boot.js", "src-tauri/src/commands/motion.rs", "tests/remote_prod_delivery_config_harness.mjs"]
+    },
+    {
+      "name": "plugins get the camera, the microphone, the location, speech and vibration through the host — runtime 1.3 (owner 25.11.2026)",
+      "task": "plugin-capabilities-020",
+      "when_all_files_in": ["dist/plugin-host-bridge.js", "dist/plugin-host-config.js", "dist/plugin-remote-boot.js", "src-tauri/src/commands/plugin_device.rs", "src-tauri/src/commands/motion.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/lib.rs", "src-tauri/gen/android/app/src/main/AndroidManifest.xml", "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt", "src-tauri/gen/apple/skipi_iOS/Info.plist", "tests/bundled_plugin_isolation_harness.mjs", "tests/remote_prod_delivery_config_harness.mjs"],
+      "require_all_of": ["dist/plugin-remote-boot.js", "src-tauri/src/commands/plugin_device.rs", "tests/remote_prod_delivery_config_harness.mjs"]
     }
   ],
   "protected_paths": [
@@ -1030,6 +1036,14 @@
       {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
       {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"},
       {"name": "seafarer_no_dead_tauri_invoke", "command": "node tests/no_dead_tauri_invoke_harness.mjs"}
+    ],
+    "plugin-capabilities-020": [
+      {"name": "seafarer_bundled_plugin_isolation", "command": "node tests/bundled_plugin_isolation_harness.mjs"},
+      {"name": "seafarer_build_provenance", "command": "node tests/build_provenance_harness.mjs"},
+      {"name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs"},
+      {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
+      {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"},
+      {"name": "seafarer_no_dead_tauri_invoke", "command": "node tests/no_dead_tauri_invoke_harness.mjs"}
     ]
   },
   "allowed_file_patterns": {
@@ -1248,6 +1262,20 @@
       "src-tauri/src/commands/motion.rs",
       "src-tauri/src/commands/mod.rs",
       "src-tauri/src/lib.rs",
+      "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt",
+      "src-tauri/gen/apple/skipi_iOS/Info.plist",
+      "tests/bundled_plugin_isolation_harness.mjs",
+      "tests/remote_prod_delivery_config_harness.mjs"
+    ],
+    "plugin-capabilities-020": [
+      "dist/plugin-host-bridge.js",
+      "dist/plugin-host-config.js",
+      "dist/plugin-remote-boot.js",
+      "src-tauri/src/commands/plugin_device.rs",
+      "src-tauri/src/commands/motion.rs",
+      "src-tauri/src/commands/mod.rs",
+      "src-tauri/src/lib.rs",
+      "src-tauri/gen/android/app/src/main/AndroidManifest.xml",
       "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt",
       "src-tauri/gen/apple/skipi_iOS/Info.plist",
       "tests/bundled_plugin_isolation_harness.mjs",
