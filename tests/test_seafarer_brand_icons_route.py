@@ -579,7 +579,7 @@ class SeafarerBrandIconsRouteTests(unittest.TestCase):
         config = self.load_config()
         # Preserve the prior exact routing order; sync has its own contract suite.
         routing_tasks = [rule["task"] for rule in config["task_routing"]
-                         if rule["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020")]
+                         if rule["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021")]
         self.assertEqual(len(routing_tasks), 20)
         self.assertEqual(routing_tasks[16:], [BRAND_TASK, PIN_TASK, "cv-order-282", "career-pattern-302"])
         self.assertEqual(routing_tasks.count(BRAND_TASK), 1)

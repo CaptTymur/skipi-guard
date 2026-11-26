@@ -30,6 +30,7 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 TASK = "plugin-capabilities-020"
+LATER = ("plugin-reviews-021",)  # 25.11.2026, oracle in tests/test_seafarer_plugin_reviews_route.py
 CORE = ["dist/plugin-remote-boot.js", "src-tauri/src/commands/plugin_device.rs", "tests/remote_prod_delivery_config_harness.mjs"]
 MANIFEST = "src-tauri/gen/android/app/src/main/AndroidManifest.xml"
 ACTIVITY = "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt"
@@ -96,9 +97,9 @@ class SeafarerPluginCapabilitiesRouteTests(unittest.TestCase):
             self.assertIn(needed, commands)
 
     def test_appended_last(self):
-        self.assertEqual(self.config["task_routing"][-1]["task"], TASK)
-        self.assertEqual(list(self.config["allowed_file_patterns"])[-1], TASK)
-        self.assertEqual(list(self.config["harness_commands"])[-1], TASK)
+        self.assertEqual([r["task"] for r in self.config["task_routing"] if r["task"] not in LATER][-1], TASK)
+        self.assertEqual([t for t in self.config["allowed_file_patterns"] if t not in LATER][-1], TASK)
+        self.assertEqual([t for t in self.config["harness_commands"] if t not in LATER][-1], TASK)
 
 
 if __name__ == "__main__":
