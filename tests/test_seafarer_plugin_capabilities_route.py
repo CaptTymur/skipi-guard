@@ -30,7 +30,7 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 TASK = "plugin-capabilities-020"
-LATER = ("plugin-reviews-021", "empty-slots-212", "port-db-024")  # 25.11.2026, oracle in tests/test_seafarer_plugin_reviews_route.py
+LATER = ("plugin-reviews-021", "empty-slots-212", "port-db-024", "app-name-skipi")  # 25.11.2026, oracle in tests/test_seafarer_plugin_reviews_route.py
 CORE = ["dist/plugin-remote-boot.js", "src-tauri/src/commands/plugin_device.rs", "tests/remote_prod_delivery_config_harness.mjs"]
 MANIFEST = "src-tauri/gen/android/app/src/main/AndroidManifest.xml"
 ACTIVITY = "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt"
@@ -87,7 +87,7 @@ class SeafarerPluginCapabilitiesRouteTests(unittest.TestCase):
 
     def test_release_task_and_no_exact_set(self):
         self.assertEqual(self.config["release_tasks"].count(TASK), 1)
-        self.assertEqual(self.config["release_tasks"][-1], TASK)
+        self.assertEqual([t for t in self.config["release_tasks"] if t != "app-name-skipi"][-1], TASK)  # 26.11.2026: app-name-skipi appended after it
         self.assertNotIn(TASK, self.config.get("exact_task_file_sets", {}))
 
     def test_runs_the_plugin_host_harnesses_and_the_invoke_check(self):

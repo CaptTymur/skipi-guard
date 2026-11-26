@@ -29,7 +29,7 @@ LOADER.exec_module(MODULE)
 TASK = "plugin-reviews-021"
 CORE = ["dist/plugin-host-ui.js", "src-tauri/src/commands/plugin_reviews.rs", "tests/bundled_plugin_isolation_harness.mjs"]
 OPTIONAL = ["dist/index.html", "src-tauri/src/commands/mod.rs", "src-tauri/src/lib.rs"]
-LATER = ("empty-slots-212", "port-db-024")  # 26.11.2026, oracle in tests/test_seafarer_empty_slots_route.py
+LATER = ("empty-slots-212", "port-db-024", "app-name-skipi")  # 26.11.2026, oracle in tests/test_seafarer_empty_slots_route.py
 
 
 class SeafarerPluginReviewsRouteTests(unittest.TestCase):

@@ -57,7 +57,7 @@ FORBIDDEN = [
 def load_config():
     return json.loads(CONFIG.read_text())
 
-LATER_ROUTES = ("plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021", "empty-slots-212", "port-db-024")  # 24.11.2026, tests/test_seafarer_plugins_unbundle_route.py
+LATER_ROUTES = ("plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021", "empty-slots-212", "port-db-024", "app-name-skipi")  # 24.11.2026, tests/test_seafarer_plugins_unbundle_route.py
 
 
 def without_route(config):

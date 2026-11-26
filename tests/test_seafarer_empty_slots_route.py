@@ -29,7 +29,7 @@ LOADER.exec_module(MODULE)
 TASK = "empty-slots-212"
 CORE = ["src-tauri/src/commands/account_sync.rs", "src-tauri/src/frameworks.rs"]
 OPTIONAL = ["src-tauri/src/commands/profile.rs"]
-LATER = ("port-db-024",)  # 26.11.2026, oracle in tests/test_seafarer_port_db_route.py
+LATER = ("port-db-024", "app-name-skipi")  # 26.11.2026, oracles in tests/test_seafarer_port_db_route.py and test_seafarer_app_name_route.py
 
 
 class SeafarerEmptySlotsRouteTests(unittest.TestCase):

@@ -540,7 +540,7 @@ class SeafarerBrandIconsRouteTests(unittest.TestCase):
 
         self.assertEqual(config["release_tasks"].count(BRAND_TASK), 1)
         # later release tasks are appended after it (25.11.2026: plugin-motion-019)
-        self.assertEqual([t for t in config["release_tasks"] if t not in ("plugin-motion-019", "plugin-capabilities-020")][-1], BRAND_TASK)
+        self.assertEqual([t for t in config["release_tasks"] if t not in ("plugin-motion-019", "plugin-capabilities-020", "app-name-skipi")][-1], BRAND_TASK)
         self.assertEqual(config["exact_task_file_sets"][BRAND_TASK], BRAND_FILES)
         self.assertEqual(len(config["exact_task_file_sets"][BRAND_TASK]), 52)
         self.assertEqual((set(config["exact_task_file_sets"]) - {"one-account-sync-192", "consent193", "jobs-profile-visibility-s2"}), {"stack-metadata", "ios-apple-project-265b", BRAND_TASK, "cv-order-282", "career-pattern-302"})
@@ -579,7 +579,7 @@ class SeafarerBrandIconsRouteTests(unittest.TestCase):
         config = self.load_config()
         # Preserve the prior exact routing order; sync has its own contract suite.
         routing_tasks = [rule["task"] for rule in config["task_routing"]
-                         if rule["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021", "empty-slots-212", "port-db-024")]
+                         if rule["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021", "empty-slots-212", "port-db-024", "app-name-skipi")]
         self.assertEqual(len(routing_tasks), 20)
         self.assertEqual(routing_tasks[16:], [BRAND_TASK, PIN_TASK, "cv-order-282", "career-pattern-302"])
         self.assertEqual(routing_tasks.count(BRAND_TASK), 1)
