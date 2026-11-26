@@ -508,6 +508,12 @@
       "task": "empty-slots-212",
       "when_all_files_in": ["src-tauri/src/commands/account_sync.rs", "src-tauri/src/commands/profile.rs", "src-tauri/src/frameworks.rs"],
       "require_all_of": ["src-tauri/src/commands/account_sync.rs", "src-tauri/src/frameworks.rs"]
+    },
+    {
+      "name": "Port DB: find a port, answer the survey, leave a review (owner 26.11.2026)",
+      "task": "port-db-024",
+      "when_all_files_in": ["dist/PORTS_VERSION", "dist/index.html", "dist/port-db.css", "dist/port-db.js", "dist/skipi-ports.data.js", "dist/skipi-ports.js", "src-tauri/src/commands/mod.rs", "src-tauri/src/commands/plugin_reviews.rs", "src-tauri/src/commands/port_reviews.rs", "src-tauri/src/lib.rs", "tests/bundled_plugin_isolation_harness.mjs", "tests/port_db_harness.mjs", "tests/seafarer_presence_contract_harness.mjs"],
+      "require_all_of": ["dist/PORTS_VERSION", "dist/port-db.js", "src-tauri/src/commands/port_reviews.rs", "tests/port_db_harness.mjs"]
     }
   ],
   "protected_paths": [
@@ -1072,6 +1078,15 @@
       {"name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs"},
       {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
       {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"}
+    ],
+    "port-db-024": [
+      {"name": "seafarer_bundled_plugin_isolation", "command": "node tests/bundled_plugin_isolation_harness.mjs"},
+      {"name": "seafarer_build_provenance", "command": "node tests/build_provenance_harness.mjs"},
+      {"name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs"},
+      {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
+      {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"},
+      {"name": "seafarer_no_dead_tauri_invoke", "command": "node tests/no_dead_tauri_invoke_harness.mjs"},
+      {"name": "seafarer_port_db", "command": "node tests/port_db_harness.mjs"}
     ]
   },
   "allowed_file_patterns": {
@@ -1321,6 +1336,21 @@
       "src-tauri/src/commands/account_sync.rs",
       "src-tauri/src/commands/profile.rs",
       "src-tauri/src/frameworks.rs"
+    ],
+    "port-db-024": [
+      "dist/PORTS_VERSION",
+      "dist/index.html",
+      "dist/port-db.css",
+      "dist/port-db.js",
+      "dist/skipi-ports.data.js",
+      "dist/skipi-ports.js",
+      "src-tauri/src/commands/mod.rs",
+      "src-tauri/src/commands/plugin_reviews.rs",
+      "src-tauri/src/commands/port_reviews.rs",
+      "src-tauri/src/lib.rs",
+      "tests/bundled_plugin_isolation_harness.mjs",
+      "tests/port_db_harness.mjs",
+      "tests/seafarer_presence_contract_harness.mjs"
     ]
   }
 }
