@@ -45,7 +45,7 @@ EXTRAS = [
 
 def without_sync(config):
     config = copy.deepcopy(config)
-    config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (TASK, "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021")]
+    config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in (TASK, "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021", "empty-slots-212")]
     config["release_tasks"] = [t for t in config["release_tasks"] if t not in ("plugin-motion-019", "plugin-capabilities-020")]  # 25.11.2026: the motion route is a release task (src-tauri/gen/**), oracle in tests/test_seafarer_plugin_motion_route.py
     for section in ("exact_task_file_sets", "allowed_file_patterns", "harness_commands"):
         config[section].pop(TASK, None)
@@ -59,6 +59,7 @@ def without_sync(config):
         config[section].pop("plugin-motion-019", None)
         config[section].pop("plugin-capabilities-020", None)
         config[section].pop("plugin-reviews-021", None)
+        config[section].pop("empty-slots-212", None)
     return config
 
 

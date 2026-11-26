@@ -29,6 +29,7 @@ LOADER.exec_module(MODULE)
 TASK = "plugin-reviews-021"
 CORE = ["dist/plugin-host-ui.js", "src-tauri/src/commands/plugin_reviews.rs", "tests/bundled_plugin_isolation_harness.mjs"]
 OPTIONAL = ["dist/index.html", "src-tauri/src/commands/mod.rs", "src-tauri/src/lib.rs"]
+LATER = ("empty-slots-212",)  # 26.11.2026, oracle in tests/test_seafarer_empty_slots_route.py
 
 
 class SeafarerPluginReviewsRouteTests(unittest.TestCase):
@@ -81,9 +82,9 @@ class SeafarerPluginReviewsRouteTests(unittest.TestCase):
             self.assertIn(needed, commands)
 
     def test_appended_last(self):
-        self.assertEqual(self.config["task_routing"][-1]["task"], TASK)
-        self.assertEqual(list(self.config["allowed_file_patterns"])[-1], TASK)
-        self.assertEqual(list(self.config["harness_commands"])[-1], TASK)
+        self.assertEqual([r["task"] for r in self.config["task_routing"] if r["task"] not in LATER][-1], TASK)
+        self.assertEqual([t for t in self.config["allowed_file_patterns"] if t not in LATER][-1], TASK)
+        self.assertEqual([t for t in self.config["harness_commands"] if t not in LATER][-1], TASK)
 
 
 if __name__ == "__main__":
