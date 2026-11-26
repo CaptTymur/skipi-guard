@@ -929,7 +929,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         baseline["allowed_file_patterns"]["version-bump"].append(plist)
 
         # Preserve the prior exact routing order; sync is checked separately.
-        routing = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021")]
+        routing = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021", "empty-slots-212")]
         self.assertEqual(len(baseline["task_routing"]), 14)
         self.assertEqual(len(routing), 20)
         self.assertEqual(routing[:14], baseline["task_routing"])
@@ -942,7 +942,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
     def test_pre_route_config_is_preserved_byte_for_byte(self) -> None:
         config = self.load_config()
         # Remove only the independently tested sync delta from this older oracle.
-        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021")]
+        config["task_routing"] = [r for r in config["task_routing"] if r["task"] not in ("one-account-sync-192", "consent193", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021", "empty-slots-212")]
         config["release_tasks"] = [t for t in config["release_tasks"] if t not in ("plugin-motion-019", "plugin-capabilities-020")]  # 25.11.2026: the motion route is a release task (src-tauri/gen/**), oracle in tests/test_seafarer_plugin_motion_route.py
         for section in ("exact_task_file_sets", "allowed_file_patterns", "harness_commands"):
             config[section].pop("one-account-sync-192", None)
@@ -957,7 +957,7 @@ class SeafarerIosAppleRouteTests(unittest.TestCase):
         baseline["allowed_file_patterns"]["version-bump"].append(plist)
         # Delta since 746bc882: the two routes of task card A0 (wave 0.4.191)
         # and the two brand-icon routes of wave 0.4.192.
-        new_tasks = {SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK, "cv-order-282", "career-pattern-302", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021"}
+        new_tasks = {SIBLING_TASK, ROUTE_TASK, BRAND_TASK, PIN_TASK, "cv-order-282", "career-pattern-302", "jobs-profile-visibility-s2", "seafarer-rank-alias-table", "plugins-unbundle", "role-modules-018", "crew-flow-018b", "crew-pilot-modules-018c", "crew-compliance-018d", "plugin-motion-019", "plugin-capabilities-020", "plugin-reviews-021", "empty-slots-212"}
 
         self.assertEqual(config["home"], baseline["home"])
         self.assertEqual(config["repo"], baseline["repo"])
