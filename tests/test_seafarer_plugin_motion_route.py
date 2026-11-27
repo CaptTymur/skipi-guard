@@ -29,7 +29,7 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 TASK = "plugin-motion-019"
-LATER = ("plugin-capabilities-020", "plugin-reviews-021", "empty-slots-212", "port-db-024")  # 25.11.2026, oracles in tests/test_seafarer_plugin_capabilities_route.py and test_seafarer_plugin_reviews_route.py
+LATER = ("plugin-capabilities-020", "plugin-reviews-021", "empty-slots-212", "port-db-024", "app-name-skipi")  # 25.11.2026, oracles in tests/test_seafarer_plugin_capabilities_route.py and test_seafarer_plugin_reviews_route.py
 CORE = ["dist/plugin-remote-boot.js", "src-tauri/src/commands/motion.rs", "tests/remote_prod_delivery_config_harness.mjs"]
 ANDROID = "src-tauri/gen/android/app/src/main/java/app/skipi/seafarer/MainActivity.kt"
 PLIST = "src-tauri/gen/apple/skipi_iOS/Info.plist"
