@@ -33,7 +33,7 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 TASK = "app-name-skipi"
-LATER = ("my-vessel-029",)  # 27.11.2026, oracle in tests/test_seafarer_my_vessel_route.py
+LATER = ("my-vessel-029", "chartering-031",)  # 27.11.2026, oracle in tests/test_seafarer_my_vessel_route.py
 FILES = [
     "dist/index.html",
     "src-tauri/Cargo.toml",

@@ -28,7 +28,7 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 TASK = "port-db-024"
-LATER = ("app-name-skipi", "my-vessel-029",)  # 26.11.2026, oracle in tests/test_seafarer_app_name_route.py
+LATER = ("app-name-skipi", "my-vessel-029", "chartering-031",)  # 26.11.2026, oracle in tests/test_seafarer_app_name_route.py
 CORE = ["dist/PORTS_VERSION", "dist/port-db.js", "src-tauri/src/commands/port_reviews.rs", "tests/port_db_harness.mjs"]
 OPTIONAL = [
     "dist/index.html", "dist/port-db.css", "dist/skipi-ports.data.js", "dist/skipi-ports.js",

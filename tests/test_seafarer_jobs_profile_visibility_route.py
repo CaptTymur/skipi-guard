@@ -61,7 +61,7 @@ LATER_ROUTES = (
     "plugin-reviews-021",  # 25.11.2026: plugin ratings and reviews, oracle in tests/test_seafarer_plugin_reviews_route.py
     "empty-slots-212",  # 26.11.2026: empty document slots (case 212), oracle in tests/test_seafarer_empty_slots_route.py
     "port-db-024",  # 26.11.2026: Port DB, oracle in tests/test_seafarer_port_db_route.py
-    "app-name-skipi", "my-vessel-029",  # 26.11.2026: app name, oracle in tests/test_seafarer_app_name_route.py
+    "app-name-skipi", "my-vessel-029", "chartering-031",  # 26.11.2026: app name, oracle in tests/test_seafarer_app_name_route.py
 )
 
 
