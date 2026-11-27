@@ -526,6 +526,12 @@
       "task": "my-vessel-029",
       "when_all_files_in": ["dist/VESSEL_VERSION", "dist/index.html", "dist/skipi-vessel.css", "dist/skipi-vessel.js", "src-tauri/src/commands/mod.rs", "src-tauri/src/commands/vessel_space.rs", "src-tauri/src/lib.rs", "tests/bundled_plugin_isolation_harness.mjs", "tests/my_vessel_harness.mjs"],
       "require_all_of": ["dist/VESSEL_VERSION", "dist/skipi-vessel.js", "src-tauri/src/commands/vessel_space.rs", "tests/my_vessel_harness.mjs"]
+    },
+    {
+      "name": "Chartering: the chartering account opens the module @skipi/chartering, on the role framework (owner 27.11.2026)",
+      "task": "chartering-031",
+      "when_all_files_in": ["dist/CHARTERING_VERSION", "dist/index.html", "dist/skipi-chartering.css", "dist/skipi-chartering.js", "src-tauri/src/commands/account_sync.rs", "src-tauri/src/commands/app_login.rs", "src-tauri/src/commands/chartering.rs", "src-tauri/src/commands/mod.rs", "src-tauri/src/commands/plugin_reviews.rs", "src-tauri/src/commands/vault.rs", "src-tauri/src/lib.rs", "tests/bundled_plugin_isolation_harness.mjs", "tests/chartering_harness.mjs", "tests/role_modules_harness.mjs"],
+      "require_all_of": ["dist/CHARTERING_VERSION", "dist/skipi-chartering.js", "src-tauri/src/commands/chartering.rs", "tests/chartering_harness.mjs"]
     }
   ],
   "protected_paths": [
@@ -1118,6 +1124,16 @@
       {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"},
       {"name": "seafarer_no_dead_tauri_invoke", "command": "node tests/no_dead_tauri_invoke_harness.mjs"},
       {"name": "seafarer_my_vessel", "command": "node tests/my_vessel_harness.mjs"}
+    ],
+    "chartering-031": [
+      {"name": "seafarer_bundled_plugin_isolation", "command": "node tests/bundled_plugin_isolation_harness.mjs"},
+      {"name": "seafarer_build_provenance", "command": "node tests/build_provenance_harness.mjs"},
+      {"name": "seafarer_presence_contract", "command": "node tests/seafarer_presence_contract_harness.mjs"},
+      {"name": "seafarer_theme_default", "command": "node tests/seafarer_theme_default_harness.mjs"},
+      {"name": "seafarer_remote_prod_delivery_config", "command": "node tests/remote_prod_delivery_config_harness.mjs"},
+      {"name": "seafarer_no_dead_tauri_invoke", "command": "node tests/no_dead_tauri_invoke_harness.mjs"},
+      {"name": "seafarer_role_modules", "command": "node tests/role_modules_harness.mjs"},
+      {"name": "seafarer_chartering", "command": "node tests/chartering_harness.mjs"}
     ]
   },
   "allowed_file_patterns": {
@@ -1406,6 +1422,22 @@
       "src-tauri/src/lib.rs",
       "tests/bundled_plugin_isolation_harness.mjs",
       "tests/my_vessel_harness.mjs"
+    ],
+    "chartering-031": [
+      "dist/CHARTERING_VERSION",
+      "dist/index.html",
+      "dist/skipi-chartering.css",
+      "dist/skipi-chartering.js",
+      "src-tauri/src/commands/account_sync.rs",
+      "src-tauri/src/commands/app_login.rs",
+      "src-tauri/src/commands/chartering.rs",
+      "src-tauri/src/commands/mod.rs",
+      "src-tauri/src/commands/plugin_reviews.rs",
+      "src-tauri/src/commands/vault.rs",
+      "src-tauri/src/lib.rs",
+      "tests/bundled_plugin_isolation_harness.mjs",
+      "tests/chartering_harness.mjs",
+      "tests/role_modules_harness.mjs"
     ]
   }
 }

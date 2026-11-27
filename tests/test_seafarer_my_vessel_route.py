@@ -29,7 +29,7 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 TASK = "my-vessel-029"
-LATER = ()
+LATER = ("chartering-031",)  # 27.11.2026, oracle in tests/test_seafarer_chartering_route.py
 CORE = ["dist/VESSEL_VERSION", "dist/skipi-vessel.js", "src-tauri/src/commands/vessel_space.rs", "tests/my_vessel_harness.mjs"]
 OPTIONAL = ["dist/index.html", "dist/skipi-vessel.css", "src-tauri/src/commands/mod.rs", "src-tauri/src/lib.rs", "tests/bundled_plugin_isolation_harness.mjs"]
 NEW_FILES = ["dist/VESSEL_VERSION", "dist/skipi-vessel.css", "dist/skipi-vessel.js", "src-tauri/src/commands/vessel_space.rs", "tests/my_vessel_harness.mjs"]
