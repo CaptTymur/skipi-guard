@@ -33,6 +33,7 @@ SPEC = importlib.util.spec_from_loader(LOADER.name, LOADER)
 MODULE = importlib.util.module_from_spec(SPEC)
 LOADER.exec_module(MODULE)
 TASK = "app-name-skipi"
+LATER = ("my-vessel-029",)  # 27.11.2026, oracle in tests/test_seafarer_my_vessel_route.py
 FILES = [
     "dist/index.html",
     "src-tauri/Cargo.toml",
@@ -103,9 +104,9 @@ class SeafarerAppNameRouteTests(unittest.TestCase):
         self.assertEqual([], MODULE.unpinned_version_moves(self.config, FILES, MODULE.configured_harnesses(self.config, TASK)))
 
     def test_appended_last(self):
-        self.assertEqual(self.config["task_routing"][-1]["task"], TASK)
-        self.assertEqual(list(self.config["allowed_file_patterns"])[-1], TASK)
-        self.assertEqual(list(self.config["harness_commands"])[-1], TASK)
+        self.assertEqual([r["task"] for r in self.config["task_routing"] if r["task"] not in LATER][-1], TASK)
+        self.assertEqual([t for t in self.config["allowed_file_patterns"] if t not in LATER][-1], TASK)
+        self.assertEqual([t for t in self.config["harness_commands"] if t not in LATER][-1], TASK)
         self.assertEqual(self.config["release_tasks"][-1], TASK)
 
 
